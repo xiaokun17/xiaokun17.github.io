@@ -28,10 +28,22 @@ layout: default
               class=profile_image_class
               alt=page.profile.image -%}
             {% endif -%}
-            {%- if page.profile.address %}
+<!--             {%- if page.profile.address %}
             <div class="address">
               {{ page.profile.address }}
+            </div> -->
+              {%- if page.social %}
+            <div class="social">
+              <div class="contact-icons">
+                {% include social.html %}
+              </div>
+
+              <div class="contact-note">
+                {{ site.contact_note }}
+              </div>
+              
             </div>
+          {%- endif %}
             {%- endif %}
           </div>
           {%- endif %}
@@ -53,7 +65,7 @@ layout: default
           {%- endif %}
 
           <!-- Social -->
-          {%- if page.social %}
+<!--           {%- if page.social %}
             <div class="social">
               <div class="contact-icons">
                 {% include social.html %}
@@ -65,6 +77,6 @@ layout: default
               
             </div>
           {%- endif %}
-        </article>
+        </article> -->
 
 </div>
