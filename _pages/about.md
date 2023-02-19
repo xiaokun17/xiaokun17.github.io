@@ -6,7 +6,7 @@ subtitle: <a href='#'>Affiliations</a>. Address. Contacts. Moto. Etc.
 
 profile:
   align: right
-  image: prof_pic.jpg
+  image: yaochao.jpeg
   image_circular: false # crops the image to make it circular
   address: >
     <p>555 your office number</p>
@@ -18,8 +18,11 @@ selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
-Write your biography here. Tell the world about yourself. Link to your favorite [subreddit](http://reddit.com). You can put a picture in, too. The code is already in, just name your picture `prof_pic.jpg` and put it in the `img/` folder.
+Associated Professor, University of Science and Technology Beijing `<br>`
+No. 30 Xueyuan Road, Haidian District, Beijing, China `<br>`
+yaochao [at] ustb.edu.cn, yaochao1986 [at] gmail.com `<br>`
+[Google scholar](https://scholar.google.com/citations?user=5FpD9m0AAAAJ&hl=zh-CN) | [DBLP](https://dblp.uni-trier.de/pid/99/6747.html) | [Github](https://github.com/yaochao1986)
 
-Put your address / P.O. box / other info right below your picture. You can also disable any these elements by editing `profile` property of the YAML header of your `_pages/about.md`. Edit `_bibliography/papers.bib` and Jekyll will render your [publications page](/al-folio/publications/) automatically.
+I'm currently a Associated Professor at [School of Computer &amp; Communication Engineering, University of Science and Technology Beijing (USTB)](http://scce.ustb.edu.cn/). Before joining USTB, I obtained my Ph.D. from the [Center of Digital Media Information Processing](http://mepro.bjtu.edu.cn/index.html) Institute of Information and Science, Beijing jiaotong Unviersity in June, 2016, supervised by Prof. [Yao Zhao](http://mepro.bjtu.edu.cn/zhaoyao/index.htm). In 2014/09--2015/09, I was a visitor of Prof. [Pascal Frossard](https://people.epfl.ch/pascal.frossard?lang=en)'s group at École Polytechnique Fédérale de Lausanne (EPFL).
 
-Link to your social media connections, too. This theme is set up to use [Font Awesome icons](http://fortawesome.github.io/Font-Awesome/) and [Academicons](https://jpswalsh.github.io/academicons/), like the ones below. Add your Facebook, Twitter, LinkedIn, Google Scholar, or just disable all of them.
+**Research interest:** image compression, video coding, human-computer interaction and time series data analysis and prediction. *Interested in internship or collaboration? Contact me.*
