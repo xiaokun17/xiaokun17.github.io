@@ -1,6 +1,6 @@
 ---
 layout: page
-title: projects
+title: Members
 permalink: /projects/
 description: A growing collection of your cool projects.
 nav: true
@@ -8,8 +8,8 @@ nav_order: 2
 display_categories: [work, fun]
 horizontal: false
 ---
-
 <!-- pages/projects.md -->
+
 <div class="projects">
 {%- if site.enable_project_categories and page.display_categories %}
   <!-- Display categorized projects -->
@@ -36,11 +36,16 @@ horizontal: false
   {% endfor %}
 
 {%- else -%}
+
 <!-- Display projects without categories -->
+
   {%- assign sorted_projects = site.projects | sort: "importance" -%}
-  <!-- Generate cards for each project -->
+
+<!-- Generate cards for each project -->
+
   {% if page.horizontal -%}
-  <div class="container">
+
+<div class="container">
     <div class="row row-cols-2">
     {%- for project in sorted_projects -%}
       {% include projects_horizontal.html %}
