@@ -2,13 +2,13 @@
 layout: page
 permalink: /service/
 title: Service
-description: Materials for courses you taught. Replace this text with your description.
+description: 
 nav: true
 nav_order: 5
 ---
 ## Academic service
 
-Program Committee of Reviewer
+### Program Committee of Reviewer
 
 * Computer Vision and Pattern Recognition (CVPR), 2022-2023
 * International Conference on Computer Vision (ICCV), 2021-2023
@@ -19,10 +19,30 @@ Program Committee of Reviewer
 * IEEE International Conference on Multimedia and Expo (ICME), 2021-2023
 * IEEE International Conference on Acoustics, Speech, and Signal Processing (ICASSP), 2022-2023
 
-Journal Reviewer
+### Journal Reviewer
 
 * [IEEE Transactions on Image Processing (TIP)](http://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=83)
 * [IEEE Transactions on Neural Networks and Learning Systems (TNNLS)](http://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=5962385)
 * [IEEE Transactions on Multimedia (TMM)](http://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=6046)
 * [IEEE Transactions on Circuits System and Video Technology (TCSVT)](http://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=76)
 * [IEEE Transactions on Broadcasting](https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=11)
+
+## Membership
+
+* Committee of Human Computer Interaction, CCF（中国计算机学会）
+* Committee of Human Computer Interaction, CSIG（中国图象图形学学会）
+* Committee of Intelligent Healthcare, CAAI（中国人工智能学会）
+
+## Hornors
+
+* 2nd Award for Scientific and Technological Advancement, Chinese Institute of Electronics (2022)
+* 1st Award for Scientific and Technological Advancement, China Gold Association (2022)
+* Best Poster Paper Award of ChinaMM (2022)
+* Higher Education Teaching Achievement Award of Beijing (2022)
+* 1st Award for Scientific and Technological Advancement, China Gold Association (2020)
+* Best Paper Award of NCIG (2020)
+* Distinguished doctoral thesis award of BSIG (2017)
+
+## Teaching
+
+    coming soon....
