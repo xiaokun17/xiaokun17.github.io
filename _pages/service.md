@@ -6,7 +6,6 @@ description:
 nav: true
 nav_order: 5
 ---
-## Academic service
 
 ### Program Committee of Reviewer
 

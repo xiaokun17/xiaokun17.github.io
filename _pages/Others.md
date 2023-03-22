@@ -1,6 +1,6 @@
 ---
 layout: page
-permalink: /service/
+permalink: /seminar/
 title: Seminar
 description:
 nav: true

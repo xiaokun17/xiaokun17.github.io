@@ -1,6 +1,6 @@
 ---
 layout: about
-title: about
+title: About
 permalink: /
 
 profile:
@@ -16,12 +16,9 @@ news: true  # includes a list of news items
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
-
 Associated Professor, University of Science and Technology Beijing
 
-
 yaochao [at] ustb.edu.cn, yaochao1986 [at] gmail.com
-
 
 I'm currently a Associated Professor at [School of Computer &amp; Communication Engineering, University of Science and Technology Beijing (USTB)](http://scce.ustb.edu.cn/). Before joining USTB, I obtained my Ph.D. from the [Center of Digital Media Information Processing](http://mepro.bjtu.edu.cn/index.html) Institute of Information and Science, Beijing jiaotong Unviersity in June, 2016, supervised by Prof. [Yao Zhao](http://mepro.bjtu.edu.cn/zhaoyao/index.htm). In 2014/09--2015/09, I was a visitor of Prof. [Pascal Frossard](https://people.epfl.ch/pascal.frossard?lang=en)'s group at École Polytechnique Fédérale de Lausanne (EPFL).
 
