@@ -17,6 +17,7 @@ nav_order: 5
 * ACM International Conference on Multimedia (ACM MM), 2021
 * IEEE International Conference on Multimedia and Expo (ICME), 2021-2023
 * IEEE International Conference on Acoustics, Speech, and Signal Processing (ICASSP), 2022-2023
+* International Conference on Computer Animation and Social Agents (CASA), 2022-2023
 
 ### Journal Reviewer
 
