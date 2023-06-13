@@ -5,7 +5,7 @@ permalink: /
 
 profile:
   align: right
-  image: yaochao.jpeg
+  image: yaochao.jpg
   image_circular: false # crops the image to make it circular
 <!--   address: >
     <p>No. 1001 Information Building</p>
