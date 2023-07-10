@@ -18,7 +18,7 @@ social: true  # includes social icons at the bottom of the page
 ---
 Associated Professor, University of Science and Technology Beijing
 
-yaochao [at] ustb.edu.cn, yaochao1986 [at] gmail.com
+wangxiaokun [at] ustb.edu.cn
 
 Professor at [School of Computer &amp; Communication Engineering, University of Science and Technology Beijing (USTB)](http://scce.ustb.edu.cn/). 
 
