@@ -22,5 +22,8 @@ wangxiaokun@ustb.edu.cn
 
 Professor at [School of Computer &amp; Communication Engineering, University of Science and Technology Beijing (USTB)](http://scce.ustb.edu.cn/). 
 
+ [**Multiphase Code**](https://github.com/xiaokun17/multiphase)
+
+[**Elasticity Code**](https://github.com/xiaokun17/elasticity)
 
 <!-- **Research interest:** todo -->
