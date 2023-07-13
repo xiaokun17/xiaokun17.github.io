@@ -28,5 +28,7 @@ Professor at [School of Computer &amp; Communication Engineering, University of 
 
 [**Fluid Control Code**](https://github.com/xiaokun17/fluid-control)
 
-[**AnisotropicSPHRendering Code**](https://github.com/xiaokun17/ZSphRenderer)
+[**Anisotropic SPH Rendering Code**](https://github.com/xiaokun17/ZSphRenderer)
+
+[**Adpative Code**](https://github.com/xiaokun17/adaptive)
 <!-- **Research interest:** todo -->
