@@ -26,4 +26,6 @@ Professor at [School of Computer &amp; Communication Engineering, University of 
 
 [**Elasticity Code**](https://github.com/xiaokun17/elasticity)
 
+[**Fluid Control Code**](https://github.com/xiaokun17/fluid-control)
+
 <!-- **Research interest:** todo -->
