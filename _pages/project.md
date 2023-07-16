@@ -1,11 +1,13 @@
 ---
 layout: page
-permalink: /project1/
-title: Project1
+permalink: /project/
+title: Project
 description:
 nav: true
 nav_order: 7
 ---
+
+https://www.bournemouth.ac.uk/research/projects/multifluid
 
 
  [**Multiphase Code**](https://github.com/xiaokun17/multiphase)
