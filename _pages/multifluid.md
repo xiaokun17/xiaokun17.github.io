@@ -16,10 +16,10 @@ MultiFluid is designed to resolve the mismatch in digital creation. It aims to a
 <!--img下不能新增子文件夹-->
 <div class="row justify-content-sm-center">
     <div class="col-sm-8 mt-3 mt-md-0">
-        {% include figure.html path="assets/img/mf-1.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.html path="assets/img/mf-1.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
     <div class="col-sm-4 mt-3 mt-md-0">
-        {% include figure.html path="assets/img/mf-2.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.html path="assets/img/mf-2.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
@@ -37,12 +37,13 @@ MultiFluid is designed to resolve the mismatch in digital creation. It aims to a
 
 
 
- |     |   |
+ <!-- |     |   |
 |  :----:  | :----:  |
 | <img src="./fivephasecocktail.png" width="200px" alt="fct" >  | <img src="./bubble.png" width="210px" alt="图片说明" > |
 |  Five phase cocktail  | Bubbles |
 | <img src="./fluidcontrol.png" width="200px" alt="fct" >  | <img src="./turbulence.png" width="252px" alt="图片说明" > |
 |  Fluid control  | Turbulence |
+-->
 
 [**https://www.bournemouth.ac.uk/research/projects/multifluid**](https://www.bournemouth.ac.uk/research/projects/multifluid)
 
