@@ -14,6 +14,15 @@ Fluid simulation is a challenging and dynamic research area in computer graphics
 MultiFluid is designed to resolve the mismatch in digital creation. It aims to advance knowledge in physically-based modelling and fluid dynamics with a distinctive unified theoretical framework to incorporate new mathematical understanding in particle-grid based numerical simulation, which tackles computer animation production with priority but also bring new knowledge into fluid simulation with a new numerical approach and tools. This multidisciplinary research is ambitious and revolutionary to combine competencies from fluid mechanics and animation artists to benefit stakeholders directly and generate impact. 
 
 Some results achieved so far:
+To give your project a background in the portfolio page, just add the img tag to the front matter like so:
+
+    ---
+    layout: page
+    title: project
+    description: a project with a background image
+    img: /assets/img/12.jpg
+    ---
+
 
 <!-- ![alt 属性文本](./fivephasecocktail.png) -->
 
