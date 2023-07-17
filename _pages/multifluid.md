@@ -13,12 +13,13 @@ Fluid simulation is a challenging and dynamic research area in computer graphics
 
 MultiFluid is designed to resolve the mismatch in digital creation. It aims to advance knowledge in physically-based modelling and fluid dynamics with a distinctive unified theoretical framework to incorporate new mathematical understanding in particle-grid based numerical simulation, which tackles computer animation production with priority but also bring new knowledge into fluid simulation with a new numerical approach and tools. This multidisciplinary research is ambitious and revolutionary to combine competencies from fluid mechanics and animation artists to benefit stakeholders directly and generate impact. 
 
+<!--img下不能新增子文件夹-->
 <div class="row justify-content-sm-center">
     <div class="col-sm-8 mt-3 mt-md-0">
-        {% include figure.html path="assets/img/multifluid/1.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.html path="assets/img/mf-1.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
     <div class="col-sm-4 mt-3 mt-md-0">
-        {% include figure.html path="assets/img/multifluid/2.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.html path="assets/img/mf-2.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
