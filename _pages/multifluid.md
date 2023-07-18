@@ -15,16 +15,34 @@ MultiFluid is designed to resolve the mismatch in digital creation. It aims to a
 
 <!--img下不能新增子文件夹-->
 <div class="row justify-content-sm-center">
-    <div class="col-sm-8 mt-3 mt-md-0">
+    <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/mf-1.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
-    <div class="col-sm-4 mt-3 mt-md-0">
+    <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/mf-2.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
-<div class="caption">
-    You can also have artistically styled 2/3 + 1/3 images, like these.
+
+<div class="row justify-content-sm-center">
+    <div class="col-sm mt-3 mt-md-0">
+        five phase cocktail       
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+      bubbles
+    </div>
 </div>
+
+<div class="row justify-content-sm-center">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/mf-3.png" title="example image" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/mf-4.png" title="example image" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<!-- <div class="caption">
+    You can also have artistically styled 2/3 + 1/3 images, like these.
+</div> -->
 
 <!-- ![alt 属性文本](./fivephasecocktail.png) -->
 
