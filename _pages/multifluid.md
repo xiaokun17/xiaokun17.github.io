@@ -25,10 +25,10 @@ MultiFluid is designed to resolve the mismatch in digital creation. It aims to a
 
 <div class="row justify-content-sm-center">
     <div class="col-sm mt-3 mt-md-0">
-        five phase cocktail       
+         Five Phase Cocktail      
     </div>
     <div class="col-sm mt-3 mt-md-0">
-      bubbles
+      Bubbles
     </div>
 </div>
 
@@ -38,6 +38,14 @@ MultiFluid is designed to resolve the mismatch in digital creation. It aims to a
     </div>
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/mf-4.png" title="example image" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="row justify-content-sm-center">
+    <div class="col-sm mt-3 mt-md-0" style="text-align: center;">
+         Fluid Control      
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+      Turbulence
     </div>
 </div>
 <!-- <div class="caption">
