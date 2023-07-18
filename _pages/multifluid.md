@@ -8,6 +8,9 @@ nav_order: 7
 ---
 
 ## Introduction
+
+---
+
 <!--from docx -->
 Fluid simulation is a challenging and dynamic research area in computer graphics and animation community, which are in line with the practical demands of the visual effects and computer animation industry for high quality images. Methods offering fine fluid details, controllable art design, phase transition and diffusion phenomena are valuable for the industry. MultiFluid will develop a multilevel theory and hybrid solution with tools to provide a coherent multi-level enhancement to refine the fluid details and offer user-friendly controls in animation. Within this framework, it will develop a multi-phase interaction and phase-transition model to consider complex physics beyond the state of the art, which aims to create realistic images for computer animation and visual effects production. 
 
@@ -24,11 +27,13 @@ MultiFluid is designed to resolve the mismatch in digital creation. It aims to a
 </div>
 
 <div class="row justify-content-sm-center">
-    <div class="col-sm mt-3 mt-md-0">
-         Five Phase Cocktail      
+    <div class="col-sm mt-3 mt-md-0"
+    style="text-align: center;">
+       <b>  Five Phase Cocktail </b>      
     </div>
-    <div class="col-sm mt-3 mt-md-0">
-      Bubbles
+    <div class="col-sm mt-3 mt-md-0"
+    style="text-align: center;">
+     <b> Bubbles</b> 
     </div>
 </div>
 
@@ -42,11 +47,11 @@ MultiFluid is designed to resolve the mismatch in digital creation. It aims to a
 </div>
 <div class="row justify-content-sm-center">
     <div class="col-sm mt-3 mt-md-0" style="text-align: center;">
-         Fluid Control      
+         <b>Fluid Control</b>      
     </div>
     <div class="col-sm mt-3 mt-md-0"
-    text-align="center">
-      Turbulence
+    style="text-align: center;">
+     <b>Turbulence</b> 
     </div>
 </div>
 <!-- <div class="caption">
@@ -77,6 +82,9 @@ MultiFluid is designed to resolve the mismatch in digital creation. It aims to a
 [Find out more about this project on the EU CORDIS site](https://cordis.europa.eu/project/id/895941)
 
 ## Results
+
+---
+
 
 ## Source Code
 
