@@ -44,7 +44,8 @@ MultiFluid is designed to resolve the mismatch in digital creation. It aims to a
     <div class="col-sm mt-3 mt-md-0" style="text-align: center;">
          Fluid Control      
     </div>
-    <div class="col-sm mt-3 mt-md-0">
+    <div class="col-sm mt-3 mt-md-0"
+    text-align="center">
       Turbulence
     </div>
 </div>
