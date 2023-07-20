@@ -77,6 +77,10 @@ MultiFluid is designed to resolve the mismatch in digital creation. It aims to a
 |  Fluid control  | Turbulence |
 -->
 
+<!-- <div class="publications">
+{% bibliography -f mf  %}
+</div> -->
+
 [**https://www.bournemouth.ac.uk/research/projects/multifluid**](https://www.bournemouth.ac.uk/research/projects/multifluid)
 
 [Find out more about this project on the EU CORDIS site](https://cordis.europa.eu/project/id/895941)
@@ -86,10 +90,8 @@ MultiFluid is designed to resolve the mismatch in digital creation. It aims to a
 ## Dissemination
 
 
-Journal Papers: 
-<!-- <div class="publications">
-{% bibliography -f mf  %}
-</div> -->
+**Journal Papers:**
+
 1. **Xiaokun Wang**, Yanrui Xu, Sinuo Liu, Bo Ren, Jiri Kosina, Alexandru C. Telea, Jiamin Wang, Chongmin Song, Jian Chang, Chenfeng Li, Xiaojuan Ban, Jianjun Zhang. “Physics-based fluid simulation: Survey, research trends, and challenges”, 1-50, Computational Visual Media, in press, 2023.
    
 2. Tiancheng Wang, Yanrui Xu, Ruolan Li, Haoping Wang, Yuege Xiong, **Xiaokun Wang (corresponding author)**. “Simulating Hyperelastic Materials with Anisotropic Stiffness Models in a Particle-Based Framework”, 1-12, recommended for publication in the journal Computers & Graphics, 2022.
@@ -104,7 +106,7 @@ Journal Papers:
    
 7. Yanrui Xu, **Xiaokun Wang (corresponding author)**, Xiaojuan Ban, Jiamin Wang, Chongming Song and Yong Wang. Volume Flux free SPH Approach for Multiphase Fluids, Journal of Computer-Aided Design & Computer Graphics, 2022, 34(11): 1637-1646.
 
-Conference paper and presentation: 
+**Conference paper and presentation:**
 
 8. Tiancheng Wang, Yanrui Xu, Ruolan Li, Haoping Wang, Yuege Xiong, **Xiaokun Wang (corresponding author)**. “Simulating Hyperelastic Materials with Anisotropic Stiffness Models in a Particle-Based Framework”, 1-12, CASA 2023 AniNex workshop in Limassol, Cyprus, in May, 2023.
    
