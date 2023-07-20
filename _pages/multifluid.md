@@ -77,9 +77,7 @@ MultiFluid is designed to resolve the mismatch in digital creation. It aims to a
 |  Fluid control  | Turbulence |
 -->
 
-<!-- <div class="publications">
-{% bibliography -f mf  %}
-</div> -->
+
 
 [**https://www.bournemouth.ac.uk/research/projects/multifluid**](https://www.bournemouth.ac.uk/research/projects/multifluid)
 
