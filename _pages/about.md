@@ -12,7 +12,7 @@ profile:
     <p>No. 30 Xueyuan Road, Haidian District</p>
     <p>Beijing, China, 100083</p> -->
 
-news: true  # includes a list of news items
+news: false  # includes a list of news items zxc
 selected_papers: false # includes a list of papers marked as "selected={true}" zxc
 social: true  # includes social icons at the bottom of the page
 ---
