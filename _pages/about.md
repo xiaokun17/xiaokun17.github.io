@@ -13,7 +13,7 @@ profile:
     <p>Beijing, China, 100083</p> -->
 
 news: true  # includes a list of news items
-selected_papers: true # includes a list of papers marked as "selected={true}"
+selected_papers: false # includes a list of papers marked as "selected={true}" zxc
 social: true  # includes social icons at the bottom of the page
 ---
 Associated Professor, University of Science and Technology Beijing

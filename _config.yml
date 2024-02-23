@@ -159,7 +159,7 @@ collections:
   news:
     defaults:
       layout: post
-    output: true
+    output: false #zxc
     permalink: /news/:path/
   projects:
     output: true
