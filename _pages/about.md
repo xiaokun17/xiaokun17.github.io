@@ -26,7 +26,7 @@ Furthermore, from July 2021 to July 2023, I worked as a Marie-Curie Fellow at th
 
 
 
-**Research Interests:** Physics-based modeling (fluids & deformations), differential rendering and simulation, virtual reality (surgical simulation), novel HCI (motion control and haptics), and the application of pertinent technologies in industry.
+**Research Interest:** Physics-based modeling (fluids & deformations), differential rendering and simulation, virtual reality (surgical simulation), novel HCI (motion control and haptics), and the application of pertinent technologies in industry.
 
 
 **Email:** wangxiaokun@ustb.edu.cn
