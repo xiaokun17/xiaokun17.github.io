@@ -16,9 +16,9 @@ news: false  # includes a list of news items zxc
 selected_papers: false # includes a list of papers marked as "selected={true}" zxc
 social: true  # includes social icons at the bottom of the page
 ---
-Associated Professor, University of Science and Technology Beijing
+Professor, University of Science and Technology Beijing
 
-I am currently an Associate Professor at the [School of Intelligence Science and Technology, University of Science and Technology Beijing (USTB)](https://ai.ustb.edu.cn/). I obtained my Ph.D. from the [School of Computer and Communication Engineering, USTB](https://scce.ustb.edu.cn/), in January 2017, under the supervision of [Professor Xiaojuan Ban](https://ai.ustb.edu.cn/szdw/xsszmjs/B/3cf3cd35a70a455abf7c4e2cf7b36064.htm).
+I am currently a full Professor at the [School of Intelligence Science and Technology, University of Science and Technology Beijing (USTB)](https://ai.ustb.edu.cn/). I obtained my Ph.D. from the [School of Computer and Communication Engineering, USTB](https://scce.ustb.edu.cn/), in January 2017.
 
 From 2017 to 2022, I held various positions including Post-doc, Lecturer, and Associate Professor at the [School of Computer and Communication Engineering, USTB](https://scce.ustb.edu.cn/). Additionally, I spent two periods as a visiting scholar and postdoctoral researcher at the [Bernoulli Institute, University of Groningen](https://www.rug.nl/research/bernoulli/?lang=en) in the Netherlands, from July 2019 to May 2020 and from February 2023 to September. During these visits, I collaborated with [Professor Alexandru C. Telea](https://www.cs.rug.nl/svcg/People/AlexandruTelea) and [Professor Jiří Kosinka](https://www.cs.rug.nl/svcg/People/JiriKosinka) from the [Scientific Visualization and Computer Graphics (SVCG) group](https://www.cs.rug.nl/svcg/).
 
