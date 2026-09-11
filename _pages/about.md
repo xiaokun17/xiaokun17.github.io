@@ -5,7 +5,7 @@ permalink: /
 
 profile:
   align: right
-  image: wangxiaokun.jpg
+  image: WangXiaoKun.png
   image_circular: false # crops the image to make it circular
 <!--   address: >
     <p>No. 1001 Information Building</p>
