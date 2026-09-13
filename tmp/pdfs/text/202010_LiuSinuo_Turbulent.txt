@@ -1,0 +1,180 @@
+                                         Volume xx (200y), Number z, pp. 1–13
+
+
+
+
+                                                                                 Turbulent Details Simulation
+                                                                            for SPH Fluids via Vorticity Refinement
+
+                                                           Sinuo Liu2† , Xiaokun Wang1†‡ , Xiaojuan Ban1‡ , Yanrui Xu1 , Jing Zhou2 , Jiří Kosinka3 , Alexandru C. Telea4
+                                                                               1 University of Science & Technology Beijing, Institute of Artificial Intelligence, China
+arXiv:2009.14535v1 [cs.GR] 30 Sep 2020
+
+
+
+
+                                                                     2 University of Science & Technology Beijing, School of Computer & Communication Engineering, China
+                                                                                             3 University of Groningen, Bernoulli Institute, Netherlands
+                                                                               4 Utrecht University, Department of Information and Computing Sciences, Netherlands
+
+
+
+
+                                                                                                                   Without vorticity refinement
+
+
+
+
+                                                                                                                   With vorticity refinement
+
+
+
+
+                                         Figure 1: Our Vorticity Refinement (VR) solver applied to an DFSPH [BK15] simulation (1.18M particles). In this scene, a breaking dam
+                                         collides with a board, creating turbulence. Zoom-ins compare the surface under DFSPH without (top) and with (bottom) our VR solver. The
+                                         result shows that our method better captures turbulence details.
+
+                                                  Abstract
+                                                  A major issue in Smoothed Particle Hydrodynamics (SPH) approaches is the numerical dissipation during the projection pro-
+                                                  cess, especially under coarse discretizations. High-frequency details, such as turbulence and vortices, are smoothed out, leading
+                                                  to unrealistic results. To address this issue, we introduce a Vorticity Refinement (VR) solver for SPH fluids with negligible com-
+                                                  putational overhead. In this method, the numerical dissipation of the vorticity field is recovered by the difference between the
+                                                  theoretical and the actual vorticity, so as to enhance turbulence details. Instead of solving the Biot-Savart integrals, a stream
+                                                  function, which is easier and more efficient to solve, is used to relate the vorticity field to the velocity field. We obtain turbu-
+                                                  lence effects of different intensity levels by changing an adjustable parameter. Since the vorticity field is enhanced according
+                                                  to the curl field, our method can not only amplify existing vortices, but also capture additional turbulence. Our VR solver is
+                                                  straightforward to implement and can be easily integrated into existing SPH methods.
+                                                  CCS Concepts
+                                                  • Computing methodologies → Physical simulation;
+
+
+
+
+                                         †   Co-first author, contributed equally                                             ‡   Corresponding author: banxj@ustb.edu.cn; wangxiaokun@ustb.edu.cn
+
+                                         submitted to COMPUTER GRAPHICS Forum (10/2020).
+2                         S. Liu & X. Wang & X. Ban et al. / Turbulent Details Simulationfor SPH Fluids via Vorticity Refinement
+
+1. Introduction                                                                                                                          Pressure projection
+
+
+Fluid simulation is a hot topic in computer graphics, with huge re-
+search and application demands. Within this context, the Smoothed
+Particle Hydrodynamics (SPH) method simulates fluids with large
+deformations accurately and efficiently, showing abundant details
+and vivid motion. In the past decades, several solutions have
+been proposed to enforce incompressibility [SP09, ICS∗ 14, BK15].               Vorticity   ζn =∇×𝒗n     ∇ ⋅ 𝒗𝑛𝑜𝑟𝑚𝑎𝑙 > 0        ෨
+                                                                                                                                ζ=∇×𝒗 𝑡𝑎𝑛𝑔𝑒𝑛𝑡𝑖𝑎𝑙                Δζ=ζn+1 −ζ෨
+However, numerical dissipation problems still remain and cause                                             Advection              Projection
+                                                                                                                                                               refine
+a significant loss of turbulence details [JST17, FGG∗ 17]. For in-              Velocity      𝒗n       𝒗𝑛𝑜𝑟𝑚𝑎𝑙 + 𝒗𝑡𝑎𝑛𝑔𝑒𝑛𝑡𝑖𝑎𝑙      𝒗𝑡𝑎𝑛𝑔𝑒𝑛𝑡𝑖𝑎𝑙                      𝒗n+1
+stance, vorticity dissipation is one of the major issues causing the
+loss of details on the fluid surface and in overall dynamic effects             Figure 2: This diagram shows how the vorticity dissipates in the
+[KBST19].                                                                       advection-projection process. Linear velocity at time step n splits
+                                                                                into normal (red) and tangential (green) components during the
+   To maintain complex turbulence and vortex details on the fluid               advection procedure. Next, projection eliminates the normal com-
+surface, some methods proposed to increase the apparent resolution              ponent using the pressure force to keep the flow divergence-free.
+by seeding over surface points [MBT∗ 15], or use an adaptive volu-
+metric mesh for grid-based fluids [EB14]. However, these methods
+only add details over a coarse discretization, without considering
+the inner volume. Vorticity Confinement (VC) methods add vor-                   rectly from the curl of the Navier-Stokes equations, which is a more
+tices from the perspective of the entire flow field [FSJ01, MM13]               physically reasonable model.
+to recover dissipated details. However, VC methods tend to add                     Summarizing, the main contributions of this paper are:
+more energy than is dissipated, and can amplify only existing vor-
+tices. Lagrangian vortex methods, such as vortex particles [PK05]               • A vivid turbulence-details generation method that recovers nu-
+and vortex filaments [WP10], have been used to effectively simu-                  merical dissipation through vorticity field correction;
+late turbulent fluids. While these methods maintain a divergence-               • A novel vorticity-based constraint and stream function solution
+free velocity field and have theoretically no numerical dissipation,              for simulating turbulence;
+they require solving the equivalent of three Poisson equations to               • An orthogonal solver for the SPH fluid framework with turbu-
+obtain velocity from vorticity, which is computationally expensive.               lence simulation that can be easily integrated into other particle-
+                                                                                  based methods and fluid solvers.
+   To alleviate the above-mentioned problems and obtain more real-
+istic turbulent flows, we introduce a turbulence refinement scheme                 The remainder of the paper is organized as follows. Section 2
+by correcting the vorticity field. In continuum mechanics, vortic-              gives an overview of related work. Section 3 discusses the accuracy
+ity is a pseudovector field that describes the local spinning motion            of numerical calculations in SPH. Our vorticity refinement scheme
+of a continuum. It can be defined as the curl of the fluidâĂŹs ve-            is presented in Section 4. Section 5 presents and discusses our ex-
+locity field. Like the divergence error issue mentioned in the DF-              perimental results. Finally, Section 6 concludes the paper.
+SPH method [BK15], vorticity dissipation also reduces the realism
+of simulations. To date, the kinetic energy from the vorticity field            2. Related Work
+could be transformed into positive divergence, causing the loss of
+                                                                                Fluid simulation is a well researched topic in computer graphics.
+surface details and of overall dynamic motion [ZBG15]. State-of-
+                                                                                Early works on this topic include [Mon94, FM96, Sta99, MCG03].
+the-art SPH approaches for fluid simulation cannot solve this prob-
+                                                                                For recent overviews, we refer to Bridson’s book [Bri15] and the
+lem completely.
+                                                                                state-of-the-art report of Koschier et al. [KBST19]. We further dis-
+   During the advection-projection process, the advection step                  cuss more specific work related to our context, namely SPH-based
+maps the original velocity field into a rotational part and a divergent         fluid simulation (Sec. 2.1) and turbulence simulation (Sec. 2.2).
+part, after which the pressure projection removes the divergent part,
+leaving only the rotational part. The angular momentum is there-
+                                                                                2.1. Incompressibility and Numerical Accuracy in SPH Fluid
+fore lost in the simulation, with the effect becoming worse as the
+                                                                                     Simulations
+time step size increases; see Fig. 2, the orange part of the diagram.
+To alleviate this, we use the accurate vorticity field derived from the         Monaghan simulated free surface flows with SPH [Mon94],
+curl of the Navier-Stokes equations to correct the linear velocity for          which laid the foundation for fluid simulation. Later, Muller et
+each particle; see Fig. 2, the green part of the diagram. Moreover,             al. [MCG03] proposed to simulate fluids using the ideal gas state
+we use a stream function to refine the velocity using a reasonable              equation with surface tension and viscosity forces, but without full
+augmentation of the vorticity field which can restore vivid yet con-            incompressibility. An improved weakly-compressible SPH (WC-
+trollable vortices and turbulence effects (as shown in Figs. 1 and 3            SPH) method was proposed by Becker and Teschner [BT07]. The
+among others). Previous related work [XBP∗ 19] looked into cor-                 use of the stiff equation of state (EOS) significantly increased re-
+recting the velocity field through the vorticity recovered from the             alistic effects, but the efficiency of such methods is limited by the
+kinematic viscosity by increasing the vorticity field proportionally            size of the used time step. To further enforce incompressibility and
+by the energy dissipated, which is based on the rotational kinetic              improve numerical accuracy, much effort has been invested into
+energy. In contrast, we focus on getting the ideal vorticity field di-          implicit pressure solvers. Previous approaches can be categorized
+
+                                                                                                                   submitted to COMPUTER GRAPHICS Forum (10/2020).
+                            S. Liu & X. Wang & X. Ban et al. / Turbulent Details Simulationfor SPH Fluids via Vorticity Refinement                    3
+
+
+
+
+                                                                          (a) DFSPH
+
+
+
+
+                                                                        (b) MP solver
+
+
+
+
+                                                                        (c) Our method
+Figure 3: A breaking dam collides with a board (1.18M particles). (a) Only few vortex effects are formed using DFSPH. (b) The MP solver
+enhances the simulation result to some extent. (c) Our method greatly improves the turbulence details, and the surface details are richer than
+with the MP solver. The MP solver and our solver achieve different styles.
+
+
+
+as methods that project particle positions onto an incompressible                  2.2. Restoring Turbulence in Fluid Simulation
+state using iterative EOS solvers, and pressure projection meth-
+ods [IOS∗ 14], as follows.                                                         Restoring high-frequency details has been an important challenge
+                                                                                   in fluid simulation since its very beginning [KTJG08, JSMF∗ 18].
+                                                                                   For Eulerian approaches, Stam’s scheme [Sta99] first achieved re-
+   He et al. [HLL∗ 12] and Solenthaler and Pajarola [SP09] pro-                    alistic and real-time fluid simulation on consumer-grade graphics
+posed predictive-corrective approaches that iteratively project par-               hardware. However, the first-order accuracy in both time and space
+ticle positions onto an incompressible state. This is also done in                 makes this method (and other extensions thereof) suffer from seri-
+position-based fluids (PBF) [MM13]. However, PBF avoids ac-                        ous numerical dissipation. Kim et al. [KLLR05] proposed a higher-
+cumulating pressure or pressure forces that eventually update the                  order approximation. Jonas et al. [ZNT18] proposed an advection-
+velocity and the position. Ihmsen et al. [ICS∗ 14] proposed im-                    reflection solver for detail-preserving fluid animation which leads
+plicit incompressible SPH (IISPH) following the strategy of pres-                  to two orders of magnitude reduction in energy loss. Rahul et
+sure projections. Separately, Bender and Koschier [BK15] pro-                      al. [NZT19] then established a connection between this method
+posed a method that enforces a low compression (0.01% ) and a                      and the implicit midpoint time integration scheme, and presented a
+divergence-free velocity constraint (DFSPH). Among all the vari-                   simple improvement to obtain an advection-reflection scheme with
+ants of the SPH method, the typical advection-projection models                    second-order accuracy in time.
+are PCISPH [SP09], IISPH [ICS∗ 14] and DFSPH [BK15]. In this
+paper, we use the DFSPH approach as a baseline for comparisons                        Hybrid particle-grid methods were subsequently proposed to
+of computational efficiency and stability.                                         further reduce numerical dissipation. Zhu and BridsonsâĂŹ FLIP
+                                                                                   method for incompressible flow [ZB05] significantly eliminates the
+                                                                                   dissipation in advection. Jiang et al. [JSS∗ 15] successfully restore
+   It is well known that SPH approaches suffer from nu-                            most of the rotational motion using a hybrid method.
+merical dissipation problems, especially for coarse discretiza-
+tions [Mon94, dGWH∗ 15, BKKW18]. Ihmsen et al. [IOS∗ 14]                              Although the general simulation methods mentioned above can
+pointed out that SPH results in undesired dissipation and high-                    handle numerical dissipation on a macroscopic level, both Eulerian
+frequency features are smoothed out. Therefore, avoiding dissipa-                  and Lagrangian approaches face challenges when simulating high-
+tion for turbulence in fluid simulation is needed to improve visual                frequency details such as turbulence. Therefore, methods specifi-
+realism.                                                                           cally designed for refining turbulent details have emerged. These
+
+submitted to COMPUTER GRAPHICS Forum (10/2020).
+

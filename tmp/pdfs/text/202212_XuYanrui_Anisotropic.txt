@@ -1,0 +1,219 @@
+                                                                                                                                                                                                     2021 IEEE International Conference on Bioinformatics and Biomedicine (BIBM)
+
+
+
+
+                                                                                                                                                                 Silicone Oil-Water Interaction and Emulsification
+                                                                                                                                                                   Visual Simulation for Intraocular Silicone Oil
+                                                                                                                                                                                    Tamponade
+2021 IEEE International Conference on Bioinformatics and Biomedicine (BIBM) | 978-1-6654-0126-5/21/$31.00 ©2021 IEEE | DOI: 10.1109/BIBM52615.2021.9669305
+
+
+
+
+                                                                                                                                                                           1st Chongming Song                                       2nd Yanrui Xu                                        3rd Xiaokun Wang*
+                                                                                                                                                                           School of Computer                            Institute of Artificial Intelligence,                 Beijing Advanced Innovation Center
+                                                                                                                                                                    and Communication Engineering,                              University of Science                         for Materials Genome Engineering,
+                                                                                                                                                                          University of Science                               and Technology Beijing                                  University of Science
+                                                                                                                                                                         and Technology Beijing                                    Beijing, China                                    and Technology Beijing
+                                                                                                                                                                             Beijing, China                                    xuyanruiedw@me.com                                        Beijing, China
+                                                                                                                                                                        18519225284@163.com                                                                                         wangxiaokun@ustb.edu.cn
+
+                                                                                                                                                                 4th Jiamin Wang                        5th Houbin Huang                         6th Zhihong Zhu                        7th Xiaojuan Ban*
+                                                                                                                                                                School of Computer                       Department of                            Department of                        Beijing Key Laboratory
+                                                                                                                                                               and Communication                         Ophthalmology,                          Ophthalmology,                      of Knowledge Engineering
+                                                                                                                                                                   Engineering,                           Chinese PLA                            Hainan Hospital                       for Materials Science,
+                                                                                                                                                               University of Science                    General Hospital                         of PLA General                         University of Science
+                                                                                                                                                              and Technology Beijing                      Beijing, China                             Hospital                         and Technology Beijing
+                                                                                                                                                                  Beijing, China                    huanghoubin@hotmail.com                       Hainan, China                            Beijing, China
+                                                                                                                                                             no4724722205@163.com                                                              zhuzhi258@163.com                         banxj@ustb.edu.cn
+
+
+
+                                                                                                                                                                 Abstract—Vitrectomy combined with silicone oil tamponade is                                              I. I NTRODUCTION
+                                                                                                                                                             an effective treatment for rhegmatogenous retinal detachment
+                                                                                                                                                             (RRD). The high viscosity and surface tension of the silicone oil
+                                                                                                                                                                                                                                                 Rhegmatogenous retinal detachment (RRD) is characterized
+                                                                                                                                                             make it suitable for treating large retinal tears by pressing against
+                                                                                                                                                             the retina. However, silicone oil becomes emulsified over time as                by retinal tears with fluid accumulating between separated
+                                                                                                                                                             it remains in the eye, which can cause serious complications.                    retinal neurosensory layer and retinal pigment epithelium
+                                                                                                                                                             Clear visual acquisitions of silicone oil-water interaction and                  layer. Pars Plana Vitrectomy (PPV) combined with silicone
+                                                                                                                                                             silicone oil emulsification progress are difficult during and after              oil tamponade has become one of the major treatments as the
+                                                                                                                                                             the surgery. To help doctors and patients perceive the two-phase
+                                                                                                                                                                                                                                              primary repair for RRD, as shown in Figure 1.
+                                                                                                                                                             interaction and emulsification progress intuitively, we propose
+                                                                                                                                                             a physically based simulation method for intraocular silicone oil
+                                                                                                                                                             visualization. For the visualization of immiscible silicone oil-water                (a)                       (c)
+                                                                                                                                                             interaction, we introduce a volume-incompressible Smoothed                         (b)
+                                                                                                                                                             Particle Hydrodynamics (SPH) approach to improve simulation
+                                                                                                                                                             precision of multiphase flow coupling. A diffusion model based on                                                    silicone oil
+                                                                                                                                                             volume fraction is proposed to visualize emulsification progress.                     vitreous body
+                                                                                                                                                             Additionally, we combine our method with cohesion and surface-
+                                                                                                                                                             minimization driven surface tension model to describe the high
+                                                                                                                                                                                                                                                                                    water
+                                                                                                                                                             surface tension of silicone oil. Experiments show that our scheme                                                                     (d)
+                                                                                                                                                             can obtain a precise pressure gradient near phase boundary
+                                                                                                                                                             and perform noticeable mixing effect that evolves over time.
+                                                                                                                                                             Our method has the advantage of higher accuracy than other                       Fig. 1. Procedure of PPV combined with silicone oil tamponade. Left: original
+                                                                                                                                                             visualization methods, and has the potential to help doctors make                condition of rhegmatogenous retinal detachment: liquid (a) accumulates
+                                                                                                                                                             decisions and estimate surgical outcomes.                                        behind the retina tear (b). Middle: silicone oil tamponade with vitreous body
+                                                                                                                                                               Index Terms—Medical visualization; Rhegmatogenous retinal                      being removed after reattaching the retina (c). Right: silicone oil emulsification
+                                                                                                                                                             detachment; Silicone oil tamponade; Multiphase flows simulation                  (d) over time.
+
+
+                                                                                                                                                                                                                                                 Silicone oil is a popular kind of intraocular filler [1]
+                                                                                                                                                                                                                                              for RRD for its relative safety and preferable optical and
+                                                                                                                                                                                                                                              mechanical properties. However, silicone oil becomes emul-
+                                                                                                                                                             *Corresponding authors.                                                          sified in the vitreous chamber over time, impairing the oper-
+                                                                                                                                                                                                                                              ation’s effectiveness and causing various complications such
+
+
+
+                                                                                                                                                             978-1-6654-0126-5/21/$31.00 ©2021 IEEE                                     736
+                                                                                                                                                                 Authorized licensed use limited to: Univ of Science and Tech Beijing. Downloaded on May 20,2026 at 01:54:39 UTC from IEEE Xplore. Restrictions apply.
+as proliferative vitreoretinopathy, recurrent retinal detachment,                is good at capturing fluid details. Becker et al. [9] proposed
+intraocular inflammation and secondary glaucoma.                                 Tait equation-based Weakly Compressible SPH (WCSPH)
+    As the emulsification process within the vitreous chamber                    method. Subsequently, implicit iterative SPH solvers [10]
+is difficult to fully observe in reality, developing a computer                  [11] were proposed to enforce the incompressibility of the
+simulation method to visualize silicone oil condition can help                   fluid. The state-of-the-art SPH solver, Divergence-Free SPH
+to better understand the process. Potential uses of such a vi-                   (DFSPH) [12], contains two iterative solvers: a divergence free
+sualization system include making demonstrations to patients                     solver and a constant density solver.
+or students, and simulating real surgeries to assist doctors to                     For multiphase simulation involving interactions and mixing
+make decisions about quantifying silicone oil needed to be                       between two or more kinds of liquid (e.g. silicone oil and
+filled and the time to remove it.                                                water), Müller et al. [13] introduced the diffusion equation.
+    Currently, there is a lack of simulation and visualization                   The concept of volume fraction [14] and corresponding mixing
+methods for silicone oil emulsification. We propose a physics-                   models [15] were introduced to better capture miscibility and
+based visual simulation method for the silicone oil-water                        were integrated into an iterative SPH solver [16]. Helmholtz
+two phase interaction and emulsification after silicone oil                      free energy [17] has been used to improve the mixing behavior;
+tamponade. In summary, the main contributions of our method                      and conservative phase field equations [18] were used to
+are:                                                                             achieve higher Reynolds number and density ratios.
+    • a    two-way coupling framework for volume-
+                                                                                     III. P HYSICS - BASED S IMULATION OF S ILICONE O IL
+      incompressible fluids that is capable of handling
+                                                                                              E MULSIFICATION AND D IFFUSION
+      various density ratios between silicone oil and water;
+    • a surface tension model that incorporates the effects of                      To simulate the multiphase fluid interaction between silicone
+      cohesion and curvature forces to minimize surface area;                    oil and water during silicone oil tamponade process, the
+    • a multiphase mixture model based on volume fraction                        motion of fluids, the surface tension effect, and diffusion due
+      scheme for the simulation of mixing states between                         to emulsification all need to be considered.
+      silicone oil and water.                                                       We first introduce a volume-incompressible SPH method
+                                                                                 that derives pressure fields according to volume incompress-
+                        II. R ELATED W ORK                                       ibility instead of density, which avoids the numerical error
+A. Silicone Oil Tamponade and Emulsification                                     that results from non-uniform density fields of the multiphase
+   In 1929, Gonin first realized that sealing the retinal tear                   flow. Secondly, we model cohesion and curvature force to
+is the key to the treatment of retinal detachment. In 1962,                      simulate the effect of surface tension between the two phases.
+Cibis et al. [2] first applied silicone oil as a vitreous substitute             Thirdly, we introduce a volume fraction-based multiphase
+in retinal detachment surgery. In the 1970s, Machemer [1]                        mixture model to simulate the diffusion between water and
+invented closed vitrectomy, which removes the vitreous body                      emulsified silicone oil. The simulation procedure is listed in
+and then injects filler such as silicone oil, in order to recover                Algorithm 1.
+the eye volume, separate the retina from adhering membranes,                     A. Pressure Model for Incompressible Multiphase Fluid
+and smooth the detached retina.
+                                                                                   1) SPH Fluid Simulation: The SPH method discretizes
+   Silicone oil emulsification refers to a process where silicone
+                                                                                 continuous medium into computable macro particles [19]. It
+oil droplets separate from the main silicone oil bubble and
+                                                                                 approximates any continuous field value A(xi ) (abbreviated
+diffuse into the eye tissue [3]. Silicone oil emulsification
+                                                                                 Ai ) at the position xi of a given particle i, from the values
+can cause several complications. If the silicone oil droplets
+                                                                                 Aj of all neighboring particles j within the support radius h,
+enter the anterior chamber, they will affect the metabolism
+                                                                                 shown in Figure 2, as:
+of aqueous humor, and adhere to the corneal endothelium,
+causing corneal decompensation, and other corneal diseases                                            X mj
+[4] [5]. Emulsified silicone oil can also cause proliferative                                   Ai =      Aj     W (xi − xj , h),           (1)
+                                                                                                       j
+                                                                                                              ρj
+vitreoretinopathy, recurrent retinal detachment, intraocular in-
+flammation, secondary glaucoma and other diseases [6]. In
+addition, long-term retention of silicone oil in the eye can
+induce complicated cataracts, reduce choroidal thickness, and
+cause retinal degeneration [7].
+B. Physics-based Fluid Simulation
+   Physics-based fluid simulation uses physical rules to sim-
+ulate fluids visually and realistically, which can model the
+interactive behaviour of water and silicone oil within the eye.
+   The Smoothed Particle Hydrodynamics (SPH) approach is
+a physics-based fluid simulation method using particle-based
+fluid representation and numerical time integration [8], which                              Fig. 2. Schematic diagram of the SPH approximation
+
+
+
+
+                                                                           737
+    Authorized licensed use limited to: Univ of Science and Tech Beijing. Downloaded on May 20,2026 at 01:54:39 UTC from IEEE Xplore. Restrictions apply.
+   In Eqn. (1), mj and ρj represent mass and density of j; and                   Algorithm 1 Silicone oil emulsification and diffusion simula-
+W (xi − xj , h) (shortened as Wij ) is a cubic spline function                   tion solver
+called the smoothing kernel [12].                                                Input: Scenario initialization
+   However, in multiphase simulations where the particle mass                           set up global attributes: phase rest density ρk , dynamic
+is non-uniform, numerical error would occur when approxi-                        viscosity µ, surface tension coefficient γ, convection term Cm
+mating the density ρ using the traditional Eqn. (1). Inspired                    and diffusion term Dm
+by [20], we establish the volume-incompressible multiphase                             initialize discretized particles’ attributes: particle location
+SPH method by substituting mi /ρi with the particle’s volume                     at time t: x(t), velocity v(t), volume fraction α(t), and rest
+Vi , and reform the SPH discretization as:                                       volume V 0
+                           X                                                     Volume-incompressible computation
+                     Ai =      Aj Vj Wij .                  (2)                        compute compression rate Γ                            Eqn. (3)
+                                  j                                                    compute pressure force −∇p                            Eqn. (6)
+We then define a coressponding notion called ”compression                              compute particle acceleration Dv/Dt                   Eqn. (5)
+rate” Γ to represent the extent to which the particle is com-                    Surface tension modeling
+pressed:                                                                               derive surface normal                                 Eqn. (8)
+                         V0    X                                                       compute curvature force F cur                         Eqn. (7)
+                  Γi = i =         Vj0 Wij ,               (3)                         compute cohesion force F coh                          Eqn. (9)
+                         Vi      j
+                                                                                       update particle acceleration Dv/Dt + (F cur + F coh )/m
+where Vi0 is the rest volume, which is the particle’s actual                           update particle position x
+volume without any compression.                                                  Multiphase mixture visualization
+  Since only Wij is a non-constant function with respect to                            compute interphase momentum term Fk                  Eqn. (11)
+xi in Eqn. 2, the gradient of Ai can be straightforwardly                              compute drift velocity vkd                           Eqn. (12)
+approximated as:                                                                       update volume fraction αk                            Eqn. (13)
+                          X                                                            update particle mass m
+                  ∇Ai =      Aj Vj ∇Wij .                (4)                     Output: Particle state of the next time step
+                                  j                                                     update particles’ attributes after simulation time step
+As for the Laplacian operator, we apply the same approximate                     spanned ∆t: location x(t + ∆t), velocity v(t + ∆t), volume
+form as in [19].                                                                 fraction α(t + ∆t), mass m(t + ∆t)
+   In physics, the motion of incompressible fluid flow is
+governed by the Navier-Stocks equation, as:
+                                                                                 surface tension. The normalPto the surface can be calculated
+                  Dv
+                   ρ   = −∇p + µ∇2 v + ρg,                 (5)                   using the color field: ci = j Vj Wij . Fluid particles located
+                   Dt
+                                                                                 on the surface, due to a lack of neighbors, have smaller color
+where µ is the dynamic viscosity, p is the pressure, v is the                    field values c than those with full neighbors. The surface
+fluid velocity, g is gravity acceleration, D/Dt presents the                     normal can be obtained with the color field gradient using
+material derivative.                                                             Eqn. (4):
+   In terms of computing the pressure gradient ∇p, our method
+                                                                                                                  X
+                                                                                                  ni = h∇ci = h       Vj ∇Wij .             (8)
+is similar to DFSPH [12]. We first assume that the pressure is                                                             j
+proportional to volume change:
+                                                                                    The second term, cohesion force, is expressed as the mutual
+                                                 X Vj0                           attraction between the particles representing the same fluid
+                 κi Vi0 − Vi          = κi Vi0
+                                
+    ∇pi = ∇                                                ∇Wij ,        (6)
+                                                 j
+                                                     Γ2j                         phase. The attraction depending on the distance between
+                                                                                 particles is:
+where κi is an unknown rigidity coefficient. Then, we implic-
+                                                                                              coh                    xi − xj
+itly solve the pressure so that the pressure force makes every                              Fi←j  = −γmi mj                    C (|xi − xj |),              (9)
+particle non-compressed.                                                                                            |xi − xj |
+                                                                                 where C(l) is a normalized spline function for cohesion force
+B. Silicone Oil-water Surface Tension Modeling
+                                                                                 (refer to [21]).
+  To depict the strong surface tension of the silicone oil, we
+apply the cohesion force model and a curvature force that                        C. Volume Fraction Mixture Model for Visualizing Silicone
+minimizes the surface area within each phase [21].                               Oil Emulsification
+  The curvature force aiming at minimizing surface area, from                       1) Volume Fraction Scheme: For the emulsification and
+particle j to particle i, is:                                                    diffusion effect between silicone oil and water, we introduce a
+                         cur
+                       Fi←j  = −γmi (ni − nj ),                          (7)     volume-fraction based diffusible multiphase mixture model. In
+                                                                                 this model, each particle can carry multiple phases, and each
+where n is the normal to the surface of the given phase, and γ                   phase occupies a fraction αk ofPthe particle’s volume, where k
+is the surface tension coefficient denoting the magnitude of the                 labels the phase, and satisfies k αki = 1, as shown in Figure
+
+
+
+                                                                           738
+    Authorized licensed use limited to: Univ of Science and Tech Beijing. Downloaded on May 20,2026 at 01:54:39 UTC from IEEE Xplore. Restrictions apply.
+

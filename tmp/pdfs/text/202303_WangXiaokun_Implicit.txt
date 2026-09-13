@@ -1,0 +1,194 @@
+Received: 2 August 2022     Revised: 13 December 2022     Accepted: 16 December 2022
+
+DOI: 10.1002/CAV.2146
+
+
+S P E C I A L I S S U E PA P E R
+
+
+
+
+Implicit smoothed particle hydrodynamics model for
+simulating incompressible fluid-elastic coupling
+
+Xiaokun Wang1,2,3   Tiancheng Wang1 Jiamin Wang1 Yanrui Xu1
+Xiaojuan Ban1,4,5 Houbin Huang6 Zhihong Zhu7 Jian Chang3 Jian Jun Zhang3
+
+1
+ School of Intelligence Science and                 Abstract
+Technology, University of Science and
+Technology Beijing, Beijing, China
+                                                    Fluid simulation has been one of the most critical topics in computer graphics
+2
+ Beijing Key Laboratory of Knowledge                for its capacity to produce visually realistic effects. The intricacy of fluid simula-
+Engineering for Materials Science,                  tion manifests most with interacting dynamic elements. The coupling for such
+University of Science and Technology
+                                                    scenarios has always been challenging to manage due to the numerical instabil-
+Beijing, Beijing, China
+3                                                   ity arising from the coupling boundary between different elements. Therefore,
+ National Centre for Computer
+Animation, Bournemouth University,                  we propose an implicit smoothed particle hydrodynamics fluid-elastic cou-
+Poole, UK                                           pling approach to reduce the instability issue for fluid-fluid, fluid-elastic, and
+4
+ Beijing Advanced Innovation Center for             elastic-elastic coupling circumstances. By deriving the relationship between the
+Materials Genome Engineering,
+University of Science and Technology                universal pressure field with the incompressible attribute of the fluid, we apply
+Beijing, Beijing, China                             the number density scheme to solve the pressure Poisson equation for both
+5
+  Key Laboratory of Perception and                  fluid and elastic material to avoid the density error for multi-material cou-
+Control of Intelligent Bionic Unmanned
+                                                    pling and conserve the non-penetration condition for elastic objects interacting
+Systems, Ministry of Education,
+University of Science and Technology                with fluid particles. Experiments show that our method can effectively han-
+Beijing, Beijing, China                             dle the multiphase fluids simulation with elastic objects under various physical
+6
+ Chinese PLA General Hospital, Beijing,             properties.
+China
+7
+  Hainan Hospital of Chinese PLA General            KEYWORDS
+Hospital, Sanya, Hainan, China
+                                                    elastic simulation, fluid-solid coupling, multiple fluid interaction, particle systems, physically
+                                                    based animation
+Correspondence
+Xiaojuan Ban, University of Science and
+Technology Beijing, Beijing, China.
+Email: banxj@ustb.edu.cn
+Jian Chang, National Centre for
+Computer Animation, Bournemouth
+University, Poole, UK.
+Email: JChang@bournemouth.ac.uk
+
+Funding information
+Horizon 2020-Marie Skłodowska-Curie
+Action-Individual Fellowships,
+Grant/Award Number: 895941;
+Guangdong Basic and Applied Basic
+
+
+
+
+This is an open access article under the terms of the Creative Commons Attribution-NonCommercial License, which permits use, distribution and reproduction in any
+medium, provided the original work is properly cited and is not used for commercial purposes.
+© 2023 The Authors. Computer Animation and Virtual Worlds published by John Wiley & Sons Ltd.
+
+Comp Anim Virtual Worlds. 2023;e2146.                                                                             wileyonlinelibrary.com/journal/cav     1 of 15
+https://doi.org/10.1002/CAV.2146
+                                                                                                                                     1546427x, 0, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/cav.2146 by Cochrane Japan, Wiley Online Library on [07/06/2023]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+2 of 15                                                                                                                WANG et al.
+
+
+
+Research Foundation, Grant/Award
+Number: 2023A1515030177; Fundamental
+Research Funds for the Central
+Universities, Grant/Award Number:
+QNXM20220043; Key Research and
+Development Project of Hainan Province,
+Grant/Award Number: ZDYF2020031
+
+
+
+
+1         I N T RO DU CT ION
+
+In daily life, most solid objects, like rubber, jelly, biological tissue and so forth are elastic. These elastomers often co-exist
+with fluidic substances simultaneously, such as blood flowing in blood vessels and lifebuoys floating on water, composing
+a complex fluid-elastic coupling scenario with multiple fluids and elastics interacting. Simulation of these complex scenes
+has always been a tough nut in computer graphics, especially for particle-based Lagrangian fluid simulation like smoothed
+particle hydrodynamics (SPH).
+    When dealing with the interactions of two objects with different densities, the numerical discontinuity that appears
+in the pressure field. Due to approximation error, the discontinuous pressure field hinders the simulation stability for
+traditional SPH computation procedures.1,2 To address this issue, Solenthaler and Pajarola proposed the number density
+scheme3 to eliminate the density approximation error for explicit pressure computation. This is achieved by analyzing
+the fluid of different phases separately. However, this method does not incorporate well with more efficient implicit pres-
+sure projection SPH approaches.4-6 During the iteration process, implicit solvers minimize the absolute value of density
+deviation rather than the density ratio, which destabilizing the direct use of the number density scheme.
+    Moreover, incorporating incompressible elastic objects into implicit SPH fluids algorithms also suffers from instability.
+Peer et al.7 developed an implicit SPH formulation for incompressible linearly elastic solids. They addressed that the
+maximum density ratio between different phases had been a significant limitation in their method. The method only
+works with a small ratio of one order of magnitude that not negatively affect the performance.
+    To perform stable fluid-fluid, fluid-elastic, and elastic-elastic simulations under high-density ratio using implicit pres-
+sure projection SPH solvers, in this article, we propose an incompressible number density based SPH (INDSPH) method.
+First, the linear relationship between number density compression and pressure is constructed. Second, a number den-
+sity incompressible solver is designed to circumvent the calculation error caused by the multiphase flow’s heterogeneous
+rest density field.
+
+
+2         RELATED WORK
+
+2.1        Physics-based fluid simulation
+
+Physics-based fluid simulation methods are usually divided into three categories: Eulerian, Lagrangian and hybrid meth-
+ods.8 The SPH method, a Lagrangian method, simulates fluid by discretizing it into a set of particles.1 Becker et al.2
+proposed a weakly compressible SPH (WCSPH) method based on the Tait equation to approximate the incompressible
+state of the fluid. To further enhance the incompressibility of fluid, a series of efficient implicit incompressible solvers4-6
+were subsequently proposed. Fluids of different phases have different physical properties, such as density. Interaction
+simulation of multiphase fluids is an interesting topic in computer graphics community. It is difficult to track the inter-
+face between immiscible multiphase fluids and correctly calculate the interaction forces at the interface. Solenthaler and
+Pajarola3 adjusted the standard SPH equation using a number density method to resolve density discontinuities at the
+interface. Alduán et al.9 applied the density contrast SPH formulation to the Position-based fluids method. They devel-
+oped a new multiphase fluids simulation framework to achieve good visualization. In addition, there are mesh-based
+interface tracking methods to handle multiphase fluids. Li et al.10 combined mesh-based tracking and distance-field sur-
+face reconstruction to avoid complex remeshing operations. This approach was extended for surface tracking of more
+than three phases.11
+                                                                                                                                    1546427x, 0, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/cav.2146 by Cochrane Japan, Wiley Online Library on [07/06/2023]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+WANG et al.                                                                                                               3 of 15
+
+
+2.2           Physics-based elastic simulation
+
+Elastic simulation is of great importance in many fields, such as various elastic tissues in the biomedical field. There are
+many ways to simulate elastic materials. The mass spring model was introduced in the early days of physical simulation
+and is a commonly used deformable model based on kinetic principles.12 Continuum mechanics methods use constitutive
+models to explain the complex mechanical behavior of elastic, including grid-based finite element methods13,14 and mate-
+rial point methods (MPM),15 as well as SPH methods in the meshless methods. Although meshless methods are slightly
+less efficient than mesh-based methods in simulating elastic solids, they are superior in terms of flexibility. Becker et al.16
+used shape matching to determine the deformation gradient using the corotational line elasticity and explicit time inte-
+gration methods. Ganzenmüller17 introduced correction forces to suppress the control mechanism of zero-energy mode
+to solve the problem of unstable strong local oscillation and the inability to return to the static state. Kugelstadt et al.18
+designed an operator splitting formulation compatible with SPH and proposed an implicit zero-energy mode control by
+minimizing the quadratic energy function to improve the simulation efficiency.
+
+
+
+2.3           Fluid-elastic multi-material coupling
+
+Multi-material coupling requires consideration of the interaction between the fluid and the elastic. The fluid-solid bound-
+ary conditions need to be fully considered to prevent penetration artifact. Yang et al.19 combined SPH and nonlinear
+finite elements to animate the real-time interaction of fluids and deformable solids. Yan et al.20 proposed the coupling
+method of multiphase fluids and solids to simulate the interaction between deformable solids, granular materials and flu-
+ids. Chen et al.21 presented a particle method based on moving the least square reproducing kernel. They used the phase
+field model to ensure mass conservation and realize the phase evolution of multiphase fluids. MPM combines the advan-
+tages of Lagrangian particle representation and Eulerian grid representation, which can effectively simulate fluid-solid
+coupling. However, this method cannot resolve the discontinuous tangential velocities at the multi-material interface,
+leading to numerical stickiness, which can be visually quite intrusive. To avoid this issue, Fang et al.22 proposed a new
+ghost matrix operator splitting scheme for solving the coupling of nonlinear elastic solids with incompressible fluids.
+They also devised a new MPM formulation for the interface orthogonal cutting unit to strengthen the free slip boundary
+conditions properly.
+
+
+
+3       BA SIS O F S PH METHOD
+
+3.1           Governing equations of fluid mechanics
+
+In order to truly simulate the dynamic behavior of the fluid, mathematical models are needed to describe the physical
+phenomena and motion of the fluid. The continuity equation describes the relationship between the change rate of fluid
+density in Lagrangian coordinates and the divergence of the velocity field as:
+
+
+                                                         D𝜌
+                                                            = −𝜌(∇ ⋅ v),                                                     (1)
+                                                         Dt
+
+where D(⋅)∕Dt denotes material derivative and v is the fluid velocity, 𝜌 is the density. The Navier–Stokes equation describes
+the momentum field of incompressible fluid as:
+
+
+                                                      Dv
+                                                  𝜌      = −∇p + 𝜇∇2 v + 𝜌g,                                                 (2)
+                                                      Dt
+
+where p is the pressure, 𝜇 is the dynamic viscosity coefficient, and g is the gravitational acceleration. Equation (2) describes
+that the momentum change rate for each fluid parcel is affected by pressure, viscous force, and gravity.
+

@@ -2,76 +2,67 @@
 layout: default
 ---
 
-<!-- about.html -->
-      <div class="post">
-        <header class="post-header">
-          <h1 class="post-title">
-           {% if site.title == "blank" -%}<span class="font-weight-bold">{{ site.first_name }}</span> {{ site.middle_name }} {{ site.last_name }}{%- else -%}{{ site.title }}{%- endif %}
-          </h1>
-          <p class="desc">{{ page.subtitle }}</p>
-        </header>
+<div class="post about-page">
+  <header class="about-hero">
+    <div class="about-hero__content">
+      <p class="about-hero__eyebrow">Professor · Computer Graphics &amp; Interactive Technologies</p>
+      <h1 class="post-title about-hero__title">
+        {% if site.title == "blank" -%}<span class="font-weight-bold">{{ site.first_name }}</span> {{ site.middle_name }} {{ site.last_name }}{%- else -%}{{ site.title }}{%- endif %}
+      </h1>
+      <p class="about-hero__affiliation">
+        School of Intelligence Science and Technology<br>
+        University of Science and Technology Beijing
+      </p>
+      <p class="about-hero__summary">
+        I develop physics-based and differentiable simulation methods for fluids, deformable materials, virtual reality, and novel human-computer interaction.
+      </p>
+      <nav class="about-hero__links" aria-label="Profile links">
+        <a href="mailto:{{ site.email | encode_email }}"><i class="fas fa-envelope" aria-hidden="true"></i> Email</a>
+        <a href="https://orcid.org/{{ site.orcid_id }}" target="_blank" rel="noopener noreferrer"><i class="ai ai-orcid" aria-hidden="true"></i> ORCID</a>
+        <a href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener noreferrer"><i class="fab fa-github" aria-hidden="true"></i> GitHub</a>
+        <a href="{{ site.research_gate_url }}" target="_blank" rel="noopener noreferrer"><i class="ai ai-researchgate" aria-hidden="true"></i> ResearchGate</a>
+      </nav>
+    </div>
 
-        <article>
-          {% if page.profile -%}
-          <div class="profile float-{%- if page.profile.align == 'left' -%}left{%- else -%}right{%- endif -%}">
-            {%- if page.profile.image %}
-              {%- assign profile_image_path = page.profile.image | prepend: 'assets/img/' -%}
+    {% if page.profile.image %}
+      {% assign profile_image_path = page.profile.image | prepend: 'assets/img/' %}
+      <div class="about-hero__portrait">
+        {% include figure.html path=profile_image_path class="img-fluid" alt="Portrait of Xiaokun Wang" %}
+      </div>
+    {% endif %}
+  </header>
 
-              {% if page.profile.image_circular %}
-                {%- assign profile_image_class = "img-fluid z-depth-1 rounded-circle" -%}
-              {% else %}
-                {%- assign profile_image_class = "img-fluid z-depth-1 rounded" -%}
-              {% endif %}
+  <article class="about-content">
+    {{ content }}
 
-              {% include figure.html 
-              path=profile_image_path 
-              class=profile_image_class
-              alt=page.profile.image -%}
-            {% endif -%}
-            {%- if page.profile.address %}
-            <div class="address">
-              {{ page.profile.address }}
-            </div>
-          {%- endif %}
+    {% if page.news %}
+      <section class="about-section">
+        <h2><a href="{{ '/news/' | relative_url }}">News</a></h2>
+        {% include news.html %}
+      </section>
+    {% endif %}
+
+    {% if page.selected_papers %}
+      <section class="about-section selected-publications">
+        <div class="section-heading-row">
+          <h2>Selected Publications</h2>
+          <a href="{{ '/publications/' | relative_url }}">View all</a>
+        </div>
+        {% include selected_papers.html %}
+      </section>
+    {% endif %}
+
+    {% if page.social %}
+      <section class="about-section contact-section">
+        <h2>Contact</h2>
+        <div class="social">
+          <div class="contact-icons" aria-label="Contact and academic profiles">
+            {% include social.html %}
           </div>
-          {%- endif %}
+          <p class="contact-note">{{ site.contact_note }}</p>
+        </div>
+      </section>
 
-          <div class="clearfix">
-            {{ content }}
-          </div>
-
-          <!-- News -->
-          {% if page.news -%}
-            <h2><a href="{{ '/news/' | relative_url }}" style="color: inherit;">news</a></h2>
-            {%- include news.html %}
-          {%- endif %}
-
-          <!-- Selected papers -->
-          {% if page.selected_papers -%}
-            <h2><a href="{{ '/publications/' | relative_url }}" style="color: inherit;">selected publications</a></h2>
-            {%- include selected_papers.html %}
-          {%- endif %}
-
-        <!-- Social -->
-          {%- if page.social %}
-            <div class="social">
-              <div class="contact-icons">
-                {% include social.html %}
-              </div>
-
-              <div class="contact-note">
-                {{ site.contact_note }}
-              </div>
-
-              <!-- <script type="text/javascript" id="clstr_globe" src="//clustrmaps.com/globe.js?d=RAD1FxbKRY6EdcPReLsNwyZf6FCnfyURSR0_ltl43Cc"></script> -->
-              <!-- <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=RAD1FxbKRY6EdcPReLsNwyZf6FCnfyURSR0_ltl43Cc&cl=ffffff&w=a"></script> -->
-              <script type='text/javascript' id='clustrmaps' src='//clustrmaps.com/map_v2.js?d=RAD1FxbKRY6EdcPReLsNwyZf6FCnfyURSR0_ltl43Cc&cl=ffffff&w=200&t=n&&co=072072&cmo=3acc3a&cmn=ff5353&ct=ffffff'></script>
-              
-              <div align="center"> 
-                    <img src="https://visitor-badge.glitch.me/badge?page_id=sun0225SUN" /> 
-              </div>
-            </div>
-          {%- endif %}
-        </article> 
-
+    {% endif %}
+  </article>
 </div>

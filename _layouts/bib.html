@@ -1,33 +1,38 @@
 ---
 ---
 <!-- _layouts/bib.html -->
-      <div class="row">
-        <div class="col-sm-2 {% if entry.preview %}preview{% else %}abbr{% endif %}">
+      {%- assign publication_area = entry.research_area | default: '' | strip -%}
+      {%- if publication_area == '' -%}
+        {%- assign title_lower = entry.title | downcase -%}
+        {%- if title_lower contains 'fluid' or title_lower contains 'sph' or title_lower contains 'multiphase' or title_lower contains 'vortical' or title_lower contains 'turbulent' -%}
+          {%- assign publication_area = 'Fluid Simulation' -%}
+        {%- elsif title_lower contains 'hyperelastic' or title_lower contains 'peridynamic' or title_lower contains 'material' or title_lower contains 'fracture' -%}
+          {%- assign publication_area = 'Deformable Materials' -%}
+        {%- elsif title_lower contains 'hand' or title_lower contains 'vr' or title_lower contains 're-localization' or title_lower contains 'interaction' -%}
+          {%- assign publication_area = 'VR / HCI' -%}
+        {%- elsif title_lower contains 'render' or title_lower contains 'view' or title_lower contains 'image' or title_lower contains 'surface' -%}
+          {%- assign publication_area = 'Rendering' -%}
+        {%- else -%}
+          {%- assign publication_area = 'Research area placeholder' -%}
+        {%- endif -%}
+      {%- endif -%}
+      <div class="row publication-entry" data-publication-area="{{ publication_area | escape }}" data-publication-search="{{ entry.title | strip_html | append: ' ' | append: entry.author | append: ' ' | append: entry.journal | append: ' ' | append: entry.booktitle | append: ' ' | append: entry.year | append: ' ' | append: entry.keywords | escape }}">
+        <div class="col-sm-3 publication-preview-column">
+        {%- assign default_preview_path = '/assets/img/publication_preview/loading.png' -%}
         {%- if entry.preview -%}
           {% if entry.preview contains '://' -%}
-          <img class="preview z-depth-1 rounded" src="{{ entry.preview }}">
+          <img class="preview z-depth-1 rounded" src="{{ entry.preview }}" alt="Preview image for {{ entry.title | escape }}">
           {%- else -%}
             {%- assign entry_path = entry.preview | prepend: '/assets/img/publication_preview/' -%}
-            {% include figure.html 
-            path=entry_path 
-            class="preview z-depth-1 rounded"
-            alt=entry.preview -%}
+            {% include figure.html path=entry_path class="preview z-depth-1 rounded" alt=entry.title zoomable=true -%}
           {%- endif -%}
-        {%- elsif entry.abbr -%}
-          {%- if site.data.venues[entry.abbr] -%}
-            {%- assign venue_style = nil -%}
-            {%- if site.data.venues[entry.abbr].color != blank -%}
-              {%- assign venue_style = site.data.venues[entry.abbr].color | prepend: 'style="background-color:' | append: '"' -%}
-            {%- endif -%}
-            <abbr class="badge" {% if venue_style %}{{venue_style}}{% endif %}><a href="{{site.data.venues[entry.abbr].url}}">{{entry.abbr}}</a></abbr>
-          {%- else -%}
-            <abbr class="badge">{{entry.abbr}}</abbr>
-          {%- endif -%}
+        {%- else -%}
+          {% include figure.html path=default_preview_path class="preview z-depth-1 rounded" alt="Default publication preview placeholder" zoomable=true -%}
         {%- endif -%}
+        <span class="publication-area-label">{{ publication_area }}</span>
         </div>
-
         <!-- Entry bib key -->
-        <div id="{{entry.key}}" class="col-sm-8">
+        <div id="{{entry.key}}" class="col-sm-9 publication-details">
         <!-- Title -->
         <div class="title">{{entry.title}}</div>
         <!-- Author -->
@@ -40,17 +45,19 @@
         {% endif %}
 
         {%- for author in entry.author_array limit: author_array_limit -%}
+          {%- assign author_first = author.first | strip -%}
+          {%- assign author_last = author.last | strip -%}
           {%- assign author_is_self = false -%}
-          {%- assign author_last_name = author.last | remove: "¶" | remove: "&" | remove: "*" | remove: "†" | remove: "^" -%}
+          {%- assign author_last_name = author_last | remove: "¶" | remove: "&" | remove: "*" | remove: "†" | remove: "^" -%}
           {%- if site.scholar.last_name contains author_last_name -%}
-            {%- if site.scholar.first_name contains author.first -%}
+            {%- if site.scholar.first_name contains author_first -%}
               {%- assign author_is_self = true -%}
             {%- endif -%}
           {%- endif -%}
           {%- assign coauthor_url = nil -%}
           {%- if site.data.coauthors[author_last_name] -%}
             {%- for coauthor in site.data.coauthors[author_last_name] -%}
-              {%- if coauthor.firstname contains author.first -%}
+              {%- if coauthor.firstname contains author_first -%}
                 {%- assign coauthor_url = coauthor.url -%}
                 {%- break -%}
               {%- endif -%}
@@ -62,12 +69,12 @@
             {%- if forloop.last and author_array_limit == author_array_size -%}and&nbsp;{%- endif -%}
           {%- endif -%}
           {%- if author_is_self -%}
-            <em>{{author.first}} {{author.last}}</em>
+            <em>{{author_first}} {{author_last}}</em>
           {%- else -%}
             {%- if coauthor_url -%}
-              <a href="{{coauthor_url}}">{{author.first}} {{author.last}}</a>
+              <a href="{{coauthor_url}}">{{author_first}} {{author_last}}</a>
             {%- else -%}
-              {{author.first}} {{author.last}}
+              {{author_first}} {{author_last}}
             {%- endif -%}
           {%- endif -%}
         {%- endfor -%}
@@ -80,7 +87,9 @@
           {%- endif -%}
           {%- assign more_authors_show = '' -%}
           {%- for author in entry.author_array offset: author_array_limit -%}
-            {%- assign more_authors_show = more_authors_show | append: author.first | append: " " | append: author.last -%}
+            {%- assign author_first = author.first | strip -%}
+            {%- assign author_last = author.last | strip -%}
+            {%- assign more_authors_show = more_authors_show | append: author_first | append: " " | append: author_last -%}
             {%- unless forloop.last -%}
               {%- assign more_authors_show = more_authors_show | append: ", " -%}
             {%- endunless -%}
@@ -133,6 +142,18 @@
           {{ entry.note | strip }}
         </div>
 
+        {%- if entry.keywords %}
+          <div class="publication-keywords" aria-label="Keywords">
+            {%- assign keyword_list = entry.keywords | split: ';' -%}
+            {%- for keyword in keyword_list -%}
+              {%- assign keyword_text = keyword | strip -%}
+              {%- if keyword_text != '' -%}
+                <span>{{ keyword_text }}</span>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif %}
+
           <!-- Links/Buttons -->
           <div class="links">
           {%- if entry.abstract %}
@@ -183,6 +204,9 @@
           {%- endif %}
           {%- if entry.website %}
             <a href="{{ entry.website }}" class="btn btn-sm z-depth-0" role="button">Website</a>
+          {%- endif %}
+          {%- if entry.abstract == nil and entry.arxiv == nil and entry.bibtex_show == nil and entry.html == nil and entry.pdf == nil and entry.supp == nil and entry.blog == nil and entry.code == nil and entry.poster == nil and entry.slides == nil and entry.website == nil %}
+            <span class="resource-placeholder">Additional resources: placeholder</span>
           {%- endif %}
           </div>
           {% if site.badges %}

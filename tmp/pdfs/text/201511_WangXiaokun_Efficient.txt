@@ -1,0 +1,181 @@
+J Vis
+DOI 10.1007/s12650-015-0317-7
+
+ R E G UL A R P A P E R
+
+
+
+
+XiaoKun Wang • XiaoJuan Ban • Xu Liu •
+YaLan Zhang • LiPeng Wang
+
+Efficient extracting surfaces approach employing
+anisotropic kernels for SPH fluids
+
+
+Received: 22 July 2015 / Revised: 17 September 2015 / Accepted: 12 October 2015
+Ó The Visualization Society of Japan 2015
+
+
+Abstract Particles are disordered throughout the entire process of fluid simulation using particle-based-
+methods, extracting surfaces through following up particles is unlikely to achieve. Therefore, it is rea-
+sonably necessary to extract fluid surfaces called surface reconstruction which has been research focus in
+particle-based fluid simulation for decades. To construct more smooth surfaces and enhance reconstruction
+efficiency in fluid simulation, this paper addresses an efficient anisotropic surface reconstruction method for
+particle-based fluid simulation. First, we simplify and modify the construction of traditional anisotropic
+kernel function. Second, we divide particles into near-surface particles and internal particles according to
+the analysis of particles’ eigenvectors. Finally, near-surface particles are involved in the calculation of
+surface reconstruction while internal particles are directly assigned color field values through the number of
+neighbor particles. Experimental results show that this algorithm ensures smoothness and geometric char-
+acteristics of fluid surfaces reconstructed. Compared to existing algorithms, this approach is simple and easy
+to implement and greatly improves the operation efficiency.
+
+Keywords Fluid simulation  SPH  Surface reconstruction  Anisotropic kernels
+
+
+1 Introduction
+
+Fluid phenomenon widely exists in nature, daily life and industrial production. The simulation of fluid also
+called fluid animation has always been the significant content in the research of physical-based animation as
+well as computer graphics. According to the different spatial discretization way, physically based animation
+can be divided into two main categories: mesh-based methods and mesh-free methods. In mesh-based
+methods, the simulation domain is discretized into mesh grids and physical attribute values on grid points
+(such as velocity and density) which are obtained by solving the governing equations. Nevertheless, the fluid
+volume is discretized into sampled particles in mesh-free methods. Moreover, each particle has physical
+properties and is advected by the governing equations. The mesh-free methods have the advantages of mass
+conservation, flexible extensibility of unbounded domains that make them easier to simulate more complex
+phenomena (such as spindrift and explosion), they have obtained rapid development in recent years and
+have become alternative ways of grid method effectively. Among various mesh-free approaches, smoothed
+particle hydrodynamics (SPH) is the most popular method for simulating fluid due to computational sim-
+plicity and efficiency.
+    Although the SPH method has been used to simulate all kinds of fluid phenomenon, it is very difficult to
+extract fluid surface. In addition, how to construct a smooth and flat fluid surface is an urgent issue that
+
+X. Wang (&)  X. Ban  X. Liu  Y. Zhang  L. Wang
+School of Computer and Communication Engineering, University Science and Technology Beijing, Beijing 100083,
+People’s Republic of China
+E-mail: wang1xiao2kun3@163.com
+                                                                                                   X. Wang et al.
+
+
+needs to be solved. SPH method is difficult to construct smooth surface due to its irregular particle
+distribution, hence color field method is always used for surface reconstruction. On account of the surface
+being not smooth enough and usually having bumps or indentations, it is reconstructed by the traditional
+color field method. At the same time, existing anisotropic approaches extracting fluid surface is seriously
+slow, therefore, this paper proposes an efficient surface reconstruction algorithm based on anisotropic
+improvement of color field function. First, we construct an anisotropic kernel function for each particle
+according to the neighbor particles distribution. Compared to the traditional anisotropic kernel function, the
+computing method of kernel function proposed in this paper is more simple. Particles can be divided into
+near-surface particles and internal particles according to the analysis of the particles’ eigenvector. The near-
+surface particles are involved in calculation when processing surface reconstruction. The internal particles’
+color field values are directly assigned by means of their number of neighbor particles, which further
+improves the calculation efficiency.
+
+
+2 Related work
+
+Since extracting fluid surfaces is vital for realistic animation, approaches for reconstructing and tracking
+fluid surfaces have attracted widespread attention when fluid simulation was first introduced in computer
+graphics. The reconstructing fluid surfaces can be divided into two categories: mesh-based methods and
+mesh-free methods. Under the framework of mesh-based methods, researchers have presented a large
+number of approaches to reconstruct surfaces. Osher and Fedkiw (2002) realized the Euler fluid surfaces
+tracking using the level set method. To solve the problem of mass loss in level set method, particle level set
+method (Enright et al. 2002) and semi-Lagrangian contouring method (Enright et al. 2005) have been
+proposed. Muller (2009) employed marching cubes grid to sample fluid surfaces, while keeping the grid
+sampling points as before. Wojtan et al. (2010) rebuilt the grid using convex hull method that kept features
+of thin fluid. The following year, Bhattacharya et al. (2011) improved Williams’s surface reconstruction
+method by minimizing energy consumption of the surface represented by level set. Wojtan et al. (2009) used
+iso-surface building methods to rebuild grids which changed topological structure. Hirt and Nichols (1981)
+proposed volume-of-fluid methods (VOF). Brochu and Bridson (2006) introduced explicit surface tracking
+method.
+    For the past few years, with the application of SPH framework in fluid simulation, researchers carried out
+an in-depth study and exploration on reconstructing surfaces based on mesh-free method. Blinn (1982)
+presented the classic blobby spheres approach. A new kind of implicit surface equations is employed using
+distance of sampling points to the scattered point as a parameter. The values of equations are used to
+determine whether the sampling points are on the surface; it successfully realizes surface extraction of the
+discrete points. One of the defects is that high or low densities of particles will cause bumps or indentations
+on the surface. Muller et al. (2003) proposed a reconstructing approach which is similar to level set method
+by calculating the color field function. Fluid free surface can be constructed simply and rapidly by this
+method, but the surface extracted is rough and the particles near the surface will cause bumps. Zhu and
+Bridson (2005) modified Blinn’s algorithm to correct local particle density variations. Primarily, they
+calculate fluid particles’ weighted average of coordinates and radius on the basis of the neighbor particles’
+position and radius. Then, they apply the particles’ weighted average coordinates and radius to the calcu-
+lation of reconstructing surfaces, thus get a relatively smooth fluid surface that do not have obvious bumps.
+Adams et al. (2007) put forward improved method by tracking the particle-to-surface distances over time
+which made the surfaces more smooth. But the surface expression using implicit function is time-consuming
+when implicit function is constructed. Williams (2008) achieved global smoothness on surface mesh through
+solving a nonlinear optimization problem iteratively. Yu et al. (2012) proposed a new reconstruction method
+for fluid surfaces. They only construct surfaces at the beginning of the simulation, and then for the each next
+frame, they merely process triangular mesh segmentation and integration of operations to previous frame
+surface, no longer reconstruct fluid surfaces each frame. Yu and Turk (2013) employed Muller’s 2003
+implicit surface method and introduced the anisotropic kernels to the implicit surface which extract more
+real and smooth surfaces of the fluid.
+    Essentially, SPH method’s core idea is to use summation of neighbor particles’ value in local area to
+replace field function and its derivative. The distribution of local area neighbor particles will directly affect
+the calculation results and the accuracy of SPH method in consequence. Particles on the surface have less
+neighbors than those in the internal which causes smaller density obtained by SPH formula. Worse still, it
+Efficient extracting surfaces approach employing
+
+
+results in a series of influence and eventually leads to the surface distortion. To solve this problem,
+Schechter and Bridson (2012) addressed ghost SPH to compensate for surface particle density variations.
+They create a random ghost particle layer in the external of original particle boundary that modifies SPH
+kernel function calculation by increasing particle number within the scope of support domain. Besides, Liu
+and Liu (2003) presented ASPH method to solve the SPH calculation of lacking neighbors in local region.
+They construct the distance covariance matrix of the particles and their neighbors to analyze the distribution
+characteristics of the surrounding particles, then acquire eigenvectors served as distance weight of different
+direction to achieve adaptive effects. Then Yu and Turk (2013), inspired by ASPH method, introduced the
+anisotropic kernels method that applied weighted principle component analysis (WPCA) (Koren and Carmel
+2003) to orient and scale the anisotropic kernel. In their method, each particle owns a unique anisotropic
+kernel function obtained through the particle’s neighborhood distribution.
+    Yu’s method solved the problem of smoothness on fluid surface to some extent. Each particle has its own
+influence scope when calculating the color field. Unlike the traditional methods, Yu’s method cannot
+directly iterate over all pixels to complete the color field calculation. Whereas it needs to traverse pixels
+based on each particle’s influence range and bring repeated traversal of the pixel, the calculation was
+directly affected by the number of particles. Moreover, it requires respective matrix calculations since the
+kernel function varies for each particle, which is time-consuming and inefficient. To solve the above
+problems, we propose an efficient SPH-oriented fluid surfaces extracting method using anisotropic kernels
+on the basis of Yu’s method. We modify the formulation of anisotropic kernels, then classify particles by
+extracting the location characteristics, and only reconstruct surfaces by the near-surface particles and
+directly assign color field values for internal particles. Without affecting the effect of reconstruction, the
+method in this paper preferably saves computing resources and greatly improves efficiency of the extracting
+algorithm.
+
+
+3 SPH framework for fluid simulation
+
+In the Lagrangian description, flow-controlled partial differential equations of Navier–Stokes for fluids can
+be expressed as
+                                                        dqi
+                                                            ¼ qi vi ;                                          ð1Þ
+                                                        dt
+                                                Dvi
+                                           qi       ¼ rpi þ qi g þ lr2 vi ;                                    ð2Þ
+                                                Dt
+where vi is the velocity, qi is the density, pi is the pressure, l is the viscosity coefficient and g represents the
+external force field. Equation (1) is mass equation and Eq. (2) is the momentum equation.
+    The theory of SPH (Becker and Teschner 2007) is to utilize the form of discrete particles to characterize
+the successive fields and use integration to approximate the fields. For particle i at location xi ,
+                                                     X Aj                  
+                                        hAðxi Þi ¼       mj W xi  xj ; h                                        ð3Þ
+                                                      j
+                                                            qj
+                                                                                    
+where mj and qi represent particle mass and density, respectively, W xi  xj ; h is the smoothing kernel and
+h the smoothing radius.
+    Applying Eq. (3) to the density of a particle i at location xi yields the summation of density:
+                                                   X                   
+                                             qi ¼       mj W xi  xj ; h                                         ð4Þ
+                                                         j
+
+Thus, forces between particles including pressure f Pi and viscous force f vi can be represented as:
+                                                                 !
+                                               X        P i  P j
+                                      f Pi ¼    mj 2 þ 2 rWij                                                  ð5Þ
+                                               j
+                                                        qi qj
+                                                              X        vji qj
+                                                   f vi ¼ l       mj          Wij                               ð6Þ
+                                                              j
+                                                                        r2
+

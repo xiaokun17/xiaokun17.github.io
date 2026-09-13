@@ -1,0 +1,177 @@
+      International Journal of Human–Computer Interaction
+
+
+
+
+      ISSN: 1044-7318 (Print) 1532-7590 (Online) Journal homepage: www.tandfonline.com/journals/hihc20
+
+
+
+
+Perceived Trustworthiness as a Pathway
+Linking ADHD Traits to Large Language Models
+Dependency: Evidence from UK and Chinese
+Samples
+
+Ala Yankouskaya, Mohammad Amin Kuhail, Haibo Yang, Xiaokun Wang,
+Jiaojiao Chen, Tina Yunsi Ma, Sameha AlShakhsi, Guandong Xu & Raian Ali
+
+To cite this article: Ala Yankouskaya, Mohammad Amin Kuhail, Haibo Yang, Xiaokun Wang,
+Jiaojiao Chen, Tina Yunsi Ma, Sameha AlShakhsi, Guandong Xu & Raian Ali (06 Aug 2026):
+Perceived Trustworthiness as a Pathway Linking ADHD Traits to Large Language Models
+Dependency: Evidence from UK and Chinese Samples, International Journal of Human–
+Computer Interaction, DOI: 10.1080/10447318.2026.2707709
+
+To link to this article: https://doi.org/10.1080/10447318.2026.2707709
+
+
+
+
+       © 2026 The Author(s). Published with
+       license by Taylor & Francis Group, LLC
+
+
+       View supplementary material
+
+
+
+       Published online: 06 Aug 2026.
+
+
+
+       Submit your article to this journal
+
+
+
+       Article views: 434
+
+
+
+       View related articles
+
+
+
+       View Crossmark data
+
+
+
+
+                      Full Terms & Conditions of access and use can be found at
+             https://www.tandfonline.com/action/journalInformation?journalCode=hihc20
+INTERNATIONAL JOURNAL OF HUMAN–COMPUTER INTERACTION
+https://doi.org/10.1080/10447318.2026.2707709
+
+
+
+
+Perceived Trustworthiness as a Pathway Linking ADHD Traits to Large
+Language Models Dependency: Evidence from UK and Chinese
+Samples
+Ala Yankouskayaa , Mohammad Amin Kuhailb , Haibo Yangc , Xiaokun Wangd ,
+Jiaojiao Chenc , Tina Yunsi Mae , Sameha AlShakhsif , Guandong Xue and Raian Alif
+a
+ School of Psychology, Bournemouth University, Poole, UK; bCollege of Technological Innovation, Zayed University, Abu
+Dhabi, United Arab Emirates; cFaculty of Psychology, Tianjin Normal University, Tianjin, China; dDepartment of Computer
+Science and Technology, University of Science and Technology, Beijing, China; eThe Education University of Hong Kong,
+Hong Kong; fCollege of Science and Engineering, Hamad Bin Khalifa University, Doha, Qatar
+
+
+    ABSTRACT                                                                                                                  KEYWORDS
+    Large language models (LLMs) create contexts in which individual differences may                                          ADHD; neurodiversity; LLMs
+    shape reliance on digital systems. Drawing on neurodiversity, this study examined                                         dependency; perceived
+    whether perceived trustworthiness of user’s primary LLM mediates associations                                             trustworthiness; inclusive
+                                                                                                                              LLMs design
+    between attention-deficit/hyperactivity disorder (ADHD) traits and LMM dependen­
+    cyinstrumental and relationship LLM dependency. Adults in the UK (n ¼ 567) and
+    China (n ¼ 577) reported ADHD traits, perceived LLM trustworthiness of LLM, and
+    both types of dependency. Across samples, higher ADHD traits were associated with
+    lower trustworthiness, whereas greater trustworthiness was associated with greater
+    instrumental and relationship dependency, yielding negative indirect effects. In the
+    UK, direct ADHD-dependency associations were non-significant after controlling for
+    trust, and mediation produces a significant negative total effect for relationship
+    dependency. In China, negative indirect effect coexisted with positive direct associa­
+    tions, creating opposing pathways whose total effects depends on their relative mag­
+    nitude. Implications for inclusive LLM design without unintendend dependency and
+    supporting neurodiverse users are discussed.
+
+
+
+
+1. Introduction
+Large language models (LLMs) have become a routine part of digital life, and their expanding presence
+highlights the need to consider the diversity of people who use them. Neurodiversity encompasses
+marked differences in how individuals organize information, manage tasks, and engage with digital
+tools, and these differences are likely to influence experiences with conversational AI (L. Z. Li & Yang,
+2024). This raises important questions for human–computer interaction, particularly concerning how
+existing assumptions about the “neurotypical” user align with the varied cognitive profiles found across
+the population. Neurodivergent individuals represent a substantial proportion of society, with estimates
+in the United Kingdom (UK) suggesting that around one in 10 meet diagnostic criteria for conditions
+such as autism, attention-deficit/hyperactivity disorder (ADHD), or dyslexia (Vo & Webb, 2024). In
+China, large-scale epidemiological work shows that approximately 0.7–1% of children meet diagnostic
+criteria for autism spectrum disorder (Sun et al., 2019) while ADHD affects an estimated 6–7% of chil­
+dren and adolescents (Wang et al., 2017). Comparable prevalence levels are seen internationally: ADHD
+prevalence is 3.4% across 27 countries (Polanczyk et al., 2015). Yet many more people show related
+
+CONTACT Ala Yankouskaya        ayankouskaya@bournemouth.ac.uk          School of Psychology, Bournemouth University, Poole, UK
+   Supplemental data for this article can be accessed online at https://doi.org/10.1080/10447318.2026.2707709.
+� 2026 The Author(s). Published with license by Taylor & Francis Group, LLC
+This is an Open Access article distributed under the terms of the Creative Commons Attribution License (http://creativecommons.org/licenses/by/4.0/), which
+permits unrestricted use, distribution, and reproduction in any medium, provided the original work is properly cited. The terms on which this article has been
+published allow the posting of the Accepted Manuscript in a repository by the author(s) or with their consent.
+2     A. YANKOUSKAYA ET AL.
+
+
+
+traits at subclinical levels, and these traits influence attention, communication, and task management in
+ways that depart from standard models of neurotypical functioning (Doyle, 2020).
+    Understanding how LLMs’ design principles, affordances, and interaction patterns intersect with
+these cognitive profiles is therefore crucial. This is especially relevant as LLMs increasingly shape how
+people search for information, make decisions, and stay oriented within digital environments
+(Berrezueta-Guzman et al., 2024). For neurodiverse users, who often show distinct patterns of attention,
+planning, and information-seeking (Papadopoulos, 2024), LLM interaction may place specific cognitive
+demands that differ from those experienced by neurotypical users. These developments have prompted
+researchers to reconsider whether LLMs serve merely supportive functions or whether they gradually
+become more constitutive elements of people’s reasoning and everyday practices. Recent work has
+drawn attention to dependency on LLMs as an emerging phenomenon (Huang et al., 2024;
+Yankouskaya et al., 2025; Z. Li et al., 2025), suggesting that conversational AI can gradually occupy
+functions that users once managed independently. Such reliance may be both instrumental, focused on
+support for thinking and task completion, and relational, where interaction acquires social or emotional
+significance (H. Li et al., 2026; Yankouskaya et al., 2025). Recognizing these two forms of dependency
+also raises the possibility that they may not be experienced in the same way by all users, particularly
+within neurodiverse groups where engagement with digital tools can diverge from neurotypical norms.
+    Interacting with an LLM typically requires monitoring unfolding text, holding previous turns in
+working memory, and deciding when to shift focus or revise a query (Flores Romero et al., 2025;
+Schneider, 2025). Cognitive models such as the Resource-Rational Model of Human Goal Pursuit
+(Prystawski et al., 2022), Cognitive Offloading frameworks (Diaz Alfaro et al., 2024) and the concept of
+sequential attentional control (Swallow & Jiang, 2013) suggest that people distribute attention strategic­
+ally depending on effort, reward, and cognitive load. These perspectives suggest that LLMs become
+helpful in complex or multi-step tasks because they ease attentional effort, keep lines of thought mov­
+ing, and supply structure for subsequent choices. Such functions align closely with the needs of neuro­
+divergent users such as with ADHD symptoms, who often report problems with sustained attention
+and managing task sequences (Cortese et al., 2025).
+    Recent work shows that neurodivergent individuals are already highly engaged with LLMs in ways
+that reflect both their cognitive needs and the pressures of everyday life. ADHD communities, for
+example, use LLMs primarily for productivity and task management, with over a quarter of all ADHD-
+related posts focusing on such functions (26.33%; Carik et al., 2025). Users with ADHD often describe
+LLMs as compensatory tools for attentional instability, challenges with sustained reading and executive-
+function demands, such as summarizing lengthy texts, organizing study materials, breaking down com­
+plex tasks, and maintaining momentum during work (Al Fraidan & Alharthi, 2025). These patterns
+align with well-established evidence on information processing in ADHD: attentional regulation, work­
+ing memory limitations, and processing-speed constraints affect how individuals manage sequential or
+cognitively effortful tasks (Kofler et al., 2020). Research also shows that adults with ADHD have
+reduced working-memory and processing capacity compared with controls, and that processing-speed
+limitations mediate attentional performance (Papp et al., 2020; Roberts et al., 2012). These findings
+map onto the Cognitive-Energetic Model, which proposes that information processing in ADHD is
+influenced by lower energetic states, inefficient allocation of attentional resources, and higher process­
+ing cost (Sergeant, 2005). Such characteristics can make external supports, including conversational AI,
+especially attractive, while also increasing the possibility that reliance on these tools develops over time.
+    ADHD users express concerns about misinformation and overreliance. In Carik et al. (2025), 80% of
+posts in the “concerns” category highlighted risks of false or misleading content, and 20% raised explicit
+worries about dependence on LLMs for daily functioning. These concerns are notable given evidence
+that information evaluation is more effortful for individuals with ADHD, who often show reduced con­
+sistency in evidence evaluation and vulnerabilities in sustained monitoring (Tucha et al., 2017). Related
+work suggests difficulties in forming and updating trust: in a virtual trust-game, adults with ADHD
+failed to adjust their investment behavior in line with partner fairness or emotional cues (Lis et al.,
+2016), and longitudinal findings indicate poorer decision-making and less adaptive risk adjustment in
+children and adolescents with ADHD (Sørensen et al., 2024). Together, this research suggests that trust
+

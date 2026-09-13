@@ -1,0 +1,212 @@
+                                               2016 International Conference on Cyberworlds
+
+
+
+
+Adaptiving Time Steps for SPH Cloth-Fluid Coupling
+                                         Yalan Zhang, Xiaojuan Ban, Xu Liu, Xiaokun Wang
+                                           University of Science and Technology Beijing
+             yalan.zhang920503@gmail.com, banxj@ustb.edu.cn, xuliu213@163.com, wang1xiao2kun3@163.com
+   Abstract—We propose a new cloth-fluid coupling scheme               Furthermore, an adaptive time-stepping scheme for
+which takes the advantages of the position-based method. With       deformable-fluid coupling is presented, which automatically
+the constraint to distance and angle, deformable sheet could be     adapts the time step according to the density fluctuation, the
+implemented and coupled with fluid particles. Furthermore, an       maximum velocity and acceleration.
+adaptive time-stepping method is adopted for the cloth-fluid
+coupling, which increases and decreases the required time step
+automatically according to the scenario. While comparatively                                              II. METHOD
+large time steps can be used, the efficiency of the simulation is                As mentioned earlier, the previous methods work well for
+significantly improved compared to the constant time-stepping.               fluid-rigid coupling. However, homogeneous time step is not
+                                                                             sufficient for deformable objects, since large deformations may
+   Keywords—Adaptiving time steps; Cloth-fluid coupling; SPH                 cause penetration between boundary particles when the time
+                                                                             step is not small enough to satisfy CFL condition. In order to
+                       I. INTRODUCTION                                       avoid this problem, adaptively time steps is necessary. This
+    Smoothed Particle Hydrodynamics (SPH) is becoming                        section starts with a brief introduction of fluid model and a
+popular for fluid simulation because of its advantages of                    description of deformable structures modeling in Section 2.1,
+solving large deformation and discontinuity of free surface                  followed by a description of our novel individual time stepping
+flow. Cloth-fluid coupling is a major bottleneck in fluid                    scheme in Section 2.2. Sections 2.3 describes the algorithm.
+simulation, since cloth is deformable and thin, the time step has
+to be chosen small enough to guarantee non-penetration                       A. Fluid model and deformable model
+                                                                                 We aim to simulate weakly compressible fluids using SPH.
+    Recently, the efficient animation of deformable-fluid
+coupling can be successfully realized with a variety of methods              In the Lagrangian setting, the density at position x j is
+[1][2][3][4]. [5] extrapolated fluid quantities into solid particles         approximated by using the values at a set of neighboring
+to improve solid boundary conditions, avoiding “stacking” and                particles x j :
+irregular pressure distributions in standing water situations.
+                                                                                                          ρj
+    To overcome the fluid penetrations in cloth with high                           < ρ ( xi ) >= ¦ m j      W ( xi − x j , h ) = ¦ m jWij   (1)
+velocity, small simulation time steps have to be used, which                                      j       ρj                      j
+reduces the efficiency of the simulation systems. [5] suggested
+an adaptive time step method for the PCISPH method, which                    where W ( xi − x j , h ) is the kernel function with the support
+adjust the required time step according to the state of the                  radius, m j iterates the mass of particle j .
+simulation. [6] suggested fluid particles have their own time-
+steps determined from local conditions.                                         For weakly compressible SPH, the momentum equation can
+                                                                             be written as follow:
+                                                                                               du    1
+                                                                                                  = − ∇p + υ∇ ⋅ ∇u + g                       (2)
+                                                                                               dt    ρ
+                                                                             with u denoting the velocity, p the pressure, υ∇ ⋅ ∇u the
+                                                                             viscosity and g the gravity acceleration. Equation (3)
+                                                                             represents a simplified version for incompressible fluids and
+                                                                             Equation(4) assures conservation of mass.
+                                                                                To relate pressure, we use an EOS [7] as:
+                                                                                                                        γ
+                                                                                                          k ρ0 § § ρi ·   ·
+                                                                                                  pi =         ¨ ¨ ¸ − 1¸                    (3)
+                                                                                                           γ ¨ © ρ0 ¹     ¸
+          Figure 1 The simulation of deformable-fluid coupling                                                 ©          ¹
+   This paper focuses on the simulation of deformable-fluid                  where ρ 0 is the rest density of the fluid, usually set as
+coupling, as shown in Figure 1, with large time steps using the              1000 kg ⋅ m −3 , γ and k control the stiffness, γ is set to 7 and
+SPH method.
+                                                                             k is chosen.
+
+
+
+
+978-1-5090-2303-5/16 $31.00 © 2016 IEEE                                143
+DOI 10.1109/CW.2016.29
+    Unlike fluid particles, in term of Lagrangian scheme, the                   of order 0.1. Another constraint on the time-step comes from
+topological structure of deformable body vertices will not                      considering particles’ maximum acceleration. Thus, the time-
+change. Besides, the relative position and relative angle of                    step is limited by the condition:
+deformable body vertices are not constant compared to rigid
+vertices. As a result, we need to solve a system of non-liner                                                       h
+                                                                                                   Δt f ≤ λ f (         )                    (11)
+constraints, with one constraint per-particle, to guarantee the                                                   f max
+invariant of the topological structure when vertices acted by a
+force and getting back to the original state without external                   where λ f is a coefficient depending on the kernel type and the
+force.
+                                                                                particle arrangement. λ f is usually in the interval [0, 1].
+     Each constraint is a function of the vertices’ position and
+                                                                                 f max = max dvi / dt denotes the magnitude of the maximum
+the positions of its neighbors, which we refer to collectively as                         i
+ p1 ,..., p n . The vertices of deformable body need to satisfy the             force per unit mass for all particles throughout the simulation.
+distance constraint:                                                                 Since SPH uses a stiff EOS which restricts the time step,
+                      Cl ( p1 , p 2 ) =| p1 − p 2 | − d             (4)         we take λv = 0.1 and λ f = 0.05 for simulation. Instead of using
+                                                                                a constant time step, we can now adjust it dynamically by
+   The angle constraint on the vertices of deformable body is
+given by:                                                                                              §    h                   h     ·
+                                                                                             Δti ≤ min ¨ λv    , λf                   ¸      (12)
+            Ca ( p1 , p 2 , p3 , p 4 ) = arccos( n1 ⋅ n 2 ) − φ0    (5)                             j ¨     vj              dv j / dt ¸
+                                                                                                       ©                              ¹
+with n1 , n 2 the included angle of p1 , p 2 , p3 , p 4 :                           As stated above, the allowable time-step should be limited
+                                                                                by equation (12). However, the maximum force is unknown
+                              ( p 2 − p1 ) × ( p3 − p1 )
+                    n1 =                                            (6)         before the iterative process and should be estimated depending
+                           || ( p 2 − p1 ) × ( p3 − p1 ) ||                     on the initial setting of the scene. For the simulation with fast
+                                                                                moving particles and non-moving objects, for example rigid-
+                               ( p 2 − p1 ) × ( p 4 − p1 )                      fluid coupling and deformable-fluid coupling, the global time
+                    n2 =                                            (9)
+                            || ( p 2 − p1 ) × ( p 4 − p1 ) ||                   step should be set as the minimum one which might be too
+                                                                                restrictive for the main part of the simulation. So we propose
+    To make the deformable body get back to the original state                  an adaptive time-stepping scheme for deformable-fluid
+gradually, we need a vertices position correction ΔP that                       coupling, which smoothly adapts to the locally condition.
+satisfies the constraint:
+                                                                                      For Lagrangian fluids, since particles only interacts with
+               C ( P + ΔP) ≈ C ( P) + ∇ p C ( P) ⋅ ΔP = 0           (7)         their neighbors, every particle could have its own time step
+                                                                                which is determined locally. To save the computing resources,
+with P = ( p1 , p 2 , p3 ...p n ) , n the number of vertices needed for         the time step is determined by current minimize individual time
+constraint. In the last-written, we set ΔP and ∇ p C (P) in the                 step:
+same direction, the equation have the following form:                                               §                            ·
+                                                                                                         h                h
+                                                                                          Δti = min ¨ λv    , λf                 ¸           (13)
+                                C ( P)                                                              ¨    vi            dvi / dt ¸¹
+                     ΔP = −                ∇ P C ( P)               (8)                             ©
+                            | ∇ PC ( P) |2
+                                                                                   Instead of the minimum of global time stepping, the
+    We determine an individual stiffness coefficient k to                       average of individual time stepping is significantly larger,
+control the constraints. After n iterations, the effect of k is                 which make the simulation more stable and efficient.
+ Δ P⋅ k n which is non-linear. So we use the following equations
+                                                                                    The proposed method varies the time step Δti for each
+to constraint the iterations instead of coefficient k :
+                                                                                particle. Besides, at every time step, only the active particles
+      k ' = 1 − (1 − k )1/ n ΔP (1 − k ' ) n = ΔP(1 − k )           (9)         will be updated. For those inactive particles, their physical
+                                                                                quantities are obtained by linear interpolation.
+B. Adaptively time steps                                                            The particle i will be updated when it meets the
+   There are everal time step constraints should be satisfied to                condition:
+ensure numerical stability and convergence. According to the
+Courant-Friedrich-Levy (CFL) condition:                                                                  tilast + Δti < t                    (14)
+
+                                              h                                 where tilast iterates the last time particle i updated, t iterates
+                            ΔtCFL ≤ λv (           )               (10)
+                                            vmax                                the system time. According to Equation (14), when the system
+                                                                                time is larger than the individual time step, the particle i will
+where vmax is the maximum particle velocity in the                              be set as active particle and be updated. In this setting, for
+computation. λv is a coefficient ensures that the particle moves                inactive particles, their velocity and position are obtained from
+only a fraction of the smoothing length every time step and is                  the interpolation of the last value directly, while the velocity
+
+
+
+
+                                                                          144
+and position of active particles are updated as semi-implicit                            9            if active then
+Euler numerical integration.
+                                                                                         10                 compute ρ i , pi
+                                                                                         11           else
+                                                                                                                                                    d ρ i ( tilast )
+                                                                                         12                 interpolate ρ i , pi by
+                                                                                                                                                          dt
+                                                                                         13        for all active particle i do
+                                                                                                                            dvi ( t )       d ρi ( t )
+                                                                                         14            compute                          ,
+                                                                                                                              dt               dt
+                                                                                                                     §    h                            h      ·
+                                                                                         15                Δti = min ¨ λv    , λf                             ¸
+                                                                                                                     ¨    v                         dvi / dt ¸¹
+               (a)                                     (b)                                                           ©     i
+
+      Figure 2 (a) without synchronization (b) after synchronization                     16                tilast = t
+      The proposed method adjusts the time step such that the                            17        for all particle i do
+total asynchronous time integration is implemented. In order to
+                                                                                         18                Δt = min ( Δti )
+synchronize the animation every Δt , [8] restricted the time step                                                       i
+
+ Δti to Δt / 2 q ( q is an integer), which decreases the Δti .                           19        for all vertices a do
+Simulation results show that, the synchronization of particles                           20             va ← va + Δtwa f ext ( xa )
+update will ensure higher numerical stability and resolve the
+                                                                                         21                 pa ← xa + Δtva
+density fluctuation, and then provide larger time step.
+Therefore, we propose to update particles which time step are                            22        loop solver Iteration times
+approximately close at the same time.                                                    23                project constraint (Cl , Ca ,p1 ,p2 ,p3 ...,p n )
+    The space-time continuum for time step should be                                     24        end loop
+considered, which means particles have close time step when                              25        for all vertices a do
+they are adjacent and every particle has nearly the same time
+                                                                                         26            va ← (pa − xa ) / Δt
+step in a while. This leaves us the following equation to
+synchronize time step:                                                                   27                xa ← p a
+
+                                 « Δt »                                                  28        end for
+                           Δti = « i »                                 (15)
+                                 ¬ Δt ¼                                                  29                update velocity ( v1 , v2 , v3 ,..., vn )
+                                                                                         30        for all particle i do
+where ¬«⋅¼» is rounded down. In practice, we record the updated
+                                                                                         31                 Δt ′ = t + Δt − tilast
+                                    « Δt »
+step number K Δt , and set K Δt mod « i » = 0 as update                                                                                                dvi ( tilast )
+                                    ¬ Δt ¼                                               32                vi ( tilast + Δt ′) = vi ( tilast ) + Δt′
+                                                                                                                                                            dt
+condition. This is shown in Fig.2.
+                                                                                         33                xi ( tilast + Δt ′) = xi ( tilast ) + Δt ′ vi ( tilast + Δt ′)
+C. The algorithm                                                                         34   t = t + Δt
+    Our adaptively time steps method for Lagrangian
+deformable-fluid coupling is outlined in Algorithm 1. As                                           III. RESULTS AND DISCUSSION
+mentioned above, neighborhood searching (line 6-7) and forces
+evaluating (line 13-16) are performed only for activate                                 In this section, we show the capabilities of our approach.
+particles.                                                                          First, we show the effect of our deformable model with
+                                                                                    different value of k . Then, we discuss our adaptive time-
+      Algorithm 1: Adaptively time steps for Lagrangian                             stepping scheme with respect to performance, stability and
+      deformable-fluid coupling                                                     influence on the simulation. Finally, our method is applied to
+                                                                                    deformable-fluid coupling scenario. All timings are given for
+      1   while animating do                                                        an Intel 3.50 GHz CPU with 4 cores. The simulation software
+      2     for all vertices a do                                                   is parallelized with OpenMP. In the given scenarios, the
+                                                                                    density fluctuation is set to 0.01.
+      3         initialize x a = xa0 , va = va0 , wa = 1 / ma
+      4      end for                                                                A. Deformable model
+      5         select active                                                           We applied this procedure to the case of the deformable
+      6        for all active particle i do                                         sheet described in section 2.2. We set stiffness coefficient as
+      7            find neighbors j                                                 different value to control the constraints. Figures 3 show the
+      8        for all particle i do                                                results we have obtained, which prove our method effectively.
+
+
+
+
+                                                                              145
+

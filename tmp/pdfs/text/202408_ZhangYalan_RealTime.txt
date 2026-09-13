@@ -1,0 +1,158 @@
+                                                                                     ed
+                Graphical Abstract
+
+
+
+
+                                                                                  iew
+                Real-Time Screen Space Rendering Method for Particle-Based Mul-
+                tiphase Fluid Simulation
+                Yalan Zhang, Yuhang Xu, Yanrui Xu, Yue Hou, Xiaokun Wang, Guo Yu,
+                Mohammad S. Obaidat, Life Fellow of IEEE, Fellow of AAIA, and Fellow of
+                SCS, Xiaojuan Ban
+
+
+
+
+                                                             r          ev
+                                                          er
+                                               pe
+                                     ot
+                          tn
+                rin
+     ep
+Pr
+
+
+
+
+This preprint research paper has not been peer reviewed. Electronic copy available at: https://ssrn.com/abstract=4720458
+                                                                                     ed
+                Highlights
+
+
+
+
+                                                                                  iew
+                Real-Time Screen Space Rendering Method for Particle-Based Mul-
+                tiphase Fluid Simulation
+                Yalan Zhang, Yuhang Xu, Yanrui Xu, Yue Hou, Xiaokun Wang, Guo Yu,
+                Mohammad S. Obaidat, Life Fellow of IEEE, Fellow of AAIA, and Fellow of
+                SCS, Xiaojuan Ban
+
+
+
+
+                                                                        ev
+                    • Novel method for real-time rendering of multiphase flows, addressing
+                      miscible fluid challenges.
+
+
+
+
+                                                             r
+                    • Achieves rapid rendering of complex fluid dynamics with high compu-
+                      tational efficiency.
+
+
+                                                          er
+                    • Outperforms existing methods for rendering immiscible multiphase flu-
+                      ids.
+                                               pe
+                                     ot
+                          tn
+                rin
+     ep
+Pr
+
+
+
+
+This preprint research paper has not been peer reviewed. Electronic copy available at: https://ssrn.com/abstract=4720458
+                                                                                     ed
+                          Real-Time Screen Space Rendering Method for
+
+
+
+
+                                                                                  iew
+                           Particle-Based Multiphase Fluid Simulation
+                 Yalan Zhanga,b , Yuhang Xua,b , Yanrui Xua , Yue Houa , Xiaokun Wanga,b ,
+                 Guo Yua,b , Mohammad S. Obaidat, Life Fellow of IEEE, Fellow of AAIA,
+                                  and Fellow of SCSc,1 , Xiaojuan Bana,b,∗
+
+
+
+
+                                                                        ev
+                  a
+                    School of Intelligence Science and Technology, University of Science and Technology
+                                                       Beijing, China
+                 b
+                   Shunde Innovation School, University of Science and Technology Beijing, Guangdong,
+                                                           China
+                   c
+                     Chair and Professor, Computer Science Department, and Director of Cybersecurity
+
+
+
+
+                                                             r
+                    Center, University of Texas-Permian Basin, 4901 E. University Blvd., Odessa, TX
+                                                        79762, USA
+                d
+
+
+                                                          er
+                  The King Abdullah II School of Information Technology, University of Jordan, Amman
+                                                       11942, Jordan
+                                               pe
+                Abstract
+                Existing fluid simulation techniques mainly process single-phase fluids, and
+                they have difficulties in accurately simulating and visualizing multiphase fluid
+                dynamics. This paper proposes a new method for the real-time rendering of
+                                     ot
+
+                multiphase fluid simulations, which uses smoothed particle hydrodynamics
+                in screen space. Meanwhile, the method employs phase fraction textures to
+                differentiate various materials in multiphase fluid simulations, thereby por-
+                           tn
+
+
+
+                traying mixing and separation effects more realistically. Besides, efficient
+                texture computation allows it to be integrated seamlessly into real-time sim-
+                ulation rendering workflows. Extensive testing confirms the effectiveness of
+                the proposed method in rendering multiphase fluid behaviors with high vi-
+                rin
+
+
+
+
+                sual fidelity and demonstrates its capability to process frames within 0.01
+                seconds, even in cases with up to 300,000 particles. This study enhances the
+
+                      ∗
+                    Corresponding author.
+     ep
+
+
+
+
+                    Email addresses: zhangyl@ustb.edu.cn (Yalan Zhang), 18600250511@163.com
+                (Yuhang Xu), xuyanruiedw@me.com (Yanrui Xu), 1586723707@qq.com (Yue Hou),
+                wangxiaokun@ustb.edu.cn (Xiaokun Wang), guoyu@ustb.edu.cn (Guo Yu),
+                m.s.obaidat@ieee.org (Mohammad S. Obaidat, Life Fellow of IEEE, Fellow of AAIA,
+                and Fellow of SCS), banxj@ustb.edu.cn (Xiaojuan Ban)
+Pr
+
+
+
+
+                Preprint submitted to Simulation Modelling Practice and Theory        February 7, 2024
+
+
+
+
+This preprint research paper has not been peer reviewed. Electronic copy available at: https://ssrn.com/abstract=4720458
+

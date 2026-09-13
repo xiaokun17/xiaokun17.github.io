@@ -1,0 +1,174 @@
+See discussions, stats, and author profiles for this publication at: https://www.researchgate.net/publication/317352593
+
+
+
+The Non-Newtonian Fluid Simulation Based on Predictive-Corrective
+Incompressible SPH
+
+Conference Paper · September 2016
+DOI: 10.1109/ICVRV.2016.20
+
+
+
+
+CITATIONS                                                                                                 READS
+0                                                                                                         80
+
+
+4 authors, including:
+
+             Zhang Yalan                                                                                             Xiaokun Wang
+             University of Science and Technology Beijing                                                            University of Science and Technology Beijing
+             27 PUBLICATIONS 72 CITATIONS                                                                            43 PUBLICATIONS 81 CITATIONS
+
+                SEE PROFILE                                                                                               SEE PROFILE
+
+
+
+
+ All content following this page was uploaded by Xiaokun Wang on 28 February 2022.
+
+ The user has requested enhancement of the downloaded file.
+                                   2016 International Conference on Virtual Reality and Visualization
+
+
+
+
+        The Non-Newtonian Fluid Simulation Based on
+          Predictive-Corrective Incompressible SPH
+                                         Yalan Zhang, Xiaojuan Ban, Xiaokun Wang, Xing Liu
+                                    School of Computer and Communication Engineering
+                                         University of Science and Technology Beijing
+                                                         Beijing, China
+               yalan.zhang920503@gmail.com, banxj@ustb.edu.cn, wang1xiao2kun3@163.com, ustbdante@gmail.com
+
+      Abstract—A novel non-Newtonian fluid simulation method for                                  Fig. 1. Non-Newtonian fluid (mud).
+ SPH is proposed in this article. The viscous liquid is modeled by a
+ non-Newtonian fluid flow, and the variable viscosity under shear                    Since the physical nature of non-Newtonian fluid is very
+ stress is achieved using a viscosity model known as Cross model. To             complicated, it is pretty difficult to exactly simulate non-
+ avoid tensile instability and improve numerical stability, a predictive-        Newtonian fluid. A Non-Newtonian fluid has characteristic
+ corrective method, aimed at correcting density error, of setting up
+                                                                                 properties of both solids and fluids [1]. Taking For example,
+ individual stiffness parameters for each particle to be added.
+ Furthermore, to improve the overall efficiency of the proposed
+                                                                                 when the shear thinning non-Newtonian fluid flows with low
+ method, a global adaptive time-stepping method that adjust the time             velocity, its viscosity becomes higher, and the fluid starts to
+ step automatically in accordance with individual scenarios is                   exhibit properties of solids; while as it flows with high
+ utilized.                                                                       velocity, its viscosity gets smaller, and non-Newtonian fluid
+                                                                                 exhibit liquid properties. In recent years, Smoothed particle
+    Keywords—Physically-based animation; fluid simulation; non-                  hydrodynamics [2] (SPH) has become an important particle-
+ Newtonian fluid; Smoothed Particle Hydrodynamics; predictive-                   based method in computer animation. However, it is rather
+ corrective method                                                               difficult to utilize this method to simulate non-Newtonian
+                                                                                 fluids. First, the performance of fluid is directly affected by the
+                         I. INTRODUCTION                                         control model, but the traditional methods of controlling are
+                                                                                 mostly designed for ideal Newtonian fluid rather than non-
+     Fluids play an important role in everyday life. Examples for                Newtonian fluid. Due to the non-linear relationship between
+ fluid phenomena are wind, weather and ocean waves. As                           viscosity and shear force, the adequate physical equations and
+ simple and ordinary these phenomena may seem to be, their                       stable approximate simulation method should be re-established
+ simulation is rather complex and difficult. Lagrangian fluid                    for non-Newtonian fluids. Secondly, SPH method has some
+ simulation is a hotspot in computer animation. Its particle-                    inherent problems common for massless methods [3]. Particles
+ based nature makes simulations of small scale phenomena                         condense into a group of trends in the flow of non-Newtonian
+ possible, while mass conservation is trivially satisfied.                       fluid because of tensile instability. In addition, due to the
+ Currently, physics-based fluid animation re-searches have been                  complicated physical equations of non-Newtonian fluids, small
+ focused on homogeneous incompressible Newtonian fluids                          time step is necessary, which proves to be rather time-
+ with linear physical characteristics, and non-Newtonian fluids                  consuming.
+ has rarely been involved. However, the non-Newtonian fluid is
+ widely present in the chemical industry, oil industry, mining                       A novel non-Newtonian fluid simulation method based on
+ engineering, bio medication, food processing and many other                     predictive-corrective incompressible SPH is presented in this
+ fields, such as pit filled paste, blood, melted chocolate, mud                  paper. In order to capture the viscous behavior, the viscosity of
+ (Fig.1), etc. Therefore, the simulation for non-Newtonian fluid                 Newtonian fluid and non-Newtonian fluid flows is measured
+ not only acts as a supplement for conventional fluid animation,                 by the Cross model. The tensile instability is removed by the
+ it is also an important and challenging research topic in the                   predictive-corrective method that corrects density error by
+ field of graphics and virtual reality.                                          pressure and predictive intermediate velocity. Furthermore, an
+                                                                                 adaptive time-stepping approach that automatically estimates
+                                                                                 appropriate time steps in accordance with individual scenarios
+                                                                                 is proposed, to improve the overall efficiency of the predictive-
+                                                                                 corrective method.
+
+                                                                                                      II. RELATED WORKS
+                                                                                    There are two major approaches to simulate Non-
+                                                                                 Newtonian fluid: Euler’s method and Lagrange method. In
+                                                                                 Euler's method, the Simulation region is dispersed to a grid
+                                                                                 point. The Physical Property (velocity, density) of the grid
+                                                                                 point can be obtained by solving the governing equations. In
+
+978-1-5090-5188-5/16 $31.00 © 2016 IEEE                                     72
+DOI 10.1109/ICVRV.2016.20
+
+
+   Authorized licensed use limited to: BOURNEMOUTH UNIVERSITY. Downloaded on February 28,2022 at 23:54:06 UTC from IEEE Xplore. Restrictions apply.
+2004, Goatskin [4] proposed a quasi linear plastic model to                 left on a pool of paint after getting brushed over, which is
+control the change of viscosity in the gradual transformation               difficult for Euler and Lagrange methods to achieve.
+from a solid to a Non-Newtonian fluid. This model meets the
+von Mises’s yield condition. They simulated the melting of a                    In recent years, the standard SPH has been gradually
+piece of wax with this model, using explicit Euler method.                  replaced by the predictive-corrective method. Predictive -
+Losasso [5] modeled unified fluids with different                           corrective algorithm was first proposed by [16] applied to the
+viscoelasticities and densities by extending the particle level             SPH method, the core idea is to predict the state of a fluid in
+set. There are many different level sets in the same grid region.           absence of pressure, then use pressure for its conduct
+The exchanges between different level sets can be achieved by               correction. Ihmsen et al [17] proposed an implicit SPH method
+adding the pressure correction process before calculating                   that adjusts fluid’s density by pressure according to the
+viscosity. Batty [6] found out that the Laplace operator and                relationship between density and velocity in the next time step.
+Strain rate items of Non-Newtonian fluid should be computed                 [18] proposed a divergence-free velocity method, which is
+under the velocity field with no divergence; therefore, the                 essentially also a predictive-corrective method that prevents
+pressure correction process was added after the calculation of              volume compression and enforces a divergence-free velocity
+viscosity. Besides, they proposed an implied unconditionally                field formulation of the physical laws.
+stable simulation method based on marker-and-cell. Even
+though they proposed high precision free surface boundary                             III. THE NON- NEWTONIAN FLUID MODEL
+conditions, it still cannot simulate High viscosity Newtonian
+fluid. Bergou [7] proposed a method based on discrete                       A. Lagrangian Formulation
+differential geometry to simulate one dimensional linear                        Non-Newtonian fluids are continuous medium, whose
+viscous fluid. This approach can simulate one dimensional                   motion equations must follow the principle of conservation of
+phenomenon vividly, but distortion often appears when the                   mass and energy conservation principles. In the Lagrangian
+flow layer gets thicker. Batty [8] simulated thin viscous layer             formulation, because the number of particles is constant and
+with dimensionality deduce technology. They combined                        each particle has a constant mass, mass conservation is
+nonlinear surface tension and smallest-discrete-surface-area-               guaranteed unconditionally. Compared to a Newtonian fluid
+based formulas and reserved the mass of Unit triangular mesh
+                                                                            [19], a non-Newtonian fluid has elasticity and plasticity, so a
+with the Local grid reconstruction technology. This approach
+                                                                            strain tensor term should be added in the governing equations.
+can simulate the physical conditions of viscous thin layer, such
+as bending and draping.                                                     The momentum equation can be written as the following:
+
+    Mesh free methods are superior when free surface and                                    dv    1    1
+complex interface are to be dealt with. So that mesh free                                      = − ∇p + ∇ ⋅  + g                             (1)
+methods represented by SPH method have been more                                            dt    ρ    ρ
+commonly applied in the field of non-Newtonian fluid
+simulation. Müller [9] simulated fluids of High elasticity and              where t denotes the time, v the velocity field, ρ the
+high plasticity by structuring a point-based animation modeling
+                                                                            density, p the pressure, g the gravity acceleration vector and
+method. He combined continuum mechanics with von Mises’s
+yield condition and calculated the displacement and the                      the shear stress tensor.
+velocity using moving least squares. [10] also completed                       Lagrangian formulation of equation (1) represents the
+simulations with a General Newtonian Fluid model, and the                   acceleration of a particle moving with the fluid flow. The term
+viscosity of fluid was controlled by the Jump Number. The                    1
+melting process of a heated non-Newtonian fluid [11], which                 − ∇p is related to particle acceleration due to pressure
+later becomes a low viscosity fluid, was also modeled by the                  ρ
+General Newtonian Fluid model. [12] proposed a free surface                                                    1
+SPH method. This method can be applied to Newton fluid and                  changes in the fluid. The term         ∇ ⋅  describes the viscous
+viscoplastic fluid, and simulates the bending phenomena of                                                     ρ
+viscous fluids. The relationship between the pressure and the               acceleration due to friction forces caused by particles with
+viscosity of non-Newtonian fluids was described with the real               different velocities, which plays a key role in non-Newtonian
+polymer state equation [13]. [14] can simulate the flow of                  fluid animation.
+polymer with high viscosity and high pressure. In addition, the
+unified molding of viscous Newtonian fluid and shear thinning               B. Cross Model
+non-Newtonian fluid was simulated, but this method can only
+simulate fluid with low viscosity; whereas unstable                            Currently, there are many models for non-Newtonian fluid
+phenomenon will appear when the time step is larger.                        simulation, among which the most common one is the General
+                                                                            Newtonian Fluid model [20]. This model is suitable for
+    In addition to Euler and Lagrange methods, recently there is            Newtonian fluid and non-Newtonian fluid conversion,
+a novel alternative, the codimensional method [15], that is able            especially for the transition of a non-Newtonian fluid with
+to simulate a non-Newtonian fluid. This method enables the
+                                                                            high viscosity to a liquid of low viscosity by melting [10] [11].
+simulation of interaction between different dimensions of a
+non-Newtonian fluid, such as a filamentous remaining marks                  However, it cannot fully capture some realistic non-
+                                                                            Newtonian fluid physical properties, such as buckling, folding
+                                                                            and coiling.
+
+
+
+                                                                       73
+
+
+
+ Authorized licensed use limited to: BOURNEMOUTH UNIVERSITY. Downloaded on February 28,2022 at 23:54:06 UTC from IEEE Xplore. Restrictions apply.
+

@@ -1,0 +1,193 @@
+                                                                                                                                PDF Download
+                                                                                                                                3757377.3763960.pdf
+                                                                                                                                04 January 2026
+                                                                                                                                Total Citations: 0
+                                                                                                                                Total Downloads: 384
+    .
+    .
+        Latest updates: hps://dl.acm.org/doi/10.1145/3757377.3763960
+
+
+
+
+                                                                                                                                .
+                                                                                                                                .
+                                                                                                                      Published: 15 December 2025
+        .
+        .
+                                                                                                                      .
+    RESEARCH-ARTICLE
+
+
+
+
+                                                                                                                      .
+                                                                                                                      Citation in BibTeX format
+    Multiphase Particle-Based Simulation of Poro-Elasto-Capillary Eﬀects
+
+
+
+
+                                                                                                                      .
+                                                                                                                      .
+                                                                                                                      SA Conference Papers '25: SIGGRAPH
+                                                                                                                      Asia 2025 Conference Papers
+    RUOLAN LI, University of Science and Technology Beijing, Beijing, China                                           December 15 - 18, 2025
+    .
+                                                                                                                      Hong Kong, Hong Kong
+    YANRUI XU, Tsinghua University, Beijing, China
+
+
+
+
+                                                                                                                      .
+                                                                                                                      .
+                                                                                                                      Conference Sponsors:
+    .
+    YALAN ZHANG, University of Science and Technology Beijing, Beijing, China                                         SIGGRAPH
+    .
+    JIŘÍ KOSINKA, University of Groningen, Groningen, Groningen, Netherlands
+    .
+    ALEXANDRU C TELEA, Utrecht University, Utrecht, Netherlands
+    .
+    JIAN CHANG, Bournemouth University, Bournemouth, Dorset, U.K.
+    .
+    View all
+    .
+    .
+    Open Access Support provided by:
+    .
+    University of Science and Technology Beijing
+    .
+    Bournemouth University
+    .
+    Utrecht University
+    .
+    University of Groningen
+    .
+    Tsinghua University
+    .
+                                                          SA Conference Papers '25: Proceedings of the SIGGRAPH Asia 2025 Conference Papers (December 2025)
+                                                                                                                      hps://doi.org/10.1145/3757377.3763960
+                                                                                                                                         ISBN: 9798400721373
+.
+Multiphase Particle-Based Simulation of Poro-Elasto-Capillary Effects
+RUOLAN LI∗ , University of Science and Technology Beijing, China
+YANRUI XU∗ , Tsinghua University, China
+YALAN ZHANG, University of Science and Technology Beijing, China
+JIRI KOSINKA, University of Groningen, Netherlands
+ALEXANDRU C. TELEA, Utrecht University, Netherlands
+JIAN CHANG, Bournemouth University, United Kingdom
+JIAN JUN ZHANG, Bournemouth University, United Kingdom
+XIAOJUAN BAN, University of Science and Technology Beijing, China
+XIAOKUN WANG† , University of Science and Technology Beijing, China
+
+
+
+
+ Fig. 1. Comparison between real (top) and simulated (bottom) scenarios: Fracture behavior of a cracker after softening induced by immersion into coffee.
+
+Simulating the interactions between fluids and porous media has attracted                       simulation methods model porous media either as static grids or as solid
+significant attention in computer graphics. A key challenge in this domain                      particles with augmented water content attributes, failing to capture the
+is modeling the Poro-Elasto-Capillary (PEC) coupling effect which describes                     full spectrum of PEC-driven effects due to the lack of physical modeling
+the intricate interplay of three physical phenomena in soft porous mate-                        for elasticity, dynamic porosity changes, and capillary interactions. We pro-
+rials: pore-structure evolution, elastic deformation, and wetting driven by                     pose a multiphase particle-based framework to holistically simulate PEC
+capillary pressure. These phenomena collectively govern dynamic behavior                        coupling effects with porous media. We develop a physics-driven model
+such as the softening and fracturing of biscuits upon water absorption or                       that captures elasticity and dynamic pore-structure evolution under cap-
+the swelling of cellulose sponges due to liquid infiltration. Most existing                     illary action, enabling realistic simulation of softening and swelling. We
+∗ Both authors contributed equally to this research.
+                                                                                                derive a saturation-aware pressure Poisson equation to enforce fluid in-
+† Corresponding author.                                                                         compressibility within and around the porous medium, ensuring accurate
+                                                                                                capillary-driven flow while preserving mass and momentum. Finally, we
+Authors’ Contact Information: Ruolan Li, University of Science and Technology Beijing,          propose a representative elementary volume-based formulation to unify the
+Beijing, China, dewiorchid2020@gmail.com; Yanrui Xu, Tsinghua University, Beijing,              modeling of homogeneous macro-porous media and cavity-embedded struc-
+China, xuyanruiedw@me.com; Yalan Zhang, University of Science and Technology                    tures, enhancing the representation of pore-scale PEC effects. Comparisons
+Beijing, Beijing, China, yalan.zhang920503@gmail.com; Jiri Kosinka, University of
+Groningen, Groningen, Netherlands, j.kosinka@rug.nl; Alexandru C. Telea, Utrecht
+                                                                                                with prior work and real footage show the advantages of our approach in
+University, Utrecht, Netherlands, a.c.telea@uu.nl; Jian Chang, Bournemouth Univer-              achieving visually realistic fluid-porous media interactions.
+sity, Bournemouth, United Kingdom, jchang@bournemouth.ac.uk; Jian Jun Zhang,
+Bournemouth University, Bournemouth, United Kingdom, jzhang@bournemouth.ac.uk;
+Xiaojuan Ban, University of Science and Technology Beijing, Beijing, China, banxj@              CCS Concepts: • Computing methodologies → Physical simulation.
+ustb.edu.cn; Xiaokun Wang, University of Science and Technology Beijing, Beijing,
+China, wangxiaokun@ustb.edu.cn.
+                                                                                                Additional Key Words and Phrases: physically-based animation, capillarity,
+Permission to make digital or hard copies of all or part of this work for personal or           multiphase flow, porous media, incompressible fluid
+classroom use is granted without fee provided that copies are not made or distributed
+for profit or commercial advantage and that copies bear this notice and the full citation
+on the first page. Copyrights for components of this work owned by others than the              ACM Reference Format:
+author(s) must be honored. Abstracting with credit is permitted. To copy otherwise, or          Ruolan Li, Yanrui Xu, Yalan Zhang, Jiri Kosinka, Alexandru C. Telea, Jian
+republish, to post on servers or to redistribute to lists, requires prior specific permission   Chang, Jian Jun Zhang, Xiaojuan Ban, and Xiaokun Wang. 2025. Multiphase
+and/or a fee. Request permissions from permissions@acm.org.
+                                                                                                Particle-Based Simulation of Poro-Elasto-Capillary Effects. In SIGGRAPH
+SA Conference Papers ’25, Hong Kong, Hong Kong
+© 2025 Copyright held by the owner/author(s). Publication rights licensed to ACM.
+                                                                                                Asia 2025 Conference Papers (SA Conference Papers ’25), December 15–18,
+ACM ISBN 979-8-4007-2137-3/25/12                                                                2025, Hong Kong, Hong Kong. ACM, New York, NY, USA, 11 pages. https:
+https://doi.org/10.1145/3757377.3763960                                                         //doi.org/10.1145/3757377.3763960
+
+
+                                                                                                         SA Conference Papers ’25, December 15–18, 2025, Hong Kong, Hong Kong.
+2 •    Ruolan Li et al.
+
+
+1     Introduction                                                           An iterative correction method further mitigates abrupt saturation
+Porous media are ubiquitous and exhibit a rich array of visual and           changes, ensuring long-term simulation stability. Our contributions,
+physical phenomena driven by fluid interactions. Examples include            each addressing a core aspect of PEC coupling, are as follows:
+the swelling of cellulose sponges, the softening and fracturing of               • The first (to our knowledge) multiphase particle-based frame-
+biscuits upon fluid saturation, and dynamic submersion effects due                  work that models the full spectrum of PEC coupling, capturing
+to the increased weight of wet materials. These fluid-porous in-                    pore-structure evolution, elastic responses to wetting, and
+teractions are governed by intricate Poro-Elasto-Capillary (PEC)                    capillary-driven flow, enabling realistic simulation of wetting-
+coupling [Ha and Kim 2020; Van de Velde et al. 2023] involving                      induced expansion, softening, and fracturing in porous media.
+the interplay of fluid flow, elastic deformation, and pore-structure             • A saturation-aware pressure Poisson equation that enforces
+evolution, making their realistic simulation a significant challenge                incompressibility for fluids within and outside porous struc-
+in computer graphics. This complexity further increases for multi-                  tures, ensuring accurate capillary-driven flow while conserv-
+phase fluids where interactions between multiple fluid phases and                   ing mass and momentum, thus supporting dynamic fluid-
+porous structures demand robust physical modeling.                                  porous interactions.
+   In computer graphics, existing methods for simulating fluid-porous            • A unified REV-based formulation that enhances pore-scale
+media interactions typically model porous media as static grids                     modeling by consistently representing both homogeneous
+or solid particles augmented with water content attributes [Fei                     macro-porous media and intricate cavity-embedded struc-
+et al. 2018; Lenaerts et al. 2008; Su et al. 2023]. Techniques such as              tures, enabling versatile simulation of diverse porous materi-
+Smoothed Particle Hydrodynamics (SPH) or grid-based solvers ap-                     als under PEC effects.
+proximate fluid flow and absorption within porous structures [Patkar            We start by reviewing related work (Sec. 2). Section 3 presents a
+and Chaudhuri 2013; Shi and Xiao 2015; Tampubolon et al. 2017;               detailed exploration of PEC effects. Section 4 describes our approach
+Wang et al. 2024]. Recent approaches incorporate dynamic water               for modelling the PEC porous flow. We next detail our implementa-
+content tracking to render wet surfaces and basic deformation [Ren           tion (Sec. 5), experiments (Sec. 6), and conclusions (Sec. 7).
+et al. 2021; Yan et al. 2016]. Such methods achieve notable visual
+results but cannot fully capture the physical complexities of fluid-         2 Related work
+porous interactions. For instance, grid-based saturation approxima-          2.1 Porous media in physics
+tions [Fei et al. 2018; Lenaerts et al. 2008] often involve frequent fluid
+insertion and removal, neglecting granular fluid details within pores,       Porous media are ubiquitous in subsurface geotechnical structures,
+which compromises simulation stability. Yan et al. [2016] incorpo-           engineering materials, and biological organisms. Early porous me-
+rated porous solid phases using diffusion-based volume fraction              dia modeling relied on empirical models, primarily to address hy-
+models, which oversimplify fluid representation and lack detailed            draulic problems in production processes such as architectural de-
+modeling of pore fluid dynamics. Similarly, Ren et al. [2021] pro-           sign [Woltmann 1794], as covered in the surveys of Bedford and
+posed a virtual phase mechanism for multiphase porous flow; their            Drumheller [1983] and De Boer [2012]. Many such physical mod-
+simplified coupling approach compromises mass conservation and               els remain widely used today. For instance, the Washburn equa-
+incompressibility within the porous medium. Such approaches also             tion [Washburn 1921] is used in many scientific and engineering
+struggle with complex, freely moving boundaries, limiting their              disciplines to model infiltration dynamics in porous media. Fick’s
+applicability to dynamic scenarios. This highlights a critical gap in        second law [Fick 1855] can be used to describe the permeation and
+current techniques, as they fail to comprehensively simulate the             transport of a liquid through homogeneous fabric materials [Das
+PEC coupling effects – encompassing pore-structure evolution, elas-          et al. 2007]. Darcy’s law [Darcy 1856], derived from seepage experi-
+tic deformation, and capillary-driven wetting – that govern diverse          ments, links the velocity of a fluid through a porous medium to the
+phenomena in soft porous materials.                                          pressure drop, permeability, and viscosity coefficient. Since Darcy’s
+   We address these shortcomings by a novel multiphase particle-             law applies to both homogeneous and heterogeneous porous me-
+based framework that holistically simulates PEC coupling effects,            dia, it is widely used in many numerical simulations. Subsequent
+supporting both single- and multi-fluid interactions with porous me-         physical research on porous media has largely focused on adapting
+dia. We directly tackle the challenges of PEC coupling by modeling           and applying these fundamental laws to specific domains [Masoodi
+the interplay of dynamic pore-structure evolution, elastic deforma-          and Pillai 2010; Schuchard and Berg 1991]. Notably, the wetting,
+tion, and capillary-driven wetting. We use an elasto-plastic model           swelling, and softening dynamics of porous media, such as cookies,
+based on an integral formulation to capture the elasticity and large         exhibit PEC effects that surpass classical capillary theory, attracting
+deformations under wetting, enabling realistic simulations of phe-           widespread attention and prompting research into their underlying
+nomena like sponge swelling and biscuit softening. By deriving a             physical mechanisms [Ha and Kim 2020; Sweijen et al. 2016; Van de
+saturation-aware pressure Poisson equation, we ensure accurate               Velde et al. 2023].
+capillary-driven flow while enforcing fluid incompressibility, en-
+                                                                             2.2   Porous media in graphics
+hancing the realism of fluid-porous interactions. Additionally, we
+propose a Representative Elementary Volume (REV)-based formu-                The study of porous behavior has gained significant attention in
+lation to consistently model pore-structure evolution across ho-             computer graphics, with applications including cloth, sand, soil, and
+mogeneous macro-porous media and cavity-embedded structures.                 volumetric solids. Early research on wetting phenomena focused
+                                                                             on simulating flow on static planar objects and painting techniques.
+
+SA Conference Papers ’25, December 15–18, 2025, Hong Kong, Hong Kong.
+

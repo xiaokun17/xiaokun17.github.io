@@ -1,0 +1,229 @@
+EUROGRAPHICS 2024 / A. Bermano and E. Kalogerakis                                                                                    COMPUTER GRAPHICS forum
+(Guest Editors)                                                                                                                                Volume 43 (2024), Number 2
+
+
+
+
+                 Monte Carlo Vortical Smoothed Particle Hydrodynamics
+                            for Simulating Turbulent Flows
+
+       Xingyu Ye1,2 , Xiaokun Wang1,2,† , Yanrui Xu1,3 , Jiří Kosinka3 , Alexandru C. Telea4 , Lihua You2 , Jian Jun Zhang2 , Jian Chang2,†
+                                    1 School of Intelligence Science and Technology, University of Science and Technology Beijing, China
+                                              2 National Centre for Computer Animation, Bournemouth University, United Kingdom
+                                                                3 Bernoulli Institute, University of Groningen, Netherlands
+                                              4 Department of Information and Computing Sciences, Utrecht University, Netherlands
+
+
+
+
+Figure 1: The divergence-free SPH (DFSPH) method (left) produces basic wake flow motions. Our MCVSPH method (right) effectively
+generates intricate vortical motions throughout the fluid domain, exhibiting transportation, merging, and splitting of vortices.
+         Abstract
+         For vortex particle methods relying on SPH-based simulations, the direct approach of iterating all fluid particles to capture
+         velocity from vorticity can lead to a significant computational overhead during the Biot-Savart summation process. To address
+         this challenge, we present a Monte Carlo vortical smoothed particle hydrodynamics (MCVSPH) method for efficiently simulating
+         turbulent flows within an SPH framework. Our approach harnesses a Monte Carlo estimator and operates exclusively within
+         a pre-sampled particle subset, thus eliminating the need for costly global iterations over all fluid particles. Our algorithm is
+         decoupled from various projection loops which enforce incompressibility, independently handles the recovery of turbulent details,
+         and seamlessly integrates with state-of-the-art SPH-based incompressibility solvers. Our approach rectifies the velocity of all
+         fluid particles based on vorticity loss to respect the evolution of vorticity, effectively enforcing vortex motions. We demonstrate,
+         by several experiments, that our MCVSPH method effectively preserves vorticity and creates visually prominent vortical motions.
+         CCS Concepts
+         • Computing methodologies → Physical simulation;
+
+
+
+1. Introduction                                                                                     field ūn . Next, ūn is projected onto a divergence-free field. Due to
+                                                                                                    the application of non-pressure forces (and self-advection in Eule-
+Fluid animation constitutes a captivating area of research within
+                                                                                                    rian approaches) without considering incompressibility, divergent
+the computer graphics community. Among various fluid simula-
+                                                                                                    velocity components are inevitably generated. As Figure 2 shows,
+tion techniques, the Navier-Stokes equations [CF88] serve as the
+                                                                                                    the pressure projection step, which aims to eliminate these divergent
+cornerstone for modern fluid solvers. In the conventional operator
+                                                                                                    components from the velocity field, often leads to a loss of turbulent
+splitting scheme [Bri15], the particle velocity field un at time step n
+                                                                                                    details [ZBG15].
+is updated in two steps. First, non-pressure effects (such as gravity
+and viscous forces) are applied to calculate an intermediate velocity                                 Visually realistic simulations of inviscid or low-viscosity liquids
+                                                                                                    with high Reynolds numbers require capturing fine turbulent details.
+                                                                                                    Vortex methods are used to simulate turbulent flows in many studies,
+† Corresponding authors: wangxiaokun@ustb.edu.cn,                                                   where vorticity is stored and evolved using vortex particles [SRF05;
+jchang@bournemouth.ac.uk                                                                            WL93] for general fluid simulation; vortex filaments [AN05; WP10]
+
+© 2024 The Authors. Computer Graphics Forum published by Eurographics - The European Associa-
+tion for Computer Graphics and John Wiley & Sons Ltd.
+This is an open access article under the terms of the Creative Commons Attribution License, which
+permits use, distribution and reproduction in any medium, provided the original work is properly
+cited.
+2 of 12                       X. Ye et al. / Monte Carlo Vortical Smoothed Particle Hydrodynamics for Simulating Turbulent Flows
+
+                                                                              of three-dimensional simulation experiments and comparisons with
+                                                                              other SPH-based methods for turbulent flow (Sec. 5). Finally, we
+                                                                              conclude the paper and provide directions for future work (Sec. 6).
+
+
+                                                                              2. Related work
+                                                                              A substantial body of research exists within the computer graphics
+                                                      projection              community focusing on fluid simulation and SPH methods. We next
+                                                                              provide a concise review of relevant work focusing on SPH and
+                                                                              techniques for enhancing turbulent details.
+Figure 2: Left: Velocity field un at time step n. Middle: Non-pressure
+forces push the original velocity un into a divergent intermediate ve-        SPH-based Incompressible Fluids. Simulating visually authen-
+locity ūn . Right: The pressure force mitigates the divergent (normal)       tic fluids often requires incompressibility. Many previous studies
+component of ūn , causing turbulent detail loss.                             focus on achieving incompressible fluid simulations through SPH-
+                                                                              based methods. Becker and Teschner [BT07] developed an explicit
+                                                                              approach to compute pressure from densities using the Tait equa-
+                                                                              tion. Yet, the simulated fluids remain weakly compressible. To over-
+for three-dimensional fluid simulation; and vortex sheets [BKB12]
+                                                                              come this, Solenthaler and Pajarola [SP09] proposed a predictive-
+for boundaries. While such methods can capture vorticity features
+                                                                              corrective scheme (PCISPH), iteratively solving particle pressures
+and preserve fine turbulent visual details, the computational cost of
+                                                                              from density change using a global stiffness constant. Ihmsen et
+iterating over the vortex elements is significant [NWRC22]. For in-
+                                                                              al. [ICS*14] enhanced the pressure-solving iterations with the im-
+stance, the direct approach to integrating the vortex particle method
+                                                                              plicit incompressible SPH (IISPH) using density deviation computed
+into SPH-based fluid simulation frameworks involves directly con-
+                                                                              from velocities and computing stiffness for each particle per time
+sidering all fluid particles as vortex particles to track vorticity evo-
+                                                                              step. However, PCISPH and IISPH solve the Pressure Poisson Equa-
+lution and compute velocity through the Biot-Savart summation.
+                                                                              tion (PPE) without explicitly enforcing a divergence-free velocity
+Typical simulations use many fluid particles, so this direct method
+                                                                              field.
+imposes high computational costs.
+                                                                                 Bender and Koschier [BK17] proposed divergence-free SPH (DF-
+   Inspired by the work of Rioux-Lavoie et al. [RSÖ*22] using a
+                                                                              SPH), where position updates correct densities and velocity updates
+Monte Carlo estimator to simulate fluids in an Eulerian framework,
+                                                                              mitigate velocity divergence. In our work, we use DFSPH for its abil-
+we propose the Monte Carlo Vortical Smoothed Particle Hydro-
+                                                                              ity to enforce invariant densities and divergence-free velocities. Yet,
+dynamics (MCVSPH) method to simulate turbulent fluids in an
+                                                                              typical SPH-based incompressible fluid solvers exhibit noticeable
+SPH framework. Our method operates independently of pressure
+                                                                              numerical damping from coarse discretisations [IOS*14], leading to
+projection loops, allowing the use of existing state-of-the-art incom-
+                                                                              significant loss of turbulent details and the need for additional ap-
+pressibility solvers [ICS*14; BK17] and simplifying the process of
+                                                                              proaches to preserve vorticity and turbulent motions. Our MCVSPH
+implementing a complete Lagrangian fluid solver. We incorporate
+                                                                              method enhances turbulent details for general fluid simulations in-
+our vortex particle method into an SPH-based framework using the
+                                                                              dependently of the pressure projection process and can be integrated
+Monte Carlo stochastic method. This adaption allows us to derive a
+                                                                              with most existing incompressibility solvers.
+corrective velocity from vorticity using the Biot-Savart summation
+within a pre-sampled small particle subset, and makes it feasible to          Numerical Dissipation Mitigation. The semi-Lagrangian method
+implement the vortex particle method efficiently within a pure parti-         is commonly employed to achieve accurate advection. Yet, it can
+cle framework, all without the need for expensive global iterations.          inadvertently blur high-frequency fluid motion information due to
+To organise vortex particles, we treat vortex and SPH particles as            the use of low-order accuracy interpolation computations. Eulerian-
+separate entities. Following Monte Carlo method principles, we ran-           Lagrangian hybrid methods, such as PIC [Har62] and FLIP [ZB05],
+domly sample a subset of SPH particles and pair each of them with             mitigate numerical dissipation, yet frequent interpolations dur-
+a corresponding vortex particle. This enables us to adopt probabilis-         ing particle-grid transfers can cause momentum loss. Jiang et
+tic methods to estimate velocities that would otherwise necessitate           al. [JSS*15] proposed the affine particle-in-cell (APIC) scheme,
+iterating through all SPH fluid particles.                                    which considers angular momentum and shearing deformation dur-
+                                                                              ing grid-particle transfers. Fu et al. [FGG*17] expand upon the
+  Our main contributions are summarised as follows:
+                                                                              APIC method by generalising the local function on each particle. Qu
+• A Lagrangian approach enhancing turbulent details;                          et al. [QLDJ22] compute weights for particle-grid transfers using the
+• Improved Biot-Savart summation in SPH with a Monte Carlo                    power particle method, which ensures uniform particle distributions
+  method;                                                                     and volume preservation.
+• An organisation scheme for vortex particles for turbulent detail
+                                                                                 In the realm of pure Eulerian simulation, Qu et al. [QZG*19]
+  preservation.
+                                                                              introduce the BiMocq scheme which capitalises on dual mesh char-
+  The remainder of this paper is organised as follows. We start               acteristics and multi-level mapping to effectively compensate error
+by reviewing related work (Sec. 2) and also briefly introduce SPH             in a back-and-forth manner. Zehnder et al. [ZNT18] propose an
+and the vortex particle method (Sec. 3). Next, we introduce our               advection-reflection scheme applying an energy-preserving reflec-
+MCVSPH approach (Sec. 4). We illustrate our approach by a series              tion operator halfway through the advection step to reduce the dissi-
+
+                                                                                                                                                   © 2024 The Authors.
+                                                                                           Computer Graphics Forum published by Eurographics and John Wiley & Sons Ltd.
+                             X. Ye et al. / Monte Carlo Vortical Smoothed Particle Hydrodynamics for Simulating Turbulent Flows                       3 of 12
+
+pation at the projection step. Nabizadeh et al. [NWRC22] enhance                    vortex filaments [AN05; WP10], to trace and evolve vorticity. Zhu
+the advection-reflection scheme by incorporating covectors to pre-                  et al. [ZYF10] simulate vortical fluids by a hybrid SPH-FLIP
+serve circulation. Previous efforts to mitigate numerical dissipation               solver with the vorticity equation solved on local grids. Wang et
+primarily address advection dissipation present in Eulerian meth-                   al. [WLB*20] proposed a turbulence refinement method using the
+ods. In contrast, our work focuses on maintaining intricate turbulent               Rankine vortex model to recover the energy lost in rotational de-
+details within a Lagrangian framework.                                              grees of freedom. Zhang et al. [ZBG15] propose the IVOCK scheme
+                                                                                    to restore lost vorticity and expedite the Biot-Savart summation
+Vorticity Confinement. The vorticity confinement method, in-
+                                                                                    using the fast multipole algorithm [Dar00]. Liu et al. [LWB*21]
+troduced to the computer graphics community by Fedkiw et
+                                                                                    adopt the vorticity equation and the stream function to reconstruct
+al. [FSJ01], amplifies existing vortices using corrective forces. Le-
+                                                                                    turbulent details in SPH fluid simulations, where the Biot-Savart
+tine et al. [LAF11] enhance the computation of these forces for
+                                                                                    summation traverses vortex particles within the support radius. How-
+improved energy and momentum conservation. While initially pro-
+                                                                                    ever, the computational overhead of traversing all vortex particles in
+posed for grid-based scenarios [JKB*10; WM19], vorticity confine-
+                                                                                    the Biot-Savart summation is high. Previous studies have introduced
+ment was applied to SPH-based methods fluids by Macklin and
+                                                                                    solutions to expedite this process within Eulerian frameworks, such
+Müller [MM13] to enhance particle vortical motions. Although the
+                                                                                    as PPPM [ZB14] and the Monte Carlo method [RSÖ*22]. Yet, the
+vorticity confinement method is relatively simple to implement, its
+                                                                                    application of vortex methods to SPH frameworks remains relatively
+sensitivity to parameters can result in the generation of excessive
+                                                                                    unexplored.
+energy and unstable simulations. Moreover, since the amplification
+forces are contingent on existing vortices, this approach cannot gen-                  Given the effectiveness of the vortex particle method in modelling
+erate new vortices, which restricts its use in simulating fluids with               vortex motion, we harness its potential to generate turbulent motion
+rich turbulent features.                                                            within SPH-based fluids. Our approach leverages the vortex particle
+Micropolar Fluids. The micropolar fluid method [Eri66; Luk99]                       method within an SPH-based framework using a Monte Carlo es-
+describes fluid micro-structures with non-symmetric stress tensors.                 timator, conducting the Biot-Savart summation via a pre-sampled
+This approach finds applications in areas where fluid micro-motion                  subset of particles.
+is significant, such as heat transfer [PMZ22], blood flows [KSPS20],
+and magnetised fluids [ANK22]. Bender et al. [BKKW19] intro-
+duced the micropolar method to computer graphics and applied it to                   3. Fundamentals of SPH and the vortex particle method
+SPH-based methods (MPSPH) to simulate turbulent flows. However,
+                                                                                    As we use SPH-based approaches in our work, we next revisit the
+as pointed out by Chen et al. [CLL10], micro-rotations represent non-
+                                                                                    governing Navier-Stokes equations and general SPH-based numeri-
+solid-body-like rotation (gyration). Given that this method does not
+                                                                                    cal computations for various differential operators needed in fluid
+explicitly model solid-body-like rotation (vorticity), the resulting
+                                                                                    simulations (Sec. 3.1). We also cover the basics of the vortex particle
+turbulent features often manifest themselves as small-scale rota-
+                                                                                    method and explain the bottleneck of its use in SPH (Sec. 3.2).
+tional motions. Our method instead employs the vorticity equation
+to explicitly model vortical motions.                                                  The Navier-Stokes equations [CF88] read
+Non-Navier-Stokes Methods. To circumvent the challenges faced                                              Du    1
+by general Navier-Stokes solvers, such as vorticity loss, some                                                = − ∇p + υ∆u + g,
+                                                                                                           Dt    ρ                                       (1)
+methods have turned to non-Navier-Stokes methods. Chern et                                                 ∇ · u = 0,
+al. [CKP*16] introduced Clebsch variables and the Schrödinger
+equation to computer graphics. While conventional fluid solvers                     where Du       ∂u
+                                                                                            Dt = ∂t + (u · ∇)u is the material derivative; p is the pres-
+use velocity or vorticity for direct fluid motion simulation, this                  sure; υ is the kinematic viscosity; and g models external forces. The
+method evolves the wave function and extracts velocity and density                  equations govern fluid dynamics and form the basis of fluid solvers.
+information from it. Hence, the need for advection is eliminated                    However, for computational purposes, it needs to be discretised.
+in a pure Eulerian setting, resulting in significant improvements
+in addressing numerical dissipation issues. Subsequent research
+has expanded the use of the Clebsch method. For example, Yang
+                                                                                     3.1. SPH discretisation
+et al. [FLX*22] combine it with the gauge method to effectively
+capture coherent vortical structures in incompressible flow. Xiong                   SPH is used as a spatial discretisation method to numerically ap-
+et al. [XWWZ22] integrate the Clebsch method with a level-set                        proximate the differential operators within the governing equa-
+approach to simulate free-surface turbulent flow. However, since                     tions [KBST19]. For general approximation without any differential
+these methods are developed based on models that diverge from                        operators, values on fluid particle i are evaluated by
+the Navier-Stokes equation, integrating them with existing high-
+                                                                                                                          mj
+performance Navier-Stokes fluid solvers is challenging. In contrast,                                           Ai = ∑        A jWi j ,                   (2)
+our approach seamlessly integrates with existing Navier-Stokes fluid                                                    j ρj
+solvers, enabling the simulation of incompressible and turbulent
+                                                                                    where j denotes a neighbor particle of particle i; m j and ρ j are
+fluids with minimal changes to current fluid simulation methods.
+                                                                                    the mass and the density, respectively, of particle j; and Wi j =
+Vortex Methods. Vortex methods [CK00; MM21] leverage La-                            W (xi − x j , h), where x denote particle positions, is a kernel function
+grangian elements, such as vortex particles [SRF05; WL93] and                       with support radius h. In this paper, we use for W the cubic spline
+
+© 2024 The Authors.
+Computer Graphics Forum published by Eurographics and John Wiley & Sons Ltd.
+

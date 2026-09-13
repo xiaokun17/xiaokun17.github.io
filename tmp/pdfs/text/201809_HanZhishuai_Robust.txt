@@ -1,0 +1,139 @@
+  Robust and customized methods for real-time hand
+     gesture recognition under object-occlusion
+   Abstract—Dynamic hand tracking and gesture recognition is a hard          Occlusion creates obstacles for finger detection and
+task since there are many joints on the fingers and each joint owns
+                                                                          recognition. The possible solution is to supplement missing
+many degrees of freedom. Besides, object occlusion is also a thorny
+issue in finger tracking and posture recognition. Therefore, we propose   articulations or other keypoints in real-time 3D hand gesture
+a robust and customized system for realtime hand tracking and gesture     assessment process. Many trials have done to predict missing
+recognition under occlusion environment. First, we model the angles       data. Recently, some state-of-art research [5], [9] adopted
+between hand keypoints and encode their relative coordinate vectors,
+then we introduce GAN to generate raw discrete sequence dataset.          joint-aware principle, considering joint pattern and mutual
+Secondly we propose a time series forecasting method in the               correlation. It used the local keypoints mode to formulate
+prediction of defined hand keypoint location. Finally, we define a        different forecasting and discriminating strategies. At the same
+sliding window matching method to complete gesture recognition. We
+analyze 11 kinds of typical gestures and show how to perform gesture      time, Neural Networks [10]–[12] are widely used in most of
+recognition with the proposed method. Our work can reach state of         their works, especially Convolutional Neural Network (CNN)
+the art results and contribute to build a framework to implement          [13], [14]. CNN can be used to effectively extract different
+customized gesture recognition task.
+   Index Terms—gesture recognition, occlusion, GANs, sequence
+                                                                          features in each gesture, and quantify the relationship
+prediction.                                                               between the most relevant features and estimated hand
+                                                                          postures. Besides, there are some improved algorithms based
+                                                                          on CNN, such as 3DCNN, as introduced in [15], [16]. They also
+                           I. INTRODUCTION
+                                                                          got excellent results. In addition, model-based methods are
+
+R    EAL-TIME hand tracking and recognition has become an
+     attractive topic based on that ubiquitous vision based
+                                                                          also proved to be very effective. Zhou Xingyi et al. [17]
+                                                                          proposed a deep learning based approach. It improved greatly
+sensors are well spread all over the world, and it’s especially           in hand tracking and gesture recognition accuracy. These
+important in interaction-based industrial applications, such as           methods can reduce the impact of occlusions in specific
+Microsoft Hololens, Apple ARKit , other applications in                   conditions.
+simulation robot interaction etc. Efficient hand interaction can             Although deep learning based methods have achieved
+ensure the natural communication between human and                        encouraging results, their experiments are running in limited
+computers. Every camera can perform as a basic input sensor               training datasets. A perfect training dataset is difficult to find.
+in machine perception. There have been extensive studies on               Training sets is as important as model architecture, this is
+vision based hand gesture recognition, such as [1]–[4]. These             discussed in [18]. Many studies utilized open source hand
+methods have applied in various environments with effective               datasets, such as NY UHandPoseDataset, HandNet and
+and promising results. However, many of them focused on                   Dexter1, or collected gesture data through webCam, Kinect or
+kinematic pose estimation of an isolated hand. The gesture                other data acquisition equipments. Using already existed
+recognition with occlusion and finger self-occlusion have not             datasets limits in pertinence in practice, it’s difficult to mark
+been covered throughly [5]. The challenge of dynamic hand                 the labels specified for customized algorithms one by one. But
+recognition is the identification of hand keypoints sequence.             the collection of a large group of hand gestures is a
+The most common assumption for hand identification is that a              complicated process. In this study, we present a new structure
+single hand owns 16-20 keypoints, 25-50 DOF(Degree of                     based on Generative Adversarial Network (GAN) to collect a
+Freedom) in total [6]–[8]. Each keypoint needs to quantify the            small portion of hand gesture data and generate more
+relationship between the current and its former state(e.g.,               approximately real ones. This method can effectively speed up
+coordinate,angle) in time series. Real-time gesture recognition           the data production and reduce time cost.
+in occlusion is even more difficult generally for three reasons.             The contributions of our paper are as follows.
+(i) Some keypoints attributes cannot be captured. This is a big             1) We propose a RNN-NN connected dataset generation
+problem for most of the model-based methods. (ii) Missing                      model based on the principle of GAN. This model can
+data. This will lead to discontinuous time sequences, and                      generate approximate real discrete data efficiently.
+further complication to maintain consistency of the keypoints               2) We model the angles between hand keypoints and
+context states. (iii) Insufficient observed sequences generate                 encode their relative coordinate vectors according to
+severe time malposition to the defined gesture templates. This                 kinematics, combining the probability distribution to
+can make the hand states be classified into wrong category.                    complete gesture model.
+  3) We propose a time series forecasting method to predict          [27]. Our proposed method is similar with [28]. It translates the
+       missing data and define a sliding window matching             3D hand and human pose prediction problem from a single
+       method to capture correct keypoint sequences from             depth map into a voxel-to-voxel prediction which uses a 3D
+       realtime input stream.                                        voxelized grid and estimates the per-voxel likelihood for each
+The paper is organized as follows. The related works includes        keypoint. We use single depth images and perform keypoints
+current occlusion solutions and relevant methods used in this        prediction, the difference lies in that we model the keypoint
+work are introduced in Section II. The definition of the angles      coordinate vector and interaction angles, and predict the
+between hand keypoints and their relative coordinate vectors         missing data based on previous states.
+are given in Section III. The framework and proposed methods                             III. MODEL REPRESENTATION
+are presented in Section IV. Furthermore, in Section V and VI          In this section, we first decompose an isolated hand. Then
+we give the experimental setup and results. Finally, we              the interaction angle model and keypoint coordinate vector
+conclude the paper in Section VII.                                   model are established based on defined coordinate system.
+
+                        II. RELATED WORK                             A. Hand decomposition
+                                                                        As illustrated in Fig.1(a), we assume there are 20 keypoints
+   Data generation Some researchers have noticed the data
+                                                                     in a static hand, categorized into 6 classes in total. This can be
+problem. Markus Oberweger et al. [19] proposed a
+                                                                     described as Θ = {A,B,C,D,E,F}. ClassB,C,D,E each owns 4
+semiautomated method for efficiently and accurately labeling
+                                                                     keypoints, numbered as 0,1,2,3 from top to down respectively.
+each frame of a hand depth video with the corresponding 3D
+                                                                     ClassA owns 3 keypoints, numbered as 0,1,2. ClassF has only
+articulation locations, it can spur the creation of accurate 3D
+                                                                     one element, denoting hand elbow.
+hand poses annotations. Simon Tomas et al. [2] presented a
+                                                                        To determine the relative position of hand keypoints, we
+multiview bootstrapping method, which used reprojected
+                                                                     adopt three keypoints {Ψ0,Ψ1,Ψ2} to form a 3D orthogonal
+triangulations reflected from noisy detections as training data.
+                                                                     coordinate system. Here {C3,B3} are used as {Ψ1,Ψ2}. {F0} is
+However, typical GAN based methods used to generate
+                                                                     used as {Ψ0}. These three keypoints are always on a plane Φ
+discrete sequence data have not been well studied and applied.
+                                                                     for most hand gestures. The line LY in which Ψ0 and Ψ1 are
+Occlusion solutions Various methods are conducted to
+                                                                     located denotes axis Y and the line LX perpendicular to LY
+reconstruct missing data or avoid data loss essentially [5], [10]–
+                                                                     within Φ denotes axis X, the line LZ through Ψ0 perpendicular
+[12], [14]–[16]. Chiho Choi et al. [5] trained a pair of object
+                                                                     to Φ denotes axis Z.
+oriented network and hand-oriented network using paired
+depth images to create a more informed representation. L. Ge         B. keypoint coordinate vector model
+et al. [13] project 3D hand points onto three orthogonal planes       As shown in Fig.1(b), we take ClassE and ClassF for example.
+to generate heat-maps for three views. Multi-perspective             For a static state St, there are 4 coordinate vectors,
+fusion based methods can also be found in [20], [21]. These                   →−         →−         →−       →−
+methods can help to maintain some hand joints data. However,         denoting V t(E0), V t(E1), V t(E2), V t(E3). The change of one
+the data is always insufficient. In those inevitable occlusion       vector represents the performance of a particular dynamic
+cases, many recent works adopted model-based approaches. I.          gesture on this feature, shown in Eq.(1).
+Oikonomidis et al. [22] formulated an optimization problem, in
+which they combined the 26-DOF hand pose and model                                                                                  (1)
+parameters of the manipulated object. Model-based principle          Also, ∆ can be decomposed into features in these three
+contains the basis of template matching procedure in our work.       directions, denoted in Fig.1(d). For those missing keypoints,
+Sequence prediction Sequence prediction is frequently used to        the previous states are used to predict the current status based
+make up for missing data or predict specific gesture. Typical        on proposed forecasting methods.
+methods include RNN, LSTM, as introduced in [23], [24].
+Recently proposed recurrent convolutional network (RCN) has          C. Angle model
+been adopted in [25]. It described a class of recurrent                 Based on predefined keypoint coordinate vectors,
+convolutional architectures which is end-to-end trainable and        interaction angles depend on three nearest neighbors. The
+suitable for large-scale visual understanding tasks. Pavlo           →−static state S→−t, αt(E012) can be expressed by two
+Molchanov et al. [26] employed connectionist temporal
+classification to train the network to predict class labels from     vectors V t(E2E1), V t(E1E0), as in Fig.1(c).
+in-progress gestures in unsegmented input streams. Further
+work combined 3DCNN with Convolutional LSTM that stated in
+                  IV. FRAMEWORK AND METHODS
+  In this section, first we present the overall framework of the
+proposed system, then introduce individual method used in it.
+Meanwhile, data processing and flow will be described.
+
+A. Overall Framework
+   As shown in Fig.2, the overall framework contains three
+modules, data generation, sequence learning and gesture
+recognition. Data generation adopts a RNN-NN network to
+generate discrete sequences. Let Nsample represent the number
+of samples for each gesture. Generated data are stored as
+original datasets. Sequence learning uses Gated Recurrent Unit
+(GRU) to perform feature extraction and status prediction.
+Obtained sequence features are saved as gesture model after
+several steps of optimized processing. Gesture recognition
+and judge the current gesture state using joint probability
+distribution.
+

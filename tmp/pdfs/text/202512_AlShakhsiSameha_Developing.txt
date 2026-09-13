@@ -1,0 +1,88 @@
+Developing and Validating the Chinese Version of
+the Attitudes Toward Large Language Models Scale
+(AT-LLM Chinese)
+Sameha AlShakhsi
+
+
+
+ Hamad bin Khalifa University
+Ala Yankouskaya
+ Bournemouth University
+Haibo Yang
+ Tianjin Normal University
+Xiaokun Wang
+ University of Science and Technology Beijing
+Jiaojiao Chen
+ Tianjin Normal University
+Tina Yunsi MA
+ Education University of Hong Kong
+Guandong Xu
+ Education University of Hong Kong
+Christian Montag
+ University of Macau
+Raian Ali
+ Hamad bin Khalifa University
+
+
+
+Research Article
+
+Keywords: Attitude, Large Language Models, Scale, Generative AI, Human-AI Collaboration
+
+Posted Date: January 14th, 2026
+
+DOI: https://doi.org/10.21203/rs.3.rs-8457517/v1
+
+License:   This work is licensed under a Creative Commons Attribution 4.0 International License.
+Read Full License
+
+
+                                                Page 1/25
+Additional Declarations: No competing interests reported.
+
+
+
+
+                                               Page 2/25
+Abstract
+Large Language Models (LLMs) have become integral to education, business, and public life, yet cross-
+culturally validated tools for assessing public attitudes toward them remain scarce. This study adapted
+and validated two established five-item instruments, the Attitudes Toward General LLMs (AT-GLLM) and
+Attitudes Toward Primary LLMs (AT-PLLM) scales, for use in the Chinese context. Each scale includes
+two items measuring acceptance and three items measuring fear. A sample of 576 Chinese LLM users
+completed the Chinese versions of both scales alongside the Attitudes Toward Artificial Intelligence
+(ATAI) measure and a self-efficacy scale. Confirmatory factor analyses supported the expected two-
+factor structure, acceptance and fear, for both scales, with acceptable model fit indices. Reliability
+coefficients ranged from α = .54 to .74, with the lower value corresponding to the two-item acceptance
+subscale, as expected given its brevity. Measurement invariance testing across low- and high-frequency
+LLM users confirmed configural, metric, scalar, and strict invariance, indicating that the constructs
+operate equivalently across experience levels. External validation showed that ATAI-acceptance strongly
+predicted LLM acceptance, whereas ATAI-fear predicted LLM-related fear, supporting convergent validity.
+Self-efficacy did not significantly predict LLM attitudes once general AI attitudes were accounted for.
+These findings confirm the psychometric soundness and cross-cultural applicability of the AT-GLLM and
+AT-PLLM scales in China. By providing validated instruments for one of the world’s largest and most
+active AI ecosystems, this study advances global understanding of LLM attitudes and offers tools for
+guiding responsible, trust-oriented LLM design and policy development.
+
+
+1. Introduction
+The rise of large language models (LLMs) such as ChatGPT and DeepSeek has ushered in a new era of
+generative artificial intelligence (AI). LLMs have transformed the way humans interact with AI, from
+systems that simply follow programmed instructions to tools capable of engaging in dynamic, human-
+like conversations. Their rapid advancement has led to deep integration across multiple sectors,
+including education, healthcare, creative industries, and public administration. In China, this development
+is particularly significant, not only in terms of adoption but also innovation, as domestic LLMs have
+proliferated rapidly, supported by national policies promoting technological self-reliance and AI
+sovereignty (Chang et al., 2025). China’s dual role as both a major user and a competitive developer of
+LLMs has created a unique socio-technical landscape, making public attitudes toward these systems an
+important area of investigation.
+
+As with artificial intelligence (AI) more broadly, LLMs, as a subset of AI, have elicited both enthusiasm
+and concern. They are widely regarded as innovative technologies that introduce novel capabilities
+beyond existing digital tools, yet they also raise important ethical, social, and practical questions. This
+duality is evident in the Chinese context as well. For instance, a sentiment analysis of Chinese social
+media posts revealed generally positive public attitudes toward ChatGPT, while simultaneously revealing
+persistent concerns regarding ethical risks, misinformation, job displacement, and human–computer
+relationship (Lian et al., 2024). Similarly, Chinese oncologists reported both optimism about AI-driven
+                                                   Page 3/25
+

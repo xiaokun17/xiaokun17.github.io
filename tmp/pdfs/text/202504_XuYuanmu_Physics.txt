@@ -1,0 +1,198 @@
+                                                        Comput. Aided Geom. Des. 119 (2025) 102437
+
+
+                                                           Contents lists available at ScienceDirect
+
+
+                                                Computer Aided Geometric Design
+                                                  journal homepage: www.elsevier.com/locate/cagd
+
+
+
+
+Physics and geometry-augmented neural implicit surfaces for rigid
+bodies
+Yuanmu Xu a,c,1 , Guanli Hou b, ,1 , Jiangbei Hu d , Tenglong Ren g , Xiaokun Wang a ,
+Yalan Zhang a , Xiaojuan Ban a , Chen Qian h , Fei Hou e,f , Ying He b,∗
+a
+  School of Intelligence Science and Technology, University of Science and Technology Beijing, China
+b
+  College of Computing and Data Science, Nanyang Technological University, Singapore
+c
+  Shunde Innovation School, University of Science and Technology Beijing, China
+d
+  School of Software, Dalian University of Technology, China
+e
+  Key Laboratory of System Software (CAS), State Key Laboratory of Computer Science, Institute of Software, Chinese Academy of Sciences, China
+f
+  University of Chinese Academy of Sciences, China
+g
+  College of Humanities, Arts and Social Sciences, Nanyang Technological University, Singapore
+h
+  Sensetime, China
+
+
+
+
+A R T I C L E              I N F O                       A B S T R A C T
+
+Editor: Shiqing Xin                                      This paper tackles the challenges of physics-based simulation of rigid bodies in neural rendering,
+                                                         with a focus on 3D model representation and collision handling. We propose Physics and
+Dataset link: https://
+                                                         Geometry-Augmented Neural Implicit Surfaces (PGA-NeuS), a novel approach that combines
+github.com/Raining00/PGA-NeuS
+                                                         neural implicit surfaces with a diﬀerentiable physics solver. In the pre-processing stage, PGA­
+Keywords:                                                NeuS reconstructs static scene and object geometry from multi-view images using signed distance
+Neural implicit surfaces                                 ﬁelds (SDFs). For dynamic scenes captured in monocular videos, these SDFs, along with the initial
+Neural rendering                                         position and orientation of moving rigid bodies, are fed into a diﬀerentiable rigid body solver to
+Physics-based simulation                                 optimize physical parameters, such as initial velocity and friction coeﬃcients. Subsequently, PGA­
+Rigid bodies                                             NeuS leverages color loss, physics loss, and object mask supervision to iteratively refine the neural
+                                                         implicit surface, ensuring the target object’s alignment with the predicted motion sequence. We
+                                                         evaluate PGA-NeuS on five real-world scenes, demonstrating its ability to accurately reconstruct
+                                                         realistic motion sequences and estimate physical parameters such as position and velocity. Dataset
+                                                         and source code are available at https://github.com/Raining00/PGA-NeuS.
+
+
+
+
+1. Introduction
+
+    Neural Radiance Fields (NeRF) introduce a groundbreaking approach to reconstructing 3D representations from multi-view im­
+ages (Mildenhall et al., 2020), using neural networks to encode scene attributes such as color and geometry. Since its inception, NeRF
+has evolved rapidly across various research domains (Sun et al., 2022; Müller et al., 2022; Jain et al., 2021; Long et al., 2022; Xu
+et al., 2022; Wang et al., 2021; Yang et al., 2022; Wang et al., 2022; Li et al., 2023b), signiﬁcantly impacting applications in visual
+computing. Recent studies (Pumarola et al., 2021; Tretschk et al., 2021a) have extended NeRF to dynamic scene reconstruction,
+achieving high geometric quality. However, these approaches often lack physical interpretability, leading to unnatural outcomes in
+
+
+    * Corresponding author.
+      E-mail address: yhe@ntu.edu.sg (Y. He).
+    1
+      Equal contribution.
+
+https://doi.org/10.1016/j.cagd.2025.102437
+Received 10 March 2025; Accepted 15 April 2025
+Available online 29 April 2025
+0167-8396/© 2025 The Authors.          Published by Elsevier B.V. This is an open access article under the CC BY-NC-ND license
+(http://creativecommons.org/licenses/by-nc-nd/4.0/).
+Y. Xu, G. Hou, J. Hu et al.                                                                 Computer Aided Geometric Design 119 (2025) 102437
+
+
+simulations. To address this limitation, recent works (Li et al., 2023a; Chu et al., 2022; Chen et al., 2022; Le Cleac’h et al., 2023)
+have incorporated physical information into neural field reconstruction, enabling more accurate simulations of physical behaviors.
+Despite these advancements, most works have focused on synthetic data, as the complexity of real-world motion and collisions remain
+signiﬁcant barriers.
+    To tackle these challenges, we focus on reconstructing scenes with rigid objects undergoing rigid motions, enhancing implicit
+neural representations to understand rigid body motions and interactions from images through a radiance field reconstruction method
+augmented by physics and geometry. We introduce PGA-NeuS, a novel framework that combines a diﬀerentiable physics solver with
+neural implicit surfaces to reconstruct dynamic scenes involving rigid body collisions. Our method uses a low-cost data acquisition
+system with a single camera to capture multi-view images and motion videos, facilitating real-world data collection for simulations.
+By reconstructing implicit surfaces of objects in various poses, we ensure accurate geometry for rendering and collision detection.
+PGA-NeuS employs a diﬀerentiable rigid body solver to model physical processes, optimizing motion sequences with color loss.
+This integration of physical and geometric information enables precise reconstruction of geometry and physical parameters, such as
+velocity and collision responses, in dynamic scenes. We validate our algorithm with real-world datasets, demonstrating its accuracy
+in fitting physical parameters and detecting collisions using synthetic data. Our contributions include:
+
+   • We propose a physics and geometry-augmented approach that reconstructs rigid body motion sequences from monocular video,
+     solving an inverse problem in dynamic scene reconstruction.
+   • Our method can eﬀectively integrate two scenes represented by neural implicit surfaces in a low-cost manner.
+   • By combining neural implicit surfaces with a physics solver and separating object reconstruction from the dynamic scene, PGA­
+     NeuS allows objects to be inserted into arbitrary scenes and generates novel motion content.
+
+2. Related work
+
+Neural implicit surface reconstruction. In recent work, surface reconstruction successfully introduces neural implicit representations
+of 3D geometry (Wang et al., 2021; Yariv et al., 2021; Oechsle et al., 2021; Peng et al., 2020). In subsequent works, hash encoding
+acceleration methods (Wang et al., 2023; Li et al., 2023c; Rosu and Behnke, 2023) achieve fast and accurate reconstruction. In
+these 3D reconstruction tasks, geometric representations are performed using occupancy grids (Oechsle et al., 2021; Peng et al.,
+2020) or signed distance functions (SDF) (Wang et al., 2021; Yariv et al., 2021). The project should be easily reusable, and our
+physical simulation method requires a continuous representation of the distance from the model to the background and gradient
+calculations. Therefore, in our work, we use SDF to represent 3D geometry and apply NeuS as a part of the fundamental approach
+in our pipeline to provide object meshes and background SDF. Recently, Gaussian Splatting (GS) has gained traction as an eﬀective
+method for reconstructing 3D scenes and performing real-time rendering. This approach utilizes anisotropic Gaussian ellipsoids to
+achieve high-quality, view-dependent rendering (Kerbl et al., 2023). In eﬀorts to enhance GS’s capability to reconstruct surfaces from
+images, subsequent studies have experimented with integrating geometrical constraints into the optimization process of Gaussian
+kernels (Lyu et al., 2024; Guédon and Lepetit, 2024; Huang et al., 2024).
+
+Dynamic NeRF. Reconstructing objects from a video sequence has been a perennial challenge in the realms of computer vision and
+graphics. The advent of NeRF, as proposed by recent works (Mildenhall et al., 2020), has unveiled a novel avenue for reconstructing
+scenes from multi-view images, achieving commendable performance results. Subsequent endeavors have been made to extend NeRF
+to reconstruct dynamic scenes. Incorporating an additional neural network to discern the connections and mappings between scenes
+at disparate time instances has emerged as an eﬃcacious approach (Attal et al., 2021; Du et al., 2021b; Gao et al., 2021; Li et al.,
+2022a; Park et al., 2021; Pumarola et al., 2021; Wang et al., 2023; Tretschk et al., 2021b; Wu et al., 2023; Johnson et al., 2023;
+Kairanda et al., 2023). Among these advances, there are two special methods, D-NeRF (Pumarola et al., 2021) and NR-NeRF (Tretschk
+et al., 2021b), which are highly representative. D-NeRF, for instance, innovates by capturing motion through encircling the subject,
+employing temporal mapping to accurately reconstruct a diverse array of animations from video sequences. Although theoretically
+feasible with a single camera, this approach faces practical challenges in real-world data acquisition, highlighting the complexity
+of capturing dynamic scenes. Building on this, NR-NeRF introduces a novel technique of bending light rays, enabling the successful
+reconstruction of high-quality dynamic scenes from monocular videos and pushing the boundaries of what’s achievable with NeRF
+in dynamic environments.
+
+Physics-augmented neural rendering. Neural editing techniques have recently gained attention as an eﬀective means to modify neural
+rendering models (NeRF or 3D-Gaussian) (Chen et al., 2024), enabling intuitive manipulation of scene content, such as object insertion,
+removal (Peng et al., 2021; Qiao et al., 2023), and deformation (Yang et al., 2022). Subsequent studies further incorporated physics
+simulation into neural editing workflows. PIE-NeRF (Feng et al., 2024) combines meshless physics simulation with NeRF, allowing
+physically realistic elastodynamic animations. PhysGaussian (Xie et al., 2024) incorporates Newtonian physics into 3D Gaussian
+kernels using the Material Point Method (MPM). This integration facilitates a broad spectrum of neural editing capabilities for various
+materials, encompassing elastic, plastic, non-Newtonian fluids, and granular media. The previously mentioned methods struggle
+to achieve real-time performance due to the computational demands of physical simulation and volumetric rendering. Thus, VR­
+GS (Jiang et al., 2024) combines position-based dynamics (PBD) with 3D Gaussian splatting to facilitate real-time neural editing on VR
+platforms, utilizing a dual-level embedding approach and deformable body simulation for interactive physics-based user experiences
+in immersive virtual settings.
+
+                                                                  2
+Y. Xu, G. Hou, J. Hu et al.                                                                                    Computer Aided Geometric Design 119 (2025) 102437
+
+
+
+
+Fig. 1. Overview of PGA-NeuS. PGA-NeuS is designed to reconstruct the motion of rigid objects from monocular videos. Initially, the geometry of the static object
+and background objects is reconstructed from multi-view images using an SDF-based reconstruction module. This geometry serves as a basis for estimating the initial
+pose of the movable object. PGA-NeuS then iteratively optimizes the pose parameters, leveraging geometry constraints and a diﬀerentiable physics solver. Upon
+reconstructing the entire motion sequence from monocular video inputs, the neural rendering framework enables the production of visual outcomes through novel
+view synthesis.
+
+
+
+
+    Signiﬁcant progress has been made in the field of diﬀerentiable physical simulation, leading to the creation of solvers for rigid
+bodies (de Avila Belbute-Peres et al., 2018; Röhrbein and Uchibe, 2021), soft materials (Hu et al., 2019; Hahn et al., 2019; Geilinger
+et al., 2020; Du et al., 2021a; Li et al., 2022b), and fluid dynamics (McNamara et al., 2004; Schenck and Fox, 2018). These solvers
+contribute to the advancements in learning and control applications. However, applying these solvers to real-world scenarios is
+challenging due to data acquisition constraints. Recently, advances in neural editing methodologies, which initially utilized forward
+physics simulations to integrate dynamic behaviors within neural rendering models, have evolved to enable the smooth incorporation
+of diﬀerentiable physical simulations with neural rendering techniques. NeRF-based methods (Xu et al., 2022; Wang et al., 2021; Yariv
+et al., 2021) provide necessary geometric structures, enabling the combination of neural fields with physics simulations for more
+dynamic and meaningful scene modeling (Guan et al., 2022; Chu et al., 2022; Driess et al., 2023). Despite progress, most techniques
+are limited to synthetic environments and lack interactive motion reconstruction. Approaches like PAC-NeRF (Li et al., 2023a) rely on
+pre-known collision boundaries unsuitable for real-world data. PI-NeRF (Chu et al., 2022) simulates collisions without true physical
+underpinnings. DANOs (Le Cleac’h et al., 2023) proposed a Probabilistic Contact Model that allows interaction between rigid bodies
+but cannot reconstruct trajectory scenes with more than one moving rigid body. Additionally, it does not reconstruct the background
+and cannot track the trajectory of a rigid body in a scene with static objects, except for the floor. Our method overcomes these gaps
+by accurately reconstructing real-world rigid body motions, combining SDFs and diﬀerentiable physics to simulate objects against
+diverse backgrounds, and negating the need for specialized setups or conditions.
+
+
+3. Method
+
+
+   We propose PGA-NeuS, a diﬀerentiable, physics-based neural rendering framework. The primary workflow of our method is
+depicted in Fig. 1.
+
+
+3.1. Overview
+
+
+   First, we reconstruct the geometry of static objects and backgrounds using neural implicit surfaces (NeuS), as detailed in Sec. 3.2.
+Next, we incorporate a diﬀerentiable rigid body solver with neural radiance fields to obtain rigid body properties, including collision
+and motion, termed as PA-NeuS in Sec. 3.3. We can also generate novel rigid body motion trajectory animation. Finally, we solve
+inverse problems by refining rigid body trajectories and using them to guide a diﬀerentiable solver for inferring physical parameters,
+termed PGA-NeuS in Sec. 3.4.
+   Note that the complexity of operating several cameras simultaneously creates a barrier to general applicability, so we focus on
+reconstructing the rigid motion of objects in the real-world with a single camera. In addition, our approach makes the following
+assumptions: a) The object’s mass density is uniform, so its geometric center aligns with the center of mass. b) The static background
+possesses infinite mass, ensuring that obstacles in the background remain stationary during collisions. c) The background material is
+homogeneous, resulting in a single set of collision parameters during motion.
+
+                                                                                3
+

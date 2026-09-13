@@ -1,0 +1,124 @@
+  Convergent Turbulence Refinement toward Irrotational Vortex
+
+                  Xiaokun Wang∗                                                Xiaojuan Ban†                                    Jing Zhou
+                    Sinuo Liu∗                                                   Yanrui Xu                                     Cong Wang
+          wangxiaokun@ustb.edu.cn                                         banxj@ustb.edu.cn                         Zhoujing_Me_CN@hotmail.com
+           liusinuo@xs.ustb.edu.cn                                      xuyanruiedw@me.com                            wangcong1024@gmail.com
+     Beijing Advanced Innovation Center                          Beijing Advanced Innovation Center                    School of Computer and
+      for Materials Genome Engineering,                           for Materials Genome Engineering,                  Communication Engineering,
+           University of Science and                                   University of Science and                       University of Science and
+              Technology Beijing                                          Technology Beijing                              Technology Beijing
+
+
+
+
+Figure 1: Breaking dam with 94K fluid particles(The radius of them is 0.1m) injected per second using MP method[Bender et al.
+2018] (second row) and our method (first row) simulated with different coefficients (left to right): α = 0, 0.2, 0.6.
+ABSTRACT                                                                                    1 INTRODUCTION
+We proposed a detail refinement method to enhance the visual ef-                            Fluid simulation is a hot topic in computer graphics, which was
+fect of turbulence in irrotational vortex. We restore the missing                           first introduced by Stam in 1999 [Stam 1999]. Recently, higher de-
+angular velocity from the particles and convert them into linear                            mands for fluid simulation is put forward, such as the simulation
+velocity to recover turbulent detail due to numerical disspation.                           of turbulence with complex surface details. Over the last years, tur-
+                                                                                            bulent fluid simulation has been more and more popular.
+CCS CONCEPTS                                                                                   There are two kinds of method that used to increase the reso-
+• Computing methodologies → Physical simulation; Real-time                                  lution of turbulent fluid, that is, up-res method and vortex-based
+simulation; Interactive simulation.                                                         method. The main idea of up-res method is up-sampling under
+                                                                                            coarse discretization, such as CNN, example-based method [Sato
+KEYWORDS                                                                                    et al. 2018]. However, Up-res methods act as a post processing step
+turbulence simulation, SPH, vortex-based method                                             which can be combined with our method.
+                                                                                               Vortex-based method aims at creating and preserving turbulence
+ACM Reference Format:                                                                       through vorticity field. It could be divided into two main categories,
+Xiaokun Wang, Sinuo Liu, Xiaojuan Ban, Yanrui Xu, Jing Zhou, and Cong
+                                                                                            vorticity confinement method and Lagrangian vortex method. Vor-
+Wang. 2019. Convergent Turbulence Refinement toward Irrotational Vor-
+tex. In Proceedings of SIGGRAPH ’19 . ACM, New York, NY, USA, 2 pages.
+                                                                                            ticity confinement was introduced in computer graphics by Fedkiw
+https://doi.org/10.1145/3306214.3338605                                                     [Fedkiw et al. 2001]. The core idea is recover existing vortexes and
+                                                                                            enhanced them by adding a new force. Lagrangian vortex methods
+∗ Co-first author, contributed equally
+† Corresponding author
+                                                                                            build on vorticity representation of Navier-Stokes equations. They
+                                                                                            are naturally divergence-free and inherently immune to numerical
+Permission to make digital or hard copies of part or all of this work for personal or       dissipation. They could be implemented by surface[Weißmann and
+classroom use is granted without fee provided that copies are not made or distributed       Pinkall 2010], filaments[Eberhardt et al. 2017] and particles[Bender
+for profit or commercial advantage and that copies bear this notice and the full citation
+on the first page. Copyrights for third-party components of this work must be honored.      et al. 2018]. Our method can be regarded as a vortex particle method.
+For all other uses, contact the owner/author(s).                                            When higher efficiency is desired in particle-based approach, par-
+SIGGRAPH ’19 , July 28 - August 01, 2019, Los Angeles, CA, USA                              ticles’ size would become larger. The inertia tensor being absent
+© 2019 Copyright held by the owner/author(s).
+ACM ISBN 978-1-4503-6314-3/19/07…$15.00                                                     from the equation could lead to severe numerical dissipation. To
+https://doi.org/10.1145/3306214.3338605
+SIGGRAPH ’19 , July 28 - August 01, 2019, Los Angeles, CA, USA                                                                                      X. Wang, S. Liu et al.
+
+
+solve this problem, we proposed a turbulence refinement method                       is more obvious. In addition, the numerical instability begins to ap-
+to recover the linear velocity from missing angular velocity to en-                  pear with MP method when the coefficient is increased, especially
+hance turbulent detail.                                                              the coefficient value exceeds 0.6. This experiment shows that our
+                                                                                     method is more stable and does not add too much energy.
+2    OUR APPROACH
+For computing the curl of a field Ai in SPH, we apply the difference
+                                        ∑
+curl formulation (∇ × Ai )dif f = ρ1i j m j (Ai − Aj ) × ∇i Wi j , where
+ρ i is the density at the location of particle i, m is the mass of each
+particle, and W is the smoothed kernel in SPH approach, we use
+spline kernel in our experiments. It is used to derive angular veloc-
+ity ω. An extra relax factor α is added, which enable users to decide
+how rough the turbulence they desire. So the angular velocity for
+particle i at kth time step is:
+
+                                            (k )
+            (k ) (k−1)       (k−1)   (∇ × v i )dif f
+           ωi = ωi     − α(ω i     −                 )                         (1)
+                                            2
+where α can be set between 0 to 1. According to this equation, the
+angular velocity that be used to refine linear velocity field is:
+
+                                                                  (k ) dif f
+       (k )      (k )      (k −1)           (k −1)         (∇ × v i   )              Figure 3: Energy comparison of IISPH, MP method and our
+    δω i      = ωi      − ωi          = α(ω i          − ) (2)
+                                                2                                    method with α = 0.6 in the breaking dam with a cylindric
+  Using Eqn 2 we can successfully recover the rotational kinetic                     obstacle (4.57 M fluid particles).
+energy and convert it to angular velocity.
+                                                                                       Figure 3 depicts the total energy comparison of IISPH, MP method
+                                                                                     and our method. MP method adds more energy to the simulation,
+                                                                                     which results in faster flow and unstable turbulence results.
+
+                                                                                     4 CONCLUSION
+                                                                                     We present a convergent turbulence refinement method that restor-
+                                                                                     ing the angular velocity to recover turbulent effect. This method
+                                                                                     can significantly reduce numerical dissipation. Experiment shows
+                                                                                     this method enhances the turbulent effects compared to classical
+    Figure 2: Velocity for each point at the particle surface                        method without adding more energy than numerical disspation.
+
+   To refine linear velocity using the difference of angular veloc-                  ACKNOWLEDGMENTS
+                            (k )        (k )
+ity, we need to convert δω i into δv i→j using irrotational refine-                  This research was funded by The National Key Research and De-
+ment model. In our model, we take the space inside particle radius                   velopment Program of China (under Grant No. 2016YFB1001404),
+as rigid body rotation, and other space inside support radius as ir-                 and National Natural Science Foundation of China (under Grant
+                                       (k )                                          Nos. 61873299, 61702036, and 61572075).
+rotational flow. Since we can get δω i for each particle, we treat
+each particle as a rigid sphere, in this case we can obtain velocity
+                                                                                     REFERENCES
+for each point at the particle surface:
+                                                                                     Jan Bender, Dan Koschier, Tassilo Kugelstadt, and Marcel Weiler. 2018. Turbulent
+                                                                                        Micropolar SPH Fluids with Foam. IEEE transactions on visualization and computer
+                               (k )             (k )                                    graphics (2018).
+                          δv sur f ace = δω i          ×r                      (3)
+                                                                                     Sebastian Eberhardt, Steffen Weissmann, Ulrich Pinkall, and Nils Thuerey. 2017. Hi-
+   By inversely refining the neighbor particles within the support-                     erarchical vorticity skeletons. In Proceedings of the ACM SIGGRAPH/Eurographics
+                                                                                        Symposium on Computer Animation. ACM, 6.
+ing radius, we can adjust the linear velocity for every particle:                    Ronald Fedkiw, Jos Stam, and Henrik Wann Jensen. 2001. Visual simulation of smoke.
+                                                                                        In Proceedings of the 28th annual conference on Computer graphics and interactive
+                                        xij                                             techniques. ACM, 15–22.
+                           (k )                 (k )                                 Markus Ihmsen, Jens Cornelis, Barbara Solenthaler, Christopher Horvath, and
+                         δv i→j =            δv sur f ace                      (4)
+                                        ∥r ∥                                            Matthias Teschner. 2013. Implicit incompressible SPH. IEEE transactions on vi-
+                                                                                        sualization and computer graphics 20, 3 (2013), 426–435.
+3    RESULTS AND DISCUSSION                                                          Syuhei Sato, Yoshinori Dobashi, Theodore Kim, and Tomoyuki Nishita. 2018. Example-
+                                                                                        based turbulence style transfer. ACM Transactions on Graphics (TOG) 37, 4 (2018),
+We show the results of our method compared with the MP method                           84.
+                                                                                     Jos Stam. 1999. Stable Fluids.. In Siggraph, Vol. 99. 121–128.
+and the IISPH method [Ihmsen et al. 2013] (See attached video).                      Steffen Weißmann and Ulrich Pinkall. 2010. Filament-based smoke with vortex shed-
+  Figure 1 shows the simulation of breaking dam. Under the same                         ding and variational reconnection. In ACM Transactions on Graphics (TOG), Vol. 29.
+coefficient, the turbulence effect behind the obstacle using our method                 Citeseer, 115.
+

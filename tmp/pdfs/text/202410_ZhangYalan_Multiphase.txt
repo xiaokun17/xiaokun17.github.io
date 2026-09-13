@@ -1,0 +1,228 @@
+DOI: 10.1111/cgf.15180
+
+ACM SIGGRAPH / Eurographics Symposium on Computer Animation 2024                                                             COMPUTER GRAPHICS forum
+M. Skouras and H. Wang                                                                                                                       Volume 43 (2024), Number 8
+(Guest Editors)
+
+
+
+
+               Multiphase Viscoelastic Non-Newtonian Fluid Simulation
+
+             Y. Zhang1,2,∗         , S. Long1,∗      , Y. Xu1    , X. Wang†1      , C. Yao1    , J. Kosinka3    , S. Frey3   , A. Telea4              , X. Ban‡1
+                                    1 School of Intelligence Science & Technology, University of Science & Technology Beijing, China
+                                               2 Shunde Innovation School, University of Science and Technology Beijing, China
+                                                          3 Bernoulli Institute, University of Groningen, Netherlands
+                                            4 Department of Information and Computing Sciences, Utrecht University, Netherlands
+
+
+
+
+Figure 1: Seven different non-Newtonian fluids are used in one single simulation (2.06M particles in total). The letters in S-C-A come with
+decreasing shear thickening, whereas the numbers in 2-0-2-4 use gradually enhanced shear thinning (see Section 6 for details). Moving a
+fork across the seven characters shows different flow behaviors and dynamic interactions after fluid contact.
+
+         Abstract
+         We propose an SPH-based method for simulating viscoelastic non-Newtonian fluids within a multiphase framework. For this, we
+         use mixture models to handle component transport and conformation tensor methods to handle the fluid’s viscoelastic stresses.
+         In addition, we consider a bonding effects network to handle the impact of microscopic chemical bonds on phase transport. Our
+         method supports the simulation of both steady-state viscoelastic fluids and discontinuous shear behavior. Compared to previous
+         work on single-phase viscous non-Newtonian fluids, our method can capture more complex behavior, including material mixing
+         processes that generate non-Newtonian fluids. We adopt a uniform set of variables to describe shear thinning, shear thickening,
+         and ordinary Newtonian fluids while automatically calculating local rheology in inhomogeneous solutions. In addition, our
+         method can simulate large viscosity ranges under explicit integration schemes, which typically requires implicit viscosity solvers
+         under earlier single-phase frameworks.
+         Keywords: fluid simulation, mixture models, Viscoelastic Non-Newtonian fluids
+         CCS Concepts
+         • Computing methodologies → Physical simulation;
+
+
+
+
+1. Introduction                                                                           solvers [TDF*15; WKBB18; LHWW21; BK16] [PICT15]; as
+                                                                                          well as numerical accuracy improvements for different calcu-
+Fluid simulation has always been a research hotspot in computer
+                                                                                          lation methods [HKA21]. In multiphase fluid simulations, sim-
+graphics [WXL*24]. Many techniques have been proposed, includ-
+                                                                                          ulated phenomena include bubbles [HK03; IBAT11; TFK*03],
+ing Newtonian fluid simulation, detail enhancement such as tur-
+                                                                                          melting [MKN*04; CBL*09; FM07], and crystallization [KL03;
+bulence [FLX*22], and multiphase fluid simulation [XWW*23].
+                                                                                          KHL04; KAL06], among several others.
+In Newtonian fluid simulations, previous work has covered
+surface tension [JWL*23], pressure solvers [BK15], and viscous
+                                                                                             Newtonian fluids can be considered time-invariant with constant
+                                                                                          viscosity under certain conditions. In contrast, non-Newtonian flu-
+                                                                                          ids show a nonlinear relationship between viscosity and shear strain
+† Corresponding author: wangxiaokun@ustb.edu.cn                                           rate. Non-Newtonian fluids are actually more common in industrial
+‡ Corresponding author: banxj@ustb.edu.cn                                                 production and in nature, e.g., blood, chocolate, paint, and glass
+∗ These two authors contributed equally to this work                                      melts. At present, single-phase techniques can simulate simple non-
+
+© 2024 Eurographics - The European Association
+for Computer Graphics and John Wiley & Sons Ltd.
+                                                                                                                                                        CGF 43-8 | e15180
+
+
+
+
+                                                                                                                                 https://www.eg.org                  https://diglib.eg.org
+2 of 12                                 Yalan Zhang, et al. / Multiphase Viscoelastic Non-Newtonian Fluid Simulation
+
+Newtonian fluids [LHWW21; ASP*14] by computing the fluid’s                   used an SPH discretization combined with finite differences to pro-
+rheology by adding macroscopic viscosity models such as the Cross            cess the Laplacian and conserve the linear and angular momenta.
+model [Cro65] to existing fluid simulators. For example, when con-           This method was later adopted by subsequent schemes [WKBB18;
+figuring a specific fluid, such as the shear thinning type, the param-       LHWW21].
+eters of the Cross model are fixed in one single simulation. As the
+local rheological properties of a mixture may be different due to the        Improving quality and speed: To achieve faster and stabler sim-
+solute concentration, such methods cannot simulate complex mix-              ulation of highly viscous fluids, many methods proposed im-
+tures. Rather, when substances are mixed to form a non-Newtonian             plicit viscosity solvers based on strain rate tensors. Takahashi et
+fluid (and since almost all non-Newtonian fluids are mixtures), sim-         al. [TDF*15] used implicit time integration in a reverse Euler
+ulation mechanisms with a multiphase framework are preferred.                framework based on the original strain rate tensor representation.
+                                                                             Though this scheme allowed for larger time steps, it led to pseudo-
+   This paper proposes a non-Newtonian fluid simulation method               realistic artifacts in some scenes due to missing particles at the
+based on multiphase flow. Our method focuses on two-phase                    boundary. Bender et al. [BK16] proposed a velocity constraint
+flow simulation and uses the conformation tensor method of non-              function with the strain rate tensor to correct the velocity field,
+Newtonian fluid dynamics to calculate the fluid’s viscoelastic               which is, however, expensive to compute. Peer et al. [PICT15] de-
+stress, and designs a non-Newtonian fluid mechanism based on                 composed the velocity gradient tensor into three parts, with an ar-
+the mixture model, which can simulate shear thinning fluids, shear           tificial regulator imposed on the shear rate tensor; SPH discretiza-
+thickening fluids, and Newtonian fluids in a single framework.               tion and Taylor expansion were used to numerically approximate
+Our method can process single-phase non-Newtonian fluids, deal               the velocity field. However, this scheme cannot smoothly recon-
+with dynamic mixing scenes, and compute the local rheological                struct the velocity field for low-viscous fluids. Also, this velocity
+properties of the fluid separately. Our method has simple-to-set             field reconstruction method produces artifacts due to the above-
+parameters and can be computed efficiently. Separately, in previ-            mentioned missing particle issue. The Laplacian-based optimiza-
+ous multiphase fluid models, interphase momentum exchange de-                tion scheme in [WKBB18] addressed the issue of boundary arti-
+pends on suitably setting various constants (e.g. kd in [JL21]; and          facts of the above methods. In addition, some acceleration schemes
+Cd in [XWW*23]). Such settings imply a constant degree of the                also consider the use of efficient data structures and multi-grid
+mixture effect on phase motion for an entire simulation – which              strategies, Goldade et al. [GWAB19] proposed an implicit octree
+does not hold for systems with significant combining reactions. To           finite difference discretization with adaptive staggered grids, sig-
+the best of our knowledge, ours is the first action model to effec-          nificantly accelerating the viscous solution of the free surface.
+tively alleviate the limitations of previous multiphase fluid models         Shao et al. [SHM22] presented an Unsmoothed Aggregation Al-
+where interphase momentum exchange is constrained by constant                gebraic MultiGrid (UAAMG) method with a multi-color Gauss-
+settings. Our model uniquely calculates the effect of concentration          Seidel smoother to speed up sparse matrix operations.
+on phase transfer by simulating the dynamic network of chemical
+bonds formed in the solution, thus providing a more accurate rep-               To further improve visual realism in large viscous fluid simula-
+resentation of the mixing dynamics in non-Newtonian fluids.                  tions, researchers have studied the interference problem between
+                                                                             incompressibility and viscosity solutions. Liu et al. [LHWW21]
+                                                                             first implemented a convergent sticky-incompressibility iterative
+2. Related Work                                                              algorithm in the SPH method by using the SIMPLE algorithm
+Much previous work on fluid simulation focuses on Newtonian flu-             in an Eulerian setting, which reduces the interference between
+ids. Simulating non-Newtonian fluids is mainly achieved by vis-              solvers; however, the iterative nature of this method can yield high
+cosity solvers combined with simple non-Newtonian fluid viscos-              computational overhead. Based on such SPH solvers, some stud-
+ity models. In such schemes, a core problem is how to solve the              ies further extended simulations to non-Newtonian fluids. Andrade
+viscous term in the Navier-Stokes equations and the viscosity of             et al. [ASP*14] combined the symmetric form of Laplacian dis-
+non-Newtonian fluids.                                                        cretization with a Cross model [Cro65] to simulate simple shear-
+                                                                             thinning non-Newtonian fluids. Ozgen et al. [OKB19] introduced
+Viscosity computation: Currently, there are three main methods               an efficient history-based stiffness term and used the fractional cal-
+to solve the viscosity term in the SPH method: artificial viscosity          culus to describe shear thickening fluids in the SPH framework. Liu
+(XSPH), viscosity Laplacian-based methods, and strain rate tensor-           et al. [LHWW21] used the Cross model [Cro65] to describe simple
+based methods [KBST22]. Schechter et al. [SB12] used XSPH to                 shear thinning and shear thickening scenarios.
+compute viscosity, which updates the velocity field by controlling
+the velocity difference with artificial parameters. However, such ar-        Refined frameworks: Some viscous solvers achieve good vi-
+tificial parameters lead to the problem that phenomena such as curl-         sual results using more refined frameworks. The codimension
+ing and coiling cannot be correctly simulated. Many methods exist            method [ZLQF15] used the Carreau model [Car72] to describe
+that handle the Laplacian of viscosity. A simple approach is to dis-         shear thinning and shear thickening fluids, achieving a good thin
+cretize the Laplacian by standard SPH. While easy to compute, this           film effect; yet, this method involves complex calculations. Bar-
+method is highly sensitive to the lack of particles at the boundary,         reiro et al. [BGAO17] were the first to implement real-time simu-
+and it cannot guarantee the sign correctness of the second deriva-           lation of viscoelastic Newtonian fluids using polymer conforma-
+tive of the Gaussian-like kernel function. To avoid second deriva-           tion methods combined with Position Based Dynamics (PBD);
+tives, Takahashi et al. [TDF*15] solved the first derivative twice,          however, they did not consider non-Newtonian fluids. Goldade et
+but the computational overhead increased. Brokshaw et al. [Bro85]            al. [GWAB19] used an octree adaptive variational finite differ-
+
+                                                                                                                  © 2024 Eurographics - The European Association
+                                                                                                                for Computer Graphics and John Wiley & Sons Ltd.
+                                            Yalan Zhang, et al. / Multiphase Viscoelastic Non-Newtonian Fluid Simulation                                                                     3 of 12
+
+ence method to optimize the viscosity solution problem, which                            of the fluid based on the weights. The kernel function is usually
+greatly increased speed. Fei et al. [FBGZ19] developed a multi-                          Gaussian-like; practical implementations use cubic spline functions
+scale framework for coupling wire and shear-related fluids, where                                                 
+                                                                                                                       3  2
+the elastoplastic fluid was modeled by the Herscher-Barkley model.                                                6(l − l ) + 1, 0 ≤ l ≤ 0.5
+                                                                                                                  
+Panuelos et al. [PGG*23] used the functional method to solve the                                     W (r, h) = Λ 2(1 − l)3 ,       0.5 < l ≤ 1          (1)
+                                                                                                                  
+unsteady Navier-Stokes equations to simulate highly viscoelastic                                                    0,              otherwise
+                                                                                                                  
+fluids. The advantage of this method is that it preserves the coupling
+                                                                                                           ∥r∥
+between the viscosity and pressure solutions and improves numer-                         where l = h , h is the support radius of the kernel, and Φ depends
+ical accuracy. Su et al. [SXH*21] used the MPM method to con-                                                               4             40              8
+                                                                                         on the spatial dimension, 1D: Λ = 3h , 2D: Λ = 7πh  2 , 3D: Λ = πh3 .
+struct a second-order accurate viscosity solver that achieves diverse
+                                                                                            For a field A, SPH uses neighborhood information to compute
+single-fluid effects while maintaining good numerical accuracy. By
+                                                                                         the value, gradient, and divergence of the field, as
+integrating previously simulated models of different materials into
+a unified particle framework, Li et al. [LGH*23] created a compre-                                                          mj
+                                                                                                               Ai = ∑           A jW i j ,
+hensive engine able to simulate a wide variety of non-Newtonian                                                      j∈N(i)
+                                                                                                                            ρ j
+fluids.                                                                                                                                           mj
+                                                                                                                           ∇Ai =           ∑ ρ j A j ⊗ ∇W i j ,
+Multiphase simulations: The above mentioned methods use a                                                                               j∈N(i)
+                                                                                                                                                  mj                                                 (2)
+single-phase framework and cannot deal with multivariate dynamic
+scenarios, such as material mixing and precipitation phenomena.
+                                                                                                                          ∇ · Ai =         ∑ ρ j A j · ∇W i j ,
+                                                                                                                                        j∈N(i)
+For such cases, multiphase simulations are needed. Multiphase                                                                                     mj
+                                                                                                                            2
+simulation frameworks aim to address this case, which is consistent                                                       ∇ Ai =           ∑ ρ j A j ∇2W i j ,
+with the fact that fluids almost always exist as mixtures. Separately,                                                                  j∈N(i)
+single-phase models can only simulate fluids with fixed properties;
+                                                                                        where a ⊗ b = abT , i is the index of current particle, j is the
+and non-Newtonian viscosity models can only realize simple non-
+                                                                                        neighbor index, N(i) are the neighbors of particle i, and W i j =
+Newtonian fluid simulations. The formation of non-Newtonian flu-
+                                                                                        W (xi − x j , h). For brevity, we next use ∑ j to denote ∑ j∈N(i) .
+ids after material mixing and the simulation of the mixing process
+can only be achieved using a multiphase framework.
+                                                                                         3.2. Implicit Mixture Model
+   The mixture model, introduced by Ren et al. [RLY*14] to graph-
+ics, is a simple to compute and easy to extend multiphase model.                         The mixture model [MTK96] is a well-known technique to simu-
+Jiang et al. [JL21] further reformulated the computation of the hy-                      late multiphase fluids. It uses the volume fraction (Fig. 2) to repre-
+brid model, abandoned the local equilibrium assumption, and en-                          sent the concentration ratio of each phase in a multiphase particle;
+hanced simulation efficiency and stability, allowing the simulation                      computes the dynamic parameters of each phase through the multi-
+of more dynamic scenes. Xu et al. [XWW*23] proposed an im-                               phase fluid dynamics; and finally reconstructs the velocity field of
+plicit mixture model and used a volume-incompressible method                             the mixed particle. We next detail the mixture model’s main terms.
+to enforce fluid incompressibility, leading to a more stable phase
+transport and a highly improved numerical stability.                                       Volume Fraction Scheme                           Momentum Source in Implicit-Mixture-Model
+                                                                                          v2   vd2                                             ρk Dv k               p
+                                                                                                                                                       = Mk = Mk + Mk + MIk
+                                                                                                                                                                           nonp
+   The phenomena investigated by current multiphase fluid simula-                                     v̄            vd1                            Dt
+                                                                                                                                                p
+tions are very broad, including bubble simulation [HK03; IBAT11;                                                                               Mk : VFSPH Solver with momentum mapping
+                                                                                                                           v1   ∑k αik = 1          nonp
+TFK*03], melting [MKN*04; CBL*09; FM07], and crystal forma-                                     αi2                                               Mk       : gravity, . . .
+                                                                                                                                                                                               ′
+tion [KL03; KHL04; KAL06]. However, in the field of computer                                                 αi1                                  MIk : analytic interphase momentum Cd MIk
+graphics, there is no current approach that attempts to model non-
+Newtonian fluids with multiphase models. We present a method                               Momentum Contribution
+                                                                                                                                     v′2
+that enables efficient computation of dynamically non-Newtonian                                             Mk
+                                                                                                                p          change                                    reconstruct
+                                                                                                                           phase-vel        αi2                      mix-vel
+fluid scenarios under a multiphase model.                                                                                                                                          v̄′ = ∑k αk v′k
+                                                                                                                    MIk
+                                                                                                                                                  αi1
+                                                                                                            g
+                                                                                                           Mk                      v̄
+3. Implicit Mixture Model with SPH                                                                                                                             v′1
+
+The implicit mixture model is a modification based on mixture
+                                                                                         Figure 2: The volume fraction scheme and momentum sources in
+model theory, which is usually computed numerically using the
+                                                                                         the implicit mixture model [XWW*23].
+SPH method in graphics. We next review the fundamentals of SPH
+(Sec. 3.1) and outline the implicit mixture model (Sec. 3.2).
+                                                                                            A mixed particle i with phases k ∈ [1, . . . , K] contains the volume
+                                                                                         fractions αik of each phase which sum up to 1, that is
+3.1. SPH method
+The SPH (Smoothed Particle Hydrodynamics) method is a spatial                                                                      αi = ∑ αik = 1.                                                   (3)
+                                                                                                                                              k
+discretization technique. It uses a set of kernel functions to rep-
+resent the weights of the space and reconstructs the physical field                      The mixture model uses the drift velocity vdk to measure the shift of
+
+© 2024 Eurographics - The European Association
+for Computer Graphics and John Wiley & Sons Ltd.
+

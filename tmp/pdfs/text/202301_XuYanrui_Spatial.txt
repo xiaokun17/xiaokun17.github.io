@@ -1,0 +1,189 @@
+                                                                                                                                                                    1546427x, 0, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/cav.2136, Wiley Online Library on [15/01/2023]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+Received: 3 August 2022     Revised: 11 December 2022     Accepted: 13 December 2022
+
+DOI: 10.1002/cav.2136
+
+
+S P E C I A L I S S U E PA P E R
+
+
+
+
+Spatial adaptivity with boundary refinement for smoothed
+particle hydrodynamics fluid simulation
+
+Yanrui Xu1   Chongming Song1 Xiaokun Wang1,2,3                                                         Xiaojuan Ban1,4,5
+Jiamin Wang1 Yalan Zhang1 Jian Chang3
+
+1
+ School of Intelligence Science and
+Technology, University of Science and               Abstract
+Technology Beijing, Beijing, China                  Fluid simulation is well-known for being visually stunning while computation-
+2
+ Beijing Key Laboratory of Knowledge                ally expensive. Spatial adaptivity can effectively ease the computational cost by
+Engineering for Materials Science,
+                                                    discretizing the simulation space with varying resolutions. Adaptive methods
+University of Science and Technology
+Beijing, Beijing, China                             nowadays mainly focus on the mechanism of refining the fluid surfaces to obtain
+3
+  National Centre for Computer                      more vivid splashes and wave effects. But such techniques hinder further perfor-
+Animation, Bournemouth University,                  mance gain under the condition where most of the vast fluid surface is tranquil.
+Poole, UK
+4
+                                                    Moreover, energetic flow beneath the surface cannot be adequately captured
+  Beijing Advanced Innovation Center for
+Materials Genome Engineering,                       with the interior of the fluid still being simulated under coarse discretization.
+University of Science and Technology                This article proposes a novel boundary-distance based adaptive method for
+Beijing, Beijing, China
+                                                    smoothed particle hydrodynamics fluid simulation. The signed-distance field
+5
+  Key Laboratory of Perception and
+Control of Intelligent Bionic Unmanned
+                                                    constructed with respect to the coupling boundary is introduced to determine
+Systems, Ministry of Education,                     particle resolution in different spatial positions. The resolution is maximal
+University of Science and Technology                within a specific distance to the boundary and decreases smoothly as the dis-
+Beijing, Beijing, China
+                                                    tance increases until a threshold is reached. The sizes of the particles are then
+Correspondence                                      adjusted towards the resolution via splitting and merging. Additionally, a wake
+Xiaokun Wang and Xiaojuan Ban, School
+                                                    flow preservation mechanism is introduced to keep the particle resolution at
+of Intelligence Science and Technology,
+University of Science and Technology                a high level for a period of time after a particle flows through the boundary
+Beijing, Beijing, China.                            object to prevent the loss of flow details. Experiments show that our method
+Email: wangxiaokun@ustb.edu.cn and
+                                                    can refine fluid–solid coupling details more efficiently and effectively capture
+banxj@ustb.edu.cn
+                                                    dynamic effects beneath the surface.
+Funding information
+Horizon 2020-Marie Skłodowska-Curie                 KEYWORDS
+Action-Individual Fellowships,                      boundary handling, computer animation, fluid simulation, spatial adaptivity
+Grant/Award Number: 895941; National
+Natural Science Foundation of China,
+Grant/Award Number: 61873299; Key
+Research and Development Project of
+Hainan Province, Grant/Award Number:
+ZDYF2020031; Fundamental Research
+Funds for the Central Universities,
+Grant/Award Number: QNXM20220043
+
+
+
+
+This is an open access article under the terms of the Creative Commons Attribution-NonCommercial License, which permits use, distribution and reproduction in any
+medium, provided the original work is properly cited and is not used for commercial purposes.
+© 2023 The Authors. Computer Animation and Virtual Worlds published by John Wiley & Sons Ltd.
+
+Comp Anim Virtual Worlds. 2023;e2136.                                                                             wileyonlinelibrary.com/journal/cav     1 of 14
+https://doi.org/10.1002/cav.2136
+                                                                                                                                           1546427x, 0, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/cav.2136, Wiley Online Library on [15/01/2023]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+2 of 14                                                                                                                        XU et al.
+
+
+
+
+1         I N T RO DU CT ION
+
+Fluid simulation plays an essential role in visual effects, for the physical-based result can produce magnificent
+eye-catching effects to maximize the sense of reality. Nevertheless, higher demand for simulation details usually means
+the rapid growth of computational cost due to the need for the finer discretization of multidimensional space and time.
+Though the choice of time step (temporal adaptivity) can be readily adapted using Courant–Friedrichs–Lewy (CFL)
+condition, the mechanism of spatial adaptivity can still be further exploited considering variable conditions for better effi-
+ciency. The spatial adaptivity mechanism enables achieving exquisite fluid behaviors with more affordable expenses by
+optimizing the interval of sampling points to refine local areas with pertinence.
+    Nowadays, research on spatial adaptivity for Lagrangian fluid simulation mainly targets surface-based optimization,
+aiming at refining the surface details like splashes, waves and thin films to enrich the visual effects. Horvath and Solen-
+thaler1 use a higher resolution for particles within a certain distance to the free surface of the fluid; Winchenbach et al.2
+make the desired size of particles increase smoothly with the distance to the surface.
+    However, the surface-based strategy has the disadvantage of an inflexible intervention mechanism, which causes low
+computational efficiency and the failure to enhance specific dynamic areas. On the wide fluid surface, the area with
+the most high-frequency details is often the part where the fluid is coupled with other objects, such as a boat sailing
+across the water surface, arousing the waves around and behind the body. Meanwhile, the boat’s rotating propeller below
+the surface can constantly transmit kinetic energy into the water, further producing splashes to the surface. When such
+a scenario is simulated using coarse discretization with surface-based refinement, the vast and calm surface brings a
+large computational burden, causing computational resources to be wasted in these unimportant areas. Also, the energy
+dissipation from the propeller area cannot be restrained effectively.
+    To conduct spatial adaptivity with more flexibility and efficiency, we propose a novel adaptivity method with bound-
+ary refinement for smoothed particle hydrodynamics (SPH) fluid simulation, where particle resolution increases as the
+distance to the interested boundary object decreases (see Figure 1). The sizes of the particles are adjusted towards the
+resolution via splitting and merging. Moreover, a wake flow preservation mechanism is introduced to retain the refined
+resolution for a specific period after a particle flows through the boundary object to prevent the loss of flow details. The
+results show that our method can enrich fluid details more economically and produce more accurate visual effects in
+contrast to the surface-based strategy.
+
+
+2         RELATED WORK
+
+Methods for spatial adaptivity in fluid simulation depend heavily on the fluid simulation approaches on which they are
+based. For Eulerian approaches that simulate the fluid with grids, a standard scheme uses octrees to split some grids
+into finer grids.3 Meanwhile, tilted grids can also be used4 to avoid numerical issues. For particle-based Lagrangian
+approaches, the sizes of particles are adaptively adjusted.2 For hybrid approaches that inherit the traits of both Eulerian
+
+
+
+
+F I G U R E 1 Contrary to the previous surface-based refinement method (a), our method (b) refines fluid particles near boundary objects
+to allow the fine-scale fluid-boundary coupling to enhance boundary coupling details. Our method can also be combined with the
+surface-based method to refine near the boundary and the surface (c).
+                                                                                                                                      1546427x, 0, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/cav.2136, Wiley Online Library on [15/01/2023]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+XU et al.                                                                                                                   3 of 14
+
+
+and Lagrangian methods, one can improve the efficiency by limiting the regions where particles are used5 or combining
+octrees with an adjustable number of particles based on regional characteristics.6
+    SPH7 is a Lagrangian fluid simulation method that possesses the advantages of natural mass conservation and sim-
+plicity of advection computation. For adaptive SPH, Adams et al.8 resampled particles with different radii based on the
+size of local geometric features. Solenthaler and Gross9 introduced a two-scale mechanism that coupled a low-resolution
+simulation with a high-resolution one, and particles were directly inserted or deleted at the boundary between the two
+resolutions, which broke the mass-preserving condition. Horvath and Solenthaler1 extended the previous work9 to sup-
+port multiple levels of resolution and conserve mass. Orthmann and Kolb10 increased the spatial resolution by splitting
+particles using a 1:2 pattern and applied a temporal blending technique to achieve a smooth particle splitting process by
+maintaining continuous physical fields. Vacondio et al.11 used the variational principle to search for an optimized split-
+ting pattern that minimized density error. They also introduced a coalescing scheme to realize the dynamic reduction of
+resolution. Winchenbach et al.2 achieved adaptivity in incompressible SPH by introducing a new split-merge mechanism
+that produced an approximately continuous resolution based on the distance from the free surface of the fluid. Winchen-
+bach and Kolb12 later proposed a method to optimize the density error from the splitting process into an arbitrary number
+of particles by optimizing the position and mass of the split particles to increase the stability of the previous method.2
+    A popular approach for boundary handling of SPH fluids is particle-based methods that represent the solid objects
+with particles.13,14 However, for fluid simulation using adaptive methods, particle-based boundary representation may
+encounter the problem of size discrepancy between fluid and boundary particles. Another approach for boundary han-
+dling is the boundary integral method. Fujisawa et al.15 used empirically derived functions to handle triangle-mesh
+boundaries. Koschier and Bender16 precomputed the integral of boundary on a fixed grid, where the precomputing
+was rather expensive. Bender et al.17 improved this method by precalculating a volume term. Chang et al.18 integrated
+computer-aided design mesh file boundary representation into SPH by converting the volume integral to surface integral.
+Winchenbach et al.19 proposed a boundary integral method that supports adaptive SPH, which approximated the bound-
+ary integral locally at each particle with a plane based on the signed-distance field (SDF) of the boundary object. Though
+the boundary handling for adaptive SPH has been well-studied, more attention needs to be paid to designing the adap-
+tive mechanism dedicated to the fluid–solid boundary. So in this article, we present a spatial adaptivity method with the
+boundary refinement mechanism for SPH fluid simulation to capture detailed interaction effects.
+
+
+3           ADAPTIVE SPH
+
+3.1          SPH basics
+
+To simulate fluid behavior, the SPH method7 describes physical fluid motion according to the Navier–Stokes equation:
+                                                      Dv
+                                                  𝜌      = −∇p + 𝜌𝜐∇2 v + fext ,                                               (1)
+                                                      Dt
+
+where the change rate of the velocity v is determined by pressure p, density 𝜌, dynamic viscosity 𝜐 and external body
+force fext .
+    To perform numerical computation, SPH discretizes the fluid into particles and calculates the physical attributes of
+each particle using the attributes from neighboring particles and a kernel function W, as:
+                                                         ∑         mj
+                                                 Ai =         Aj      W(xi − xj , hij ),                                       (2)
+                                                          j
+                                                                   𝜌j
+
+where A is the physical attribute. i is the current particle. j denotes neighboring particles of i, whose distance to i is smaller
+than the support radius hij . hij = (hi + hj )∕2, where hi = 2ri and r is the particle diameter. m is mass. x is position. This
+article uses a cubic spline function for the kernel function W. Any value followed by the subscript i or j means the value
+of that particle.
+    According to Equation (2), density located at particle i can be approximated as:
+                                                                ∑
+                                                          𝜌i =     mj Wij ,                                                    (3)
+                                                                     j
+
+
+where Wij is short for W(xi − xj , hij ).
+

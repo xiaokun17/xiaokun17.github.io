@@ -1,0 +1,178 @@
+ 第 34 卷 第 11 期                                             计算机辅 助 设计与图 形 学学报                                            Vol.34 No.11
+   2022 年 11 月                                   Journal of Computer-Aided Design & Computer Graphics                    Nov. 2022
+
+
+
+
+面向多相流模拟的体积通量无散度 SPH 方法
+
+徐衍睿 1,2), 王笑琨 1,3)*, 班晓娟 1,3,4), 王佳敏 1,2), 宋重明 1,2), 王勇 5)
+1)
+   (北京科技大学智能科学与技术学院 北京 100083)
+2)
+   (北京科技大学计算机与通信工程学院 北京 100083)
+3)
+   (北京科技大学人工智能研究院 北京 100083)
+4)
+   (北京材料基因工程高精尖创新中心 北京 100083)
+5)
+   (北京科技大学土木与资源工程学院 北京 100083)
+(wangxiaokun@ustb.edu.cn)
+
+
+        摘     要: 针对高密度比多相流体模拟中存在的相间密度计算误差问题及产生的不合理对流运动模拟效果, 提出一种
+        基于体积通量无散度的隐式流体压强求解方法. 首先, 分析传统多相流模拟方法产生密度近似误差的原因; 其次,
+        提出“体积-压缩率”的关联计算方式, 构建流体压缩率与压强间的线性关系; 再次, 分别设计恒定体积求解器和体积
+        通量无散度求解器, 以实现多相流模拟过程中流体体积的不可压缩性和速度场的无散度特性. 为验证所提方法性能,
+        以流体模拟方法 DFSPH 为对比对象, 分别以模拟效果合理性、数值计算稳定性与收敛性为定性和定量评估指标, 依
+        次开展两相溃坝、热对流等多相流交互实验. 结果表明, 该方法能够实现高效、稳定的多相流交互模拟视觉效果, 在
+        同等多相流条件下较 DFSPH 方法耗费更少计算时间实现收敛, 在各种复杂模拟场景中均具有良好的健壮性、有效性
+        和可扩展性, 尤其适用于高密度比流体交互模拟.
+
+
+        关键词: 基于物理的模拟; 不可压缩流体; 多相流; 光滑粒子流体动力学
+        中图法分类号: TP391.41                      DOI: 10.3724/SP.J.1089.2022.19190
+
+
+
+Volume Flux Free SPH Approach for Multiphase Fluids
+
+Xu Yanrui1,2), Wang Xiaokun1,3)*, Ban Xiaojuan1,3,4), Wang Jiamin1,2), Song Chongming1,2), and Wang Yong5)
+1)
+     (School of Intelligence Science and Technology, University of Science and Technology Beijing, Beijing 100083)
+2)
+     (School of Computer and Communication Engineering, University of Science and Technology Beijing, Beijing 100083)
+3)
+     (Institute of Artificial Intelligence, University of Science and Technology Beijing, Beijing 100083)
+4)
+     (Beijing Advanced Innovation Center for Materials Genome Engineering, Beijing 100083)
+5)
+     (School of Civil and Resource Engineering, University of Science and Technology Beijing, Beijing 100083)
+
+
+      Abstract: Aiming at the numerical issue at the interface during multiphase flow simulation with high density
+      ratio and resulting unreasonable effect of convective motion, an implicit pressure algorithm based on volu-
+      metric flux free condition is proposed. Firstly, the causes of density approximation errors in the traditional
+      multiphase flow simulation methods are analyzed. Secondly, the correlation calculation of “vol-
+      ume-compression ratio” is proposed to construct the linear relationship between fluid compression state and
+      pressure. Thirdly, the constant volume solver and the volume flux free solver are designed respectively to
+      realize the incompressibility of fluid volume and the divergence free of velocity field. In order to verify the
+
+
+         收稿日期: 2021-06-21; 修回日期: 2021-07-24. 基金项目: 国家自然科学基金(61873299); 海南省重点研发计划(ZDYF2020031);
+佛山市科技创新专项(BK19AE034, BK20AF001); 中央高校基本科研业务费(FRF-IDRY-20-031, FRF-TP-19-043A2). 徐衍睿(1995—),
+男, 博士研究生, 主要研究方向为计算机图形学; 王笑琨(1987—), 男, 博士, 副教授, 论文通信作者, 主要研究方向为计算机图形
+学; 班晓娟(1970—), 女, 博士, 教授, 博士生导师, CCF 会员, 主要研究方向为人工智能、计算机图形学; 王佳敏(2000—), 女, 在校
+学生, 主要研究方向为计算机图形学; 宋重明(1998—), 女, 在校学生, 主要研究方向为计算机图形学; 王勇(1985—), 男, 博士, 副
+教授, 主要研究方向为金属矿膏体充填.
+ 1638                                       计算机辅助设计与图形学学报                                                 第 34 卷
+
+
+  performance of the proposed algorithm, the advanced fluid simulation method DFSPH is taken as compari-
+  son. And the rationality of simulation effect, numerical stability and convergence are taken as the qualitative
+  and quantitative evaluation factors respectively. Experiments such as two-phase dam break and thermal
+  convection are carried out under multiphase flow condition. The results show that the proposed method can
+  achieve efficient and stable multiphase flow interaction. Under the same multiphase flow conditions, it can
+  consume less calculation time and achieve convergence faster than DFSPH. It has good robustness, effec-
+  tiveness and scalability in various complex simulation scenarios, especially suitable for simulating fluids
+  with high density ratio.
+
+
+  Key words: physical simulation; incompressible fluid; multiphase flows; smoothed particle hydrodynamics
+
+    流体广泛存在于自然界、日常生活与工业生产                                             本文首先提出利用“体积-压缩率”为中心的体
+中, 是一种常见的物质形态. 通过计算机对流体物                                     积通量无散度 SPH 数值计算方案, 替代传统 SPH
+理现象进行模拟, 一直是计算机图形学领域的研                                       方法中以“质量-密度”为中心的密度不可压缩计算
+究热点. 当前, 流体模拟的主要研究对象为单一种                                     方案, 以有效地避免高密度比多相流体交互和边
+类流体, 即单相流体, 很少考虑对由多种具有不同                                     界处数值计算误差. 其次, 本文基于时下先进的隐
+物理性质的流体混合而成的多相流体进行动力学                                        式压强泊松方程(pressure Poisson equation, PPE)求
+建模, 并对其中耦合交互作用进行计算分析. 然                                      解思想, 分别设计 2 种压强力求解器, 实现流体速
+而, 自然界中的流体多以多相流形式存在, 如油水                                     度场无散度和流体不可压缩条件.
+混合以及冷热空气对流等. 多相流交互现象中最
+显著的即为由流相间物质密度差及速度差所导致                                        1     相关工作
+的耦合交互运动效果. 本文面向不可压缩黏性混
+合多相流间的耦合交互运动计算问题, 提出隐式                                               流体模拟是计算机图形学和虚拟现实领域的
+体 积 通 量 无 散 度 光 滑 粒 子 流 体 动 力 学 (smoothed                    研究热点, 在影视及工程产业中有着广泛的应用
+particle hydrodynamics, SPH)方法, 解决当前隐式                       需求. 流体模拟方法主要分为基于网格的欧拉法
+拉格朗日流体模拟方法中对于高密度比流体交互                                        和基于粒子的拉格朗日法, 其中, 拉格朗日法更适
+计算的不精确和不稳定问题, 实现高性能混合多                                       合模拟流体的复杂激烈运动, 近年来受到广泛关
+相流模拟.                                                        注 [1-4]. SPH 方法是最典型且使用最广泛的拉格朗
+    在当前先进 SPH 流体模拟方法中, 求解器通                                  日法之一 [1,5], 本节讨论基于 SPH 的流体模拟和多
+过预测-矫正方案分 2 步计算离散化流体粒子在各                                     相流体交互模拟的相关工作.
+时刻所具有的加速度, 并在时间上对粒子运动进                                       1.1      基于 SPH 的流体模拟
+行积分以形成粒子运动路径, 实现对流体运动的                                               SPH 方法最初由 Lucy[6] 提出, 用于解决天体
+描述. 在对每一时刻粒子位置预测过程中, 通过考                                     物理学问题, 2003 年由 Müller 等 [7]应用于流体动
+虑当前粒子速度及非压强力所形成的加速度, 分                                       画, 以加速流体仿真并实现实时交互.
+析粒子在每一时刻的压缩趋势, 并在矫正过程中                                       1.1.1    基于状态方程的求解器
+迭代计算维持流体整体不可压缩所需要的压强大                                                基于密度压缩与压强大小的关系, SPH 方法可
+小, 实现流体每一时刻的完整受力分析. 传统意                                      使用状态方程(equation of state, EOS)显式求解流
+义上, 该预测-矫正过程依托 SPH 方法对流体密                                    场各处压强. 该类方法称为基于 EOS 的压强力求
+度场的近似计算获取压缩状态量化预测. 然而,                                       解器. 此类方法通常导致一定的密度波动, 不能很
+当面向由多种不同密度的流体所组成的混合多相                                        好地满足液体的不可压缩性. Müller 等 [7]基于理想
+流进行密度场近似时, 传统 SPH 方法会在多相流                                    气体状态方程计算压强力. Becker 等 [8]提出弱可压
+交互边界处产生密度计算误差, 形成阶跃式压强                                       缩 SPH(weakly compressible SPH, WCSPH), 使用
+场, 极大地增加数值计算收敛难度, 并产生不稳                                      泰特方程取代理想气体状态方程, 将密度波动保
+定效果.                                                         持在较小范围内(通常为 1%).
+  第 11 期                               徐衍睿, 等: 面向多相流模拟的体积通量无散度 SPH 方法                                   1639
+
+
+1.1.2    迭代压强力求解器                                         了 Solenthaler 等 [22]的方案处理粒子间密度不同的
+        为增强模拟过程中流体不可压缩性, 并提升                              问题. Yang 等 [24]引入亥姆霍兹自由能, 并提出改进
+模拟效率, 不同的基于 PPE 的迭代压力求解器被                                 的 Cahn-Hillard 方 程 , 以 支 持 萃 取 等 更 多 现 象 .
+相继发明 [1]. 迭代压力求解器基于预测-矫正方案                                2020 年, Jiang 等 [25]将 Solenthaler 等 [22]的模型与基
+对粒子受力进行拆分, 首先根据除压力以外的所                                    于 PPE 的隐式迭代求解器结合, 然而, 当将数量密
+有力引起的粒子运动确定密度偏差, 然后隐式地迭                                   度方法应用于隐式迭代 PPE 压强力求解中时, 即
+代求解使密度偏差被抵消至最小的压力. 与 EOS 方                                使使用数量密度, 也只能支持密度相近的流体(密
+法相比, 虽然 PPE 迭代压力求解方法在每个时间步                                度比不高于 3)所组成的多相流体交互.
+内具有更高的计算复杂度, 但其允许更大的时间步                                   1.3   本文方法
+长, 可以提高方法的整体效率. 2009 年, Solenthaler                             本文针对现有方法不能在迭代压强力求解器
+等 [9]提出了预测-矫正 SPH(predictive-corrective in-               中处理高密度比相间界面的问题, 对不可压缩流
+compressible SPH, PCISPH), 在每轮迭代中通过粒                      体提出一种体积通量无散度的 SPH 方法, 以实现
+子预测位置计算密度, 并更新压力以矫正密度.                                    对高密度比多相流体交互现象的稳定模拟, 并结
+                  [10]
+2012 年, He 等             提出了 Local Poisson SPH, 以避免       合热传导的物理性质, 验证连续变化密度场中流
+求 解 全 局 PPE 带 来 的 巨 大 计 算 开 销 . 2014 年 ,                  体的对流动态效果.
+           [11]
+Ihmsen 等          提 出 隐 式 不 可 压 缩 SPH(implicit in-
+compressible SPH, IISPH)方法, 通过预测速度计算密                     2     SPH
+                            [12]
+度. 2015 年, Bender 等                提出无散度 SPH(divergence
+free SPH, DFSPH), 在简化 PPE 方法迭代步骤的同                        2.1   连续介质的 SPH 离散化
+时, 使用 2 个压力求解器来确保密度不变和速度场                                       光滑粒子流体动力学方法, 即 SPH 方法, 使
+散度为 0. 与前 2 种方法相比, DFSPH 可实现更好                            用离散宏观粒子来描述连续流体介质. 对位于 xi
+的不可压缩性, 使用更长的时间步长, 从而显著地                                  处的粒子 i 的任意物理量 Ai , 其数值可以通过 SPH
+提升模拟效率.                                                   方法近似为
+1.2   多相流体交互模拟                                                         Ai  V j A jW ( xi  x j , h)    (1)
+      在多相流的相互作用中, 流体通常展现出不                                                     j
+可混溶与可混溶 2 种行为 [13]. 不可混溶流体的各                                          mj
+相间不互溶, 具有清晰可辨的相间界面; 相反, 可                                 其中, V j         为局部体积; j 为在粒子 i 支持半
+                                                                      j
+混溶流体相间可互溶, 可同时存在于一个模拟单
+                                                          径 h 内所有邻居粒子, m j 为粒子 j 的质量,  j 为
+元内.
+                                                          粒子 j 处的密度; W ( xi  x j , h) 为光滑核函数(以下
+      针对不可混溶多相流, 研究人员提出了各种解
+决方案, 如基于位置的流体(position-based fluids,                      简写为 Wij ), 为归一化类高斯函数, 本文采用 3 次
+PBF)[14], 流 体 隐 式 粒 子 (fluid implicit particle,           样条插值函数作为光滑核函数.
+FLIP)[15-18], 格 子 玻 尔 兹 曼 方 法 (lattice Boltzmann                对 Ai 一阶导数计算可以通过求取光滑核函数
+method, LBM)[19]等流体模拟方法. 而在 SPH 框架                        梯度近似为
+中, 一种早期方法是显式地计算不同相粒子的碰
+                                                                           Ai     V j A j Wij
+                                                                                   0
+                                                                                                         (2)
+撞并调整粒子位置 [20], 另一种方法是为不同相粒                                                             j
+子分配不同的标签和物理属性 [21]. 然而, 由于相
+                                                          关于其高阶导, 也可同理计算 [26].
+间交界面处密度不连续, 早期方法会造成较大计
+                                                                不 可 压 缩 黏 性 流 体 运 动 可 用 纳 维 -斯 托 克 斯
+算误差. 为处理界面密度不连续问题, Solenthaler
+                                                          (Navier-Stocks, N-S)方程描述为
+等 [22]引入了数量密度, 显著地提升了 EOS 方法所
+                                                                           Dv
+支持的多相流交互密度比.                                                                  p   2 v  f ext     (3)
+                                                                           Dt
+      对于可混溶流体的 SPH 模拟, Müller 等 [21]首先
+引入了体积分数概念, 以表示同一粒子中存在的                                    其中, p 为压强;  为黏度系数; v 为流体流动速
+多相流体. Ren 等 [23] 进一步引入了漂移速度模型,                            度; D() / Dt 为物质导数, 表示流体微团物理量随
+以模拟相间受力不同所引起的混合效果, 并使用                                    时间的变化率; f ext 为重力场等体积力. 根据上述
+

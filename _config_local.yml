@@ -1,0 +1,10 @@
+# Local preview overrides. Keep network-dependent sample content out of builds.
+external_sources: []
+
+exclude:
+  - bin
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - _posts/2020-09-28-twitter.md
+  - _posts/2021-07-04-diagrams.md

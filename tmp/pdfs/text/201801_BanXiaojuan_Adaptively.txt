@@ -1,0 +1,200 @@
+Neural Comput & Applic
+DOI 10.1007/s00521-016-2286-8
+
+    RECENT ADVANCES IN PATTERN RECOGNITION AND ARTIFICIAL INTELLIGENCE
+
+
+
+Adaptively stepped SPH for fluid animation based
+on asynchronous time integration
+Xiaojuan Ban1 • Xiaokun Wang1 • Liangliang He 1 • Yalan Zhang 1 •
+Lipeng Wang1
+
+
+
+
+Received: 12 November 2015 / Accepted: 25 March 2016
+Ó The Natural Computing Applications Forum 2016
+
+
+Abstract We present a novel adaptive stepping                    interest in graphics community, are able to successfully
+scheme for SPH fluids, in which particles have their own         simulate complex scenes with versatile effects [1]. To
+time steps determined from local conditions, e.g. courant        produce appealing visual results with small-scale details,
+condition. These individual time steps are constrained for       SPH fluids demand a high discretization resolution, i.e.,
+global convergence and stability. Fluid particles are then       large number of particles. The computational expenses of
+updated asynchronously. The approach naturally allocates         simulating millions of particles are, however, too large for
+computing resources to visually complex regions, e.g.            practical use [2]. To cope with the increasing demand for
+regions with intense collisions, thereby reducing the overall    more detailed fluids, adaptive methods, that adapt either the
+computational time. The experiments show that our                spatial resolution or the sampling in time, have been pro-
+approach is more efficient than the standard method and the      posed. They follow the idea to allocate computing
+method with globally adaptive time steps, especially in          resources to regions with complex flow behavior.
+highly dynamic scenes.                                              Space adaptive methods [3–5] dynamically exchange
+                                                                 particle sets. Large particles are divided into smaller ones
+Keywords Fluid simulation  Adaptive SPH  Individual            when a high discretization resolution is needed, and vice
+time steps  Asynchronous                                        versa. In contrast to homogeneous fluids, these adaptively
+                                                                 sampled particle fluids use fewer particles to produce the
+                                                                 similar details and thus are more efficient. However, diffi-
+1 Introduction                                                   culties exist in reproducing quantity when refining particles.
+                                                                 Furthermore, while neighborhood searching is usually the
+Physics-based fluid simulations are widely used, for             bottleneck [2], non-uniform smoothing radii make it slower
+example, in movies, virtual realities and even in computer       since hierarchical data structures such as kd-trees have to be
+games, despite the difficulty due to the complexity of fluid     used [1].
+behavior. Lagrangian methods based on smoothed particle             As an alternative to adaptive spatial discretization, time
+hydrodynamics (SPH), which have been gaining increased           adaptive methods adapt the sampling distance in time.
+                                                                 Globally adaptive time-stepping methods [6–8] use a single
+                                                                 time step adjusted in each simulation step with respect to the
+Electronic supplementary material The online version of this     CFL condition [6] for all particles. Since globally adaptive
+article (doi:10.1007/s00521-016-2286-8) contains supplementary
+material, which is available to authorized users.                time steps update all particles according to the particle that
+                                                                 has the current smallest time step, it is not the most efficient.
+& Xiaokun Wang                                                   Locally adaptive time-stepping methods [3, 9, 10] use dif-
+  wang1xiao2kun3@163.com
+                                                                 ferent time steps for particles. In [3], each particle evaluates
+     Xiaojuan Ban                                                forces only when needed, according to its current individual
+     banxj@ustb.edu.cn
+                                                                 time step determined from individual stability conditions.
+1
+     School of Computer and Communication Engineering,              In this paper, we adopt the idea of [3] for weakly
+     University Science and Technology Beijing, Beijing, China   compressible SPH (WCSPH) [11]. To make the simulation
+
+
+                                                                                                                       123
+                                                                                                              Neural Comput & Applic
+
+
+                                                                        27] used the CPU/GPU asynchronous computing to
+                                                                        improve the efficiency of the method. [28, 29] employed
+                                                                        motion blur, particle blending texture mapping, and other
+                                                                        computer graphics techniques to achieve real-time effect.
+                                                                        [30] presented a sleepy algorithm to improve efficiency by
+                                                                        ignoring particles appearing to be at rest.
+                                                                           For high-resolution simulations, many adaptive methods
+                                                                        have been presented reducing the computational cost. Space
+                                                                        adaptive methods, e.g. adaptively sampling methods [3, 4],
+                                                                        multi-resolution methods [31] or multi-scale method [5, 32],
+                                                                        change local resolution, i.e., particle size, dynamically or
+                                                                        couple multiple resolution levels to reduce the number of
+                                                                        particles. To reduce the error introduced when changing
+                                                                        particle configurations, temporal blending approach [33]
+                                                                        smoothly changes quantity fields along with simulation time.
+                                                                           As an alternative to reducing the number of particles,
+Fig. 1 Asynchronous time integration. The starting points of the line
+segments are update time, and the length of line segments iterate       many techniques try to optimize the time steps, either
+individual time step                                                    globally or locally. Since the convergence of SPH simu-
+                                                                        lations is bound to CFL condition, globally adaptive time-
+of stiff fluids stable, small time steps are spread to neighbor         stepping methods use a single optimal time step for each
+particles in order to respond to strong shocks. The proposed            simulation step. [8] proposed an adaptive time-stepping
+simulation is very similar to the globally adaptive time-               method for PCISPH, in which the time steps are changed
+stepping methods, except performing neighborhood                        smoothly to overcome stability problems. The idea of using
+searching and forces evaluating for only fraction of all                individual time step with each particle was first proposed in
+particles in every simulation step. The position, velocity              [3] for the simulation of deformable objects. In [10], the
+and density of the particle that currently does not need                movement of inactive particles is temporarily restricted. [9]
+force evaluations are interpolated. We show that the pre-               proposed a block-based regional time-stepping method
+sented simulation algorithm naturally allocates computing               using different time steps for different regions. Compared
+resources to visually complex regions with intense colli-               to [9], our approach uses individual time steps for each
+sions (Fig. 1) and thus reduces the computational time.                 particle which is similar to [3] with careful selected sta-
+                                                                        bility conditions.
+                                                                           A good introduction into SPH fluid simulation is given
+2 Related work                                                          in the state-of-the-art report of Markus et al. [1].
+
+Since the SPH concept [12] was first introduced to graphics
+community by the work of Mathieu [6], it has become an                  3 Methodology
+active topic. Matthias et al. [7] first applied the SPH
+method to interactive fluid simulation. Markus et al. [13]              3.1 Basic SPH
+use a stiff equation of state (EOS) for weakly compressible
+SPH (WCSPH). To enforce incompressibility efficiently,                  In SPH, a fluid is consisted by a set of particles. Each
+iterative solvers are proposed including predictive-correc-             particle i has several attributes, namely
+tive incompressible SPH (PCISPH) [12], local poisson SPH
+(LPSPH) [14] and implicit incompressible SPH (IISPH)
+[15]. These methods are, however, in the cost of increasing             mi                                                   Mass
+the complexity of programming.                                          qi                                                   Density
+   Algorithms to handle the fluid–rigid coupling problems               pi                                                   Pressure
+were proposed [16, 17]. In order to obtain a satisfied sur-             xi                                                   Position
+face, [18–21] made efforts on surface reconstruction. In                vi                                                   Velocity
+additional, [22, 23] revised tension model to get the details
+of surface. Since there are almost no data dependencies,
+SPH methods generally map well to parallel architectures.                  When the particles flow with the fluid, the relations
+[2] presented a parallel SPH implementation on multi-core               between these attributes are governed by governing equa-
+CPUs, and [24, 25] implemented the SPH on GPUs. [26,                    tions. For WCSPH [11, 12], the governing equations are
+
+
+123
+Neural Comput & Applic
+
+       X                                                                       sﬃﬃﬃﬃﬃﬃﬃﬃ!
+qi ¼       mj Wij                                            ð1Þ                  h
+       j                                                            Dtf  kf                                                  ð7Þ
+                                                                                fmax
+             c 
+     q0 c2S   qi                                                                      
+pi ¼             1                                          ð2Þ                       i
+      c       q0                                                    where fmax ¼ maxi j dv
+                                                                                         dt j denotes the maximum force per
+dxi                                                                 unit mass of particles, kf \1. In [8], kv ¼ 0:4; kf ¼ 0:25 are
+    ¼ vi                                                     ð3Þ
+dt                                                                  used for PCISPH. Since WCSPH uses a stiff EOS which
+                              !                                     restricts the time step [2, 34], we use kv ¼ 0:1; kf ¼ 0:05
+ dvi      X         pi pj
+     ¼       mj 2 þ 2 rWij þ g                               ð4Þ   for globally adaptive time-stepping method. Instead of
+ dt         j
+                    qi qj                                           using a constant time step in Algorithm 1, we can now
+                                                                  adjust it dynamically by
+where Wij ¼ W xi  xj ; h is the kernel function with h the
+smooth radii, j iterates all the neighbors, q0 ¼ 1000; cS ; c ¼ 7   Dt ¼ min ðDtCFL ; Dtf Þ:                                  ð8Þ
+are constants, r is the gradient operator and g is the external
+force. For the other force term, e.g. viscous force and surface
+tension force, we can add them on the right side of Eq. (4). In
+our implementation, we use the viscous force and kernels            4 Individual time stepping
+presented in [6] and rigid–fluid coupling methods of [16]. The
+Basic SPH method uses the semi-implicit Euler numerical             In SPH fluids, each particle only interacts with its neigh-
+integration scheme, which is illustrated in Algorithm 1.            bors. The convergence of the simulation of each particle is
+                                                                    determined locally. In our method, the individual time
+                                                                    stepping of each particle is determined by the local con-
+                                                                    dition in its smooth radii. Allowing particles to have dif-
+ Algorithm 1 Basic SPH
+                                                                    ferent time steps is more efficient than using a globally
+  1: while animating do
+  2:   for all particle i do                                        restricted time step for all particles. Regarding the calcu-
+  3:       find neighbors j                                         lation speed, the algorithm is two times larger compared to
+  4:   for all particle i do                                        globally adaptive time-stepping algorithm and six times
+  5:       compute ρi , pi (e.g. Eq. (1), (2))                      larger compared to WCSPH.
+  6:   for all particle i do
+  7:       compute forces (e.g. Eq. (4))
+                                                                       We propose a novel asynchronous time integration
+  8:   for all particle i do
+                                                                    algorithm based on particle’s individual time stepping. The
+  9:       vi (t + Δt) = vi (t) + Δt dv
+                                      dt
+                                        i (t)                       algorithm has the same skeleton as the globally adaptive
+ 10:       xi (t + Δt) = xi (t) + Δtvi (t + Δt)                     time-stepping methods do. The main difference is that, at
+ 11:   t = t + Δt                                                   every time step, only the active particles will be updated.
+  The density derivative is given by                                For those inactive particles, their physical quantities are
+                                                                    obtained by linear interpolation.
+dqi X
+   ¼     mj vij rWij                                         ð5Þ
+dt     j                                                            4.1 Time steps
+where vij ¼ vi  vj . We use density derivative to interpo-
+                                                                    Our individual time-stepping method computes time step
+late density.
+                                                                    for each particle i according to
+                                                                                            sﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃ!
+3.2 Globally adaptive time stepping                                                   h              h
+                                                                    Dti ¼ min kv   ; kf                         ð9Þ
+                                                                            j        jvj j      jdvj =dtj
+The time step of SPH fluids must be constrained for
+numerical stability and convergence. The Courant–Frie-              where j iterates over all neighbors. In contrast to [3], we
+drich–Levy (CFL) condition                                          take the neighbors into account, which make the algo-
+                                                                  rithm stable for stiff fluids. The proposed method, how-
+             h
+DtCFL  kv                                        ð6Þ               ever, requires small coefficients due to the asynchrony.
+            vmax
+                                                                    We use kv ¼ 0:05; kf ¼ 0:025; i.e., half of that of globally
+ensure that numerical propagation speed is higher than              adaptive time-stepping method. Fortunately, this restric-
+physical propagation speed, where vmax ¼ maxi ðjjvi jjÞ is          tion will be counteracted by the fact that the proposed
+the maximum of the particle velocities, coefficient kv \1.          method updates only a small fraction of all particles in
+In addition, particle forces have to be considered                  every time step.
+
+
+
+                                                                                                                       123
+

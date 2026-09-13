@@ -1,0 +1,200 @@
+Hindawi
+Scientiﬁc Programming
+Volume 2017, Article ID 8502691, 11 pages
+https://doi.org/10.1155/2017/8502691
+
+
+
+
+Research Article
+Rigid Body Sampling and Individual Time Stepping for
+Rigid-Fluid Coupling of Fluid Simulation
+
+          Xiaokun Wang, Xiaojuan Ban, Yalan Zhang, and Xu Liu
+          University of Science and Technology Beijing, Beijing 100083, China
+
+          Correspondence should be addressed to Xiaojuan Ban; banxj@ustb.edu.cn
+
+          Received 4 August 2016; Accepted 14 February 2017; Published 2 March 2017
+
+          Academic Editor: Wenbing Zhao
+
+          Copyright © 2017 Xiaokun Wang et al. This is an open access article distributed under the Creative Commons Attribution License,
+          which permits unrestricted use, distribution, and reproduction in any medium, provided the original work is properly cited.
+
+          In this paper, we propose an efficient and simple rigid-fluid coupling scheme with scientific programming algorithms for particle-
+          based fluid simulation and three-dimensional visualization. Our approach samples the surface of rigid bodies with boundary
+          particles that interact with fluids. It contains two procedures, that is, surface sampling and sampling relaxation, which insures
+          uniform distribution of particles with less iterations. Furthermore, we present a rigid-fluid coupling scheme integrating individual
+          time stepping to rigid-fluid coupling, which gains an obvious speedup compared to previous method. The experimental results
+          demonstrate the effectiveness of our approach.
+
+
+
+1. Introduction                                                          only a few rigid boundary sampling methods can be directly
+                                                                         employed in rigid-fluid coupling simulation. For another
+Physically based fluid simulation is a popular issue in com-
+puter graphics and virtual reality while having a huge research          thing, the computational expenses of rigid-fluid coupling are
+and application demand in three-dimensional visualization                considerable. To deal with the increasing demands for more
+and human- computer interactions. More realistic effects                 detailed fluids and high efficiency, we present rigid sampling
+and higher simulation efficiency are the main goals; thus,               and individual time stepping for rigid-fluid coupling and
+reasonable, efficient, and scientific programming algorithms             design a practical and easy rigid-fluid animation simulation
+are needed to design and implement the animation. Two                    scheme with our scientific programming algorithms.
+major schemes are employed for animating fluids: the grid-
+based Eulerian approach and particle-based Lagrangian                    2. Related Work
+approach. Eulerian method is particularly suited to simulate
+large volumes fluid, while being restricted by time step                 Desbrun and Gascuel introduced SPH to computer graphics
+and computing time for small scale features. In contrast,                for simulating deformable objects [1]. SPH became popular in
+Lagrangian method is suitable for capturing small scale                  computer graphics for various fluid phenomena. Monaghan
+effects such as spindrift and droplet. Among various particle-           addressed simulating free surface flows with SPH [2] that
+based approaches, Smoothed Particle Hydrodynamics (SPH)                  serves as a basis for SPH fluid simulation. Muller et al.
+is the most popular method for simulating fluid due to                   [3] proposed using gas state equation with surface tension
+computational simplicity and efficiency.                                 and viscosity forces for fluid simulation, which also bring
+    In reality, rigid-fluid interaction widely exists in many            compressibility issue. Becker and Teschner [4] proposed
+scenarios. As a result, the interesting fluid behaviors emerge           WCSPH employing Tait equation to reduce compressibility.
+once rigid objects are added to fluid simulation. While                  It significantly increased realistic effects but the efficiency is
+interaction between particle-based fluids and rigid objects              limited by time step. As incompressibility expenses compu-
+seems to be straightforward, there are still several issues not          tation time, many improved algorithms were addressed to
+well resolved. For one thing, rigid bodies must be sampled               enhance the efficiency. Solenthaler and Pajarola [5] presented
+to particles in order to interact with particle-based fluids, but        PCISPH using a prediction-correction scheme to determine
+2                                                                                                              Scientific Programming
+
+particle’s pressure and large time steps which significantly        with rigid bodies [27]. Becker et al. presented direct forcing
+improved efficiency comparing to WCSPH. Another similar             for rigid-fluid coupling [28] which employs a prediction-
+method that ensures incompressibility by iterative process          correction scheme to enforce particle positions and velocities
+is LPSPH [6]. Afterwards, Ihmsen et al. addressed a more            to specific values. Akinci et al. presented a momentum-
+efficient approach IISPH [7]. It carefully constructed pressure     conserving two-way coupling approach based on hydro-
+Poisson equation and solved the linear system using Relaxed         dynamic forces that use boundary particles to sample the
+Jacobi, which has a great improvement in stability as well as       surface of rigid bodies [23]. We present a rigid-fluid coupling
+convergence speed and is particularly suitable for large-scale      scheme by integrating individual time stepping to Akinci’s
+scene. Recently, a promising approach for impressible SPH           boundary handling method that gains an obvious speedup
+has been proposed by Bender and Koschier [8]. It combines           [29].
+two pressure solvers which enforce low volume compression                Rigid bodies sampling includes particle-based methods
+and a divergence-free velocity field and permits large time         and polygonization-based methods. Turk repelled particles
+steps that yields a considerable performance gain.                  on surfaces to get a uniform sample [30] and also sim-
+     Besides, adaptive method, either spatial resolution or         plified a polygonization through reducing the number of
+time discretization, is another way to promote efficiency. They     polygons [31]. Witkin and Heckbert employed local repulsion
+allot computing resources to regions with complex flow              to make particles spread uniform [32]. Nehab and Shilane
+behavior. Space adaptive methods [9–11] adaptively sample           [33] presented algorithm of stratified point sampling. Cook
+particle and employ less particles to produce similar details.      addressed stochastic sampling of Poisson disk distributions
+Large particles are divided into small particles if high reso-      with blue noise [34]. Blue sampling has the ability to generate
+lution is needed, and vice versa. However, difficulties exist in    random points and get uniform distribution of sampling
+reproducing quantity when refining particles, and neighbor          points set. Therefore, the following sampling methods always
+searching is usually the bottleneck. As an alternate to adaptive    have blue noise characteristics. Corsini et al. sampled trian-
+spatial discretization, the time domain can be adaptively           gular meshes with blue noise properties [35]. Dunbar and
+sampled as well. Globally adaptive time stepping methods            Humphreys [36] modified Poisson disk sample using a spatial
+[1, 12, 13] employ a single time step to adjust each step           data structure. Bridson [37] simplified Dunbar’s approach
+for all particles in consideration of CFL condition. Though         with rejection sampling and extending it to higher dimen-
+each particle has the current smallest time step, it is not the     sions. Then, Schechter [22] modified Bridson’s approach and
+most efficient way. Locally adaptive time stepping methods          employed it to Ghost SPH. Inspired by Schechter’s approach,
+[9, 14, 15] use different time steps for particles. Desbrun and     we address sampling method improved by SPH equation that
+Cani proposed that each particle evaluates forces depending         is more efficient and easy to implement.
+on its current individual time step [9]. He et al. [16] adopt
+this idea and implement stable simulation of stiff fluids. It       3. Particle-Based Fluid Simulation Framework
+updates position, velocity, and density for active particles and
+interpolates for inactive particles. In this paper, we integrate    In particle-based fluid simulation, the forces acting on
+it to rigid-fluid coupling to reduce the computational time.        particles are derived from the Navier-Stokes equations. The
+     For boundary handling in SPH fluid simulation, distance-       conservation of mass and momentum are written as
+based penalty methods were commonly employed [17–19].                                    𝑑𝜌𝑖
+Nonetheless, these methods require large penalty forces                                      = −𝜌𝑖 ∇ ⋅ k𝑖 ,
+which limit the time step and make particles stick to the                                 𝑑𝑡
+                                                                                                                                    (1)
+boundary on account of lacking fluid neighbors. Frozen or                                𝐷k𝑖                     2
+ghost particles based models are used to solve the problem                            𝜌𝑖     = −∇𝑝𝑖 + 𝜌𝑖 𝑔 + 𝜇∇ k𝑖 ,
+                                                                                         𝐷𝑡
+of sticking particles [20]. In order to avoid penetration,
+                                                                    where k𝑖 is the velocity, 𝜌𝑖 is the density, 𝑝𝑖 is the pressure, 𝜇
+more than one layer of frozen particles were used [21], or
+                                                                    is the viscosity coefficient, and 𝑔 is the external force field.
+the positions of penetrating particles should be corrected
+                                                                         SPH works by obtaining approximate numerical solutions
+[13]. However, handling two-way interaction is troublesome
+                                                                    of fluid dynamics equations by expressing fluids with parti-
+since the elevated density near boundary in one phase affects
+                                                                    cles. In SPH, the representation of a field variable 𝐴 at location
+particles in the other phase. For this reason and for the lack of
+                                                                    x𝑖 is defined as
+fluid neighbors, Ghost SPH [22] solved those problem using
+a narrow layer of ghost particles and Akinci et al. employed                                          𝐴𝑗
+boundary particles to correct the calculation of fluid density                    ⟨𝐴 (x𝑖 )⟩ = ∑𝑚𝑗          𝑊 (x𝑖 − x𝑗 , ℎ) ,       (2)
+                                                                                                  𝑗   𝜌𝑗
+[23]. Because Ghost SPH is more time consuming, we use
+Akinci’s boundary handling method which is simple and easy          where 𝑚𝑗 and 𝜌𝑗 represent particle mass and density, respec-
+to achieve in this paper.                                           tively, 𝑊(x𝑖 − x𝑗 , ℎ) is smoothing kernel, and ℎ is smoothing
+     For rigid-fluid coupling, several approaches were pre-         radius.
+sented up to now. In [24], the fluid is represented as rigid            It can be easily derived from the basic SPH equation by
+spheres and switching impulses with rigid bodies. In [25, 26],      substituting fluid density 𝜌 into (2), that is,
+the pressure at the boundary is taken into consideration for
+two-way fluid-rigid coupling. Then, Oh et al. proposed an                              𝜌𝑖 = ∑𝑚𝑗 𝑊 (x𝑖 − x𝑗 , ℎ) .                  (3)
+impulse-based scheme for two-way coupling of SPH fluids                                       𝑗
+Scientific Programming                                                                                                                             3
+
+                                                                           where 𝑓𝑗 and 𝑏𝑘 denote fluid particle 𝑗 and boundary particle
+                                                                           𝑘, respectively. The first summation calculates the affection
+                                                                           of adjacent fluid particles, while the second summation
+                                                             Rigid         computes the influence of adjacent boundary particles. This
+                                                             body          formula can overcome the problem of boundary defects in
+                                                                           SPH fluid simulation to some extent.
+                                                                               Due to the use of boundary particle mass in (5), the
+                               Rigid                                       density of fluid particles is incorrect or unstable when the
+                               body                                        boundary particle density is set unreasonably or unevenly
+                                                                           distributed. Hence, consider the contribution of boundary
+                                                                           particles to fluid particle by the volume of boundary particles
+                                                            Rigid          is
+                                                            body
+                                                                                                        Ψ𝑏𝑖 (𝜌0 ) = 𝜌0 𝑉𝑏𝑖                       (6)
+                                                                           where 𝜌0 denotes the remaining density of fluid and 𝑉𝑏𝑖 is the
+                                                                           estimation value of boundary area volume of corresponding
+                                                                           boundary particles. Applying Ψ𝑏𝑖 (𝜌0 ) to replace the boundary
+                                                                           particle mass can guarantee the stability.
+     Boundary particle                   ＆ＩＬ＝？rigid-ﬂuid                       Thus, (5) can be rewritten as
+                                         ＆ＩＬ＝？ﬂuid-ﬂuid
+                                         ＆ＩＬ＝？rigid-rigid                                𝜌𝑓𝑖 = ∑𝑚𝑓𝑗 𝑊𝑖𝑗 + ∑Ψ𝑏𝑘 (𝜌0𝑖 ) 𝑊𝑖𝑘 .                      (7)
+     Fluid particle                                                                                𝑗                         𝑘
+
+ Figure 1: Forces between boundary particles and fluid particles.          The most important interaction between fluid particles and
+                                                                           boundary particles is the pressure. The pressure acceleration
+                                                                           generated by boundary particles to fluid particles can be
+Therefore, particles’ pressure force f𝑖𝑃 and viscous force f𝑖V can         computed as
+be written as
+                                                                                           𝑑k𝑓𝑖              𝑘𝑝𝑓𝑖
+                             𝑃    𝑃𝑗                                                               =−                    ∑Ψ𝑏𝑘 (𝜌0𝑖 ) ∇𝑊𝑖𝑘 ,      (8)
+                 f𝑖𝑃 = −∑𝑚𝑗 ( 2𝑖 + 2 ) ∇𝑊𝑖𝑗 ,                                               𝑑𝑡               𝜌𝑓2         𝑘
+                                                                                                                     𝑖
+                        𝑗    𝜌𝑖   𝜌𝑗
+                                                                     (4)   where 𝑝𝑓𝑖 > 0 takes 𝑘 = 2. When 𝑝𝑓𝑖 < 0, boundary
+                                   k𝑗𝑖                                     particles and fluid particles attract each other; then, we can
+                  f𝑖V = 𝜇∑𝑚𝑗             ∇2 𝑊𝑖𝑗 .                          adjust parameter 𝑘 (0 ≤ 𝑘 ≤ 2) to realize different adsorption
+                           𝑗       𝜌𝑗
+                                                                           effects, and we choose 𝑘 = 1 in our experiment.
+In this paper, we use Tait equation [4] to calculate the                       To simulate the friction between fluid and container wall
+pressure; that is, 𝑝𝑖 = (𝜌0 𝑐𝑆2 /𝛾)((𝜌𝑖 /𝜌0 )𝛾 − 1), where 𝜌0 = 1000       or the interaction of rigid body and fluid, we have to compute
+is the rest density of the fluid, 𝛾 = 7 is stiffness parameter, and        the friction of boundary particles with fluid particles. The
+𝑐𝑆 is velocity of sound. We use the equation in [23] to compute            friction is calculated by the artificial viscosity; that is,
+viscous force.                                                                              𝑑k𝑓𝑖
+                                                                                                       = −∑Ψ𝑏𝑘 (𝜌0𝑖 ) Π𝑖𝑘 ∇𝑊𝑖𝑘 ,                 (9)
+                                                                                             𝑑𝑡                  𝑘
+4. Boundary Handling for
+   Particle-Based Fluids                                                   where Π𝑖𝑘 = −](k𝑖𝑘 𝑇 x𝑖𝑘 /(x𝑖𝑘 2 + 𝜀ℎ2 )), ] = 2𝛼ℎ𝑐𝑠 /(𝜌𝑘 + 𝜌𝑗 ).
+                                                                               On account of (8) and (9) that listed the forces for fluid
+In rigid-fluid interaction, there are three types of forces                particles, we can get the forces of boundary particles using
+among particles: the forces between fluid particles and                    Newton’s third law. The forces generated by fluid particles to
+boundary particles Forcerigid-fluid , the forces between fluid             boundary particles are
+particles Forcefluid-fluid , the forces between boundary particles
+                                                                                                   𝑘𝑝𝑓𝑖
+Forcerigid-rigid , which is shown in Figure 1. In our simulation,                    F𝑏𝑘 = ∑ (                   + Π𝑖𝑘 ) 𝑚𝑓𝑖 Ψ𝑏𝑘 (𝜌0𝑖 ) ∇𝑊𝑖𝑘 ,   (10)
+we sample rigid body to obtain boundary particles which is                                  𝑖          𝜌𝑓2
+                                                                                                         𝑖
+described in Section 5. Moreover, for the boundary handling
+way of rigid-fluid interaction, we implement our simulation                where 𝑖 denotes the fluid neighbors of boundary particle 𝑘. It
+based on the work of [23]. The following will briefly introduce            is the counteracting force of (8) and (9).
+boundary handling in this section.                                              For a rigid body, the total force and torque need to be
+    Considering influence of boundary particles, density                   calculated. This can be separately written as
+formula of fluid particles in (3) needs to introduce weighted                               Frigid = ∑F𝑏𝑘 ,
+summation influence of boundary particle [23], that is,                                                      𝑘
+                                                                                                                                                 (11)
+                      𝜌𝑓𝑖 = ∑𝑚𝑓𝑗 𝑊𝑖𝑗 + ∑𝑚𝑏𝑘 𝑊𝑖𝑘 ,                    (5)
+                                                                                                              cm
+                                                                                            𝜏rigid = ∑ (x𝑘 − xrigid ) × F𝑏𝑘 ,
+                            𝑗                  𝑘                                                             𝑘
+

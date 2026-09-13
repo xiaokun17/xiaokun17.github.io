@@ -1,0 +1,186 @@
+                     Utrecht University Repository
+
+Title                Visual simulation of bone cement blending and dynamic flow
+
+
+Authors              Shen, Long; Zhang, Yalan; Frey, Steffen; Telea, Alex; Kosinka, Jiri; Wang,
+                     Xiaokun; Ban, Xiaojuan
+
+
+Published in         Proceedings - 2024 IEEE International Conference on Bioinformatics and
+                     Biomedicine, BIBM 2024;Proceedings - 2024 IEEE International Conference
+                     on Bioinformatics and Biomedicine, BIBM 2024;2024 IEEE International
+                     Conference on Bioinformatics and Biomedicine, BIBM 2024
+
+
+Publication Date     2025-01-10
+
+
+Link                 https://dspace.library.uu.nl/handle/1874/482710
+
+
+Citation             Shen, L, Zhang, Y, Frey, S, Telea, A, Kosinka, J, Wang, X & Ban, X 2025, Visual
+                     simulation of bone cement blending and dynamic flow. in M Cannataro, H
+                     Zheng, L Gao, J Cheng, J L de Miranda, E Zumpano, X Hu, Y-R Cho & T Park
+                     (eds), Proceedings - 2024 IEEE International Conference on Bioinformatics
+                     and Biomedicine, BIBM 2024. Proceedings - 2024 IEEE International
+                     Conference on Bioinformatics and Biomedicine, BIBM 2024, IEEE, pp.
+                     6226-6233, 2024 IEEE International Conference on Bioinformatics and
+                     Biomedicine, BIBM 2024, Lisbon, Portugal, 3/12/24. https://doi.org/10.1109/
+                     BIBM62325.2024.10822238;conference
+
+
+Versions / License   Publisher version
+
+
+Rights               https://www.uu.nl/en/university-library/license-and-reuse-conditions
+                                                                                                                                                                                                       2024 International Conference on Bioinformatics and Biomedicine (BIBM)
+
+
+
+
+                                                                                                                                                                          Visual simulation of bone cement blending
+                                                                                                                                                                                      and dynamic flow
+2024 IEEE International Conference on Bioinformatics and Biomedicine (BIBM) | 979-8-3503-8622-6/24/$31.00 ©2024 IEEE | DOI: 10.1109/BIBM62325.2024.10822238
+
+
+
+
+                                                                                                                                                                        1st Long Shen                    2nd Yalan Zhang*                        3rd Steffen Frey                            4th Alex Telea
+                                                                                                                                                                     School of Intelligence              School of Intelligence               Bernoulli Institute                    Department of Information
+                                                                                                                                                                   Science and Technology,             Science and Technology,             University of Groningen                    and Computing Sciences
+                                                                                                                                                                     University of Science               University of Science            Groningen, the Netherlands                     Utrecht University
+                                                                                                                                                                    and Technology Beijing              and Technology Beijing                  s.d.frey@rug.nl                       Utrecht, the Netherlands
+                                                                                                                                                                        Beijing, China                      Beijing, China                                                                a.c.telea@uu.nl
+                                                                                                                                                                     sl 111211@163.com                   zhangyl@ustb.edu.cn
+
+                                                                                                                                                                    5th Jiřı́ Kosinka                        6th Xiaokun Wang                                       7th Xiaojuan Ban*
+                                                                                                                                                                  Bernoulli Institute                        School of Intelligence                       Beijing Key Laboratory of Knowledge
+                                                                                                                                                               University of Groningen                     Science and Technology,                         Engineeringfor Materials Science,
+                                                                                                                                                              Groningen, the Netherlands                     University of Science                                University of Science
+                                                                                                                                                                   j.kosinka@rug.nl                         and Technology Beijing                               and Technology Beijing
+                                                                                                                                                                                                                Beijing, China                                       Beijing, China
+                                                                                                                                                                                                           wangxiaokun@ustb.edu.cn                                 banxj@ustb.edu.cn
+
+
+
+
+                                                                                                                                                                 Abstract—Bone cement filling is an important method for pre-
+                                                                                                                                                              venting osteoporosis and treating fractures. In bone cement filling
+                                                                                                                                                              surgery, the preparation and dosage of the cement usually depend
+                                                                                                                                                              on specific product manuals and the doctor’s experience. If bone
+                                                                                                                                                              cement is not used properly, it may cause additional damage. For
+                                                                                                                                                              teaching and auxiliary medical purposes, for example, assisting
+                                                                                                                                                              doctors to observe the possible flow of bone cement, this paper
+                                                                                                                                                              proposes a multiphase non-Newtonian fluid simulation method
+                                                                                                                                                              to simulate and visualize the flow behavior during the wet sand
+                                                                                                                                                              phase of bone cement blending and polymerization. Our method
+                                                                                                                                                              enables showing intuitively the application process of bone
+                                                                                                                                                              cement under different scene settings to obtain dynamic bone ce-
+                                                                                                                                                              ment effects with high stability and performance. Compared with
+                                                                                                                                                              other methods, our method can simulate highly viscous mixed
+                                                                                                                                                              fluids efficiently and robustly, which supports our method’s usage
+                                                                                                                                                              in the aforementioned training and experimentation scenarios.
+                                                                                                                                                                 Index Terms—Medical visualization, Bone filling simulation,              Fig. 1. a) Schematic diagram of bone cement (green) filled inside a bone
+                                                                                                                                                              Multiphase non-Newtonian fluid modeling, Bone cement effects                (gray). b) When there is a fracture(as shown by purple lines), and the cement
+                                                                                                                                                                                                                                          is too thin, the pressure inside the bone and a low modulation ratio may cause
+                                                                                                                                                                                    I. I NTRODUCTION                                      the cement to leak from the fracture. c) If the cement is too thick, it may
+                                                                                                                                                                                                                                          cause obstruction, and the bone cannot be fully filled. d) When the cement is
+                                                                                                                                                                 With the rising life expectancy and an aging population,                 diffused inside the bone, it may reach the nerve (red) and cause complications.
+                                                                                                                                                              about 200 million people worldwide suffer from osteoporosis,
+                                                                                                                                                              fractures and other diseases that can occur at any time. Bone
+                                                                                                                                                              cement filling is an early intervention in osteoporosis and also               Current research on the simulation and visualization of
+                                                                                                                                                              an important treatment option for bone fractures [1], [2].                  highly viscous mixed fluids, such as cement, is limited. To
+                                                                                                                                                                 In the process of using bone cement, medical doctors                     address this problem, we propose a new multiphase non-
+                                                                                                                                                              usually need to carefully mix it according to their own                     Newtonian fluid simulation method for bone cement prepa-
+                                                                                                                                                              experience and specific product instructions to prevent bone                ration and coarse sand flow, which is the early stage of the
+                                                                                                                                                              cement leakage or insufficient dispersion (Fig. 1). This trial-             bone cement flow state. Our contributions are:
+                                                                                                                                                              and-error process can be time- and effort-intensive and is                     • a viscoelastic stress method based on an implicit mixture
+                                                                                                                                                              not conducive to low-cost teaching. Computer simulation and                      model and conformation tensor;
+                                                                                                                                                              visualization techniques can help, at a low cost, doctors                      • a unified framework for describing Newtonian and non-
+                                                                                                                                                              intuitively understand different preparation scenarios and the                   Newtonian fluids;
+                                                                                                                                                              impact of the operation on the surgical results.                               • a bonding effect network for controlling the implicit
+
+
+
+
+                                                                                                                                                                                                                                   6226
+                                                                                                                                                              979-8-3503-8622-6/24/$31.00 ©2024 IEEE
+                                                                                  splash of droplets on the fluid’s free surface. Several SPH-
+                                                                                  based fluid solvers exist including Weakly compressible SPH
+                                                                                  (WCSPH) [12], Predictive-Corrective Incompressible SPH
+                                                                                  (PCISPH) [13], and Divergence-Free SPH (DFSPH) [14].
+                                                                                  Among them, DFSPH is arguably the most advanced fluid
+                                                                                  solver that can guarantee the incompressibility and divergence-
+Fig. 2. Structural support in vertebral augmentation. Left: Deformed vertebrae
+                                                                                  free conditions of the fluid.
+caused by damage or osteoporosis. Right: Bone cement filling (green) can          Multiphase Fluid Simulation: Multiphase fluid simulation
+effectively restore the original structure.                                       can simulate a mixture of several miscible or non-miscible
+                                                                                  components, such as is the case of bone cement. In more
+                                                                                  detail, multiphase simulations can handle different material
+      mixture model’s phase transfer.
+                                                                                  components, like a mixture of water and sand (for cement)
+   Our model allows physicians to quickly set up Newtonian                        or different states of the same material, such as water and
+or non-Newtonian fluids with different properties and perform                     bubbles. Current multiphase flow simulation research covers
+simulation of mixing, injection, etc. This in turn allows spe-                    bubble simulation [15], [16], phase transition [17], and im-
+cialists to quickly investigate various scenarios and parameter                   proving numerical accuracy [18]–[20]. Commonly used multi-
+settings (for the bone cement mix) and also helps with training.                  phase fluid simulation methods include two-fluid models [21],
+   We start by reviewing relevant related work (Section II),                      suspension models [22], and mixture models [18]. Among
+then present our simulation method (Section III), describe our                    them, the mixture model has received much attention recently.
+experiments and results (Section IV), and finally conclude the                    In the mixture model, the volume fraction is used to represent
+paper (Section V).                                                                the proportion of different phases at the same sampling posi-
+                         II. R ELATED W ORK                                       tion. The overall discretization method uses SPH; the physical
+                                                                                  field of the fluid is calculated using multiphase fluid dynamics.
+A. Bone cement filling                                                            For more details on SPH and multiphase simulation methods,
+   Bone cement filling is an important method for orthope-                        we refer the interested reader to a recent survey [11].
+dic joint replacement and the treatment of osteoporosis. In
+the 1960s, Charnley [3] was the first to apply polymethyl                          III. M ULTIPHASE NON -N EWTONIAN FLUID SIMULATION
+methacrylate (PMMA) to the fixation of femoral prosthesis                                           FOR BONE CEMENT FLOW
+and acetabulum. More bone cement materials have been
+                                                                                     The use of bone cement involves two processes: modulation
+extensively investigated in dentistry since the 1970s such as
+                                                                                  and injection. During modulation, two substances – organic
+polyzinc carboxylate [4] and glass polylinoate cement [5], [6].
+                                                                                  solvent and solute – are mixed in different proportions, which
+   With the advancement of minimally invasive surgical tech-
+                                                                                  leads to varying flow performance during the injection phase.
+niques, vertebral augmentation [7], [8] has become the most
+                                                                                  The mixed fluid is a non-Newtonian fluid with viscoelastic
+commonly used surgical procedure for treating osteoporotic
+                                                                                  shear thinning, and polymerization reactions will change its
+compression fractures. By injecting bone cement, the damaged
+                                                                                  physical properties. The fluid polymerization period can be
+bone can be preserved in its original form. During the process
+                                                                                  further split into four stages: coarse sand, drawing, clumping,
+of vertebral augmentation, bone cement is injected as a filler
+                                                                                  and hardening. In this paper, we model the fluid based on an
+into the damaged bone to maintain its morphology (Fig. 2).
+                                                                                  implicit mixture model and the polymer conformation tensor
+However, when using bone cement, strict operating procedures
+                                                                                  method, so as to simulate the dynamic modulation process and
+are required to reduce the risk of postoperative complications.
+                                                                                  the coarse sand flow. The other stages remain as future work.
+Improper operation can cause bone cement leakage; a large
+                                                                                     Previous work [20] assumes that the effect of the mixture
+amount of leakage can lead to fatal consequences such as
+                                                                                  on the phases is constant. However, this is not true in some
+pulmonary embolism and paraplegia [9], [10].
+                                                                                  solutions that react. We extend this to the dynamic setting
+B. Physics-based simulation methods                                               using a bonding effect network (Section III-B) in our algorithm
+   Given the expenses incurred with running multiple physical                     (SectionIII-C). Before doing that, we continue by describing
+experiments to assess how bone cement will behave in a con-                       the relevant basics of SPH methods (Section III-A).
+crete given context (that is, bone morphology), physics-based
+                                                                                  A. SPH-based fluid simulation
+simulations are an attractive alternative both for professionals
+and, potentially even more importantly, for training practition-                     The SPH method discretizes the continuous fluid medium
+ers. We outline below related work in fluid simulations which                     into independent particles. SPH can be understood as a dis-
+is relevant to our context.                                                       cretization method for spatial fields and spatial differential
+Smoothed Particle Hydrodynamics (SPH): The SPH                                    operations. The physical field information in space (e.g., fluid
+method [11] uses particles to sample the fluid and calcu-                         density, mass, velocity, pressure) is defined on SPH particles.
+late its physical properties during a simulation. SPH has                         SPH determines the state information of each particle at the
+high numerical accuracy and can capture details such as the                       next time step based on the contribution of neighbor particles,
+
+
+
+                                                                           6227
+

@@ -83,7 +83,9 @@
         {%- capture link -%}https://publons.com/a/{{ site.publons_id }}/{%- endcapture -%}
         {%- assign sameaslinks = sameaslinks | push: link -%}
     {%- endif -%}
-    {%- if site.research_gate_profile -%}
+    {%- if site.research_gate_url -%}
+        {%- assign sameaslinks = sameaslinks | push: site.research_gate_url -%}
+    {%- elsif site.research_gate_profile -%}
         {%- capture link -%}https://www.researchgate.net/profile/{{site.research_gate_profile}}{%- endcapture -%}
         {%- assign sameaslinks = sameaslinks | push: link -%}
     {%- endif -%}

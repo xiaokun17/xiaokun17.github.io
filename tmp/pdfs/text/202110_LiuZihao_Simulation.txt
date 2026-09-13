@@ -1,0 +1,216 @@
+                                                                                                                                                                                          Simulation and visualization of solid-liquid
+                                                                                                                                                                                    phase transition and interactive using particle-based
+                                                                                                                                                                                                           method
+2021 International Conference on Communications, Computing, Cybersecurity, and Informatics (CCCI) | 978-1-6654-3208-5/21/$31.00 ©2021 IEEE | DOI: 10.1109/CCCI52664.2021.9583207
+
+
+
+
+                                                                                                                                                                                                1st Zihao Liu                                                                                                3rd Xiaokun Wang*
+                                                                                                                                                                                   Beijing Key Laboratory of Knowledge                                   2nd Yanrui Xu                                 dept. University of Science and
+                                                                                                                                                                                    Engineering for Materials Science,                         dept. University of Science and                               Technology Beijing
+                                                                                                                                                                                   University of Science and Technology                              Technology Beijing                                        Beijing, China
+                                                                                                                                                                                               Beijing, China                                          Beijing, China                                    wangxiaokun@ustb.edu.cn
+                                                                                                                                                                                           892113695@qq.com                                       xuyanruiedw@me.com
+
+                                                                                                                                                                                              4rd Xiaojuan Ban                                        5th Zhiyu Zheng
+                                                                                                                                                                                       dept. University of Science and                         dept. University of Science and
+                                                                                                                                                                                             Technology Beijing                                      Technology Beijing
+                                                                                                                                                                                               Beijing, China                                          Beijing, China
+
+
+                                                                                                                                                                                   Abstract—The simulation and visualization of natural                                The particle-based method is more suitable for solid-
+                                                                                                                                                                                   phenomena has been widely studied in computer graphics. But                     liquid phase simulation because of its simple calculation and
+                                                                                                                                                                                   those studies are less involved in complex phenomena, such                      easy handling of large deformation and transition of various
+                                                                                                                                                                                   as solid-liquid interaction and transition. We propose a                        materials. Therefore, the smoothed particle hydrodynamics
+                                                                                                                                                                                   method for simulation and visualization of solid-liquid heat                    (SPH) method was used to discretize the solid-liquid phase
+                                                                                                                                                                                   conduction and phase transition using Smooth Particle                           interactions. Combined with the first law of thermodynamics
+                                                                                                                                                                                   Hydrodynamics(SPH) based on Fourier law. To achieve a                           and Fourier law, the latent heat of solid and liquid caused by
+                                                                                                                                                                                   realistic phase transition, spatio-temporal discretization of                   phase transition is considered to construct the physical
+                                                                                                                                                                                   solid-liquid two-phase material, we map the temperature field                   quantity mapping of solid and liquid in particle state phase
+                                                                                                                                                                                   to solid and liquid particles and combining with the heat                       transition. To achieve the flow effect of liquid on solid during
+                                                                                                                                                                                   conduction model. Our method includes heat conduction                           solid melting and liquid solidification.
+                                                                                                                                                                                   between solid and liquid, solid and surrounding air, and latent
+                                                                                                                                                                                   heat caused by phase transition. The experimental results                                               II. RELEATED WORK
+                                                                                                                                                                                   show that our method can realize stable heat conduction and                         Particle-based method to simulate fluid has always been
+                                                                                                                                                                                   smooth phase transition from solid to liquid with accurate                      a research hotspot in computer graphics [1-4]. SPH method
+                                                                                                                                                                                   simulation details and visualization effects.                                   is the most typical and widely used. which was originally
+                                                                                                                                                                                       Keywords—fluid simulation and visualization, solid-                         proposed by Lucy[5] for solving astrophysical problems. In
+                                                                                                                                                                                   liquid transition, heat conduction                                              2003, Muller [6]et al. applied SPH method to fluid animation.
+                                                                                                                                                                                                                                                                   In 2009, Solenthaler et al. [7] proposed the predictive
+                                                                                                                                                                                                            I. INTRODUCTION                                        correction SPH method for the simulation of incompressible
+                                                                                                                                                                                       Solid-liquid phase transition phenomenon widely exists                      fluids, which iteratively calculates and updates density
+                                                                                                                                                                                   in nature, such as ore melting into molten steel, chocolate                     fluctuations during the predictive correction. In 2014, Ihmsen
+                                                                                                                                                                                   melting, magma cooling and solidification, etc. The                             et al. [8] proposed the implicit incompressible SPH method,
+                                                                                                                                                                                   dynamics of phase transition is one of the most attractive                      which obtained the discrete Poisson pressure strength
+                                                                                                                                                                                   visualization effects. Solid-liquid phase transition simulation                 equation by combining the symmetric SPH pressure strength
+                                                                                                                                                                                   is an interesting and challenging research direction with wide                  and the discrete continuity equation, and maintain the density
+                                                                                                                                                                                   application value in film and television special effects,                       change within 0.01%.
+                                                                                                                                                                                   entertainment games and other fields.                                               The common method to simulate the melting of objects is
+                                                                                                                                                                                       The solid-liquid phase transition and interaction usually                   to use thermodynamic heat conduction to conduct heat and
+                                                                                                                                                                                   involve deformation and topological changes. The common                         melt objects. Zhao et al. [9] based on the improved lattice
+                                                                                                                                                                                   method is to use an improved fluid solver, which is suitable                    Boltzmann method, simulate objects with different materials
+                                                                                                                                                                                   for the simulation of viscous Newtonian fluids and                              to make them melt and flow in multiple phases. Solenthaler
+                                                                                                                                                                                   viscoplastic fluids. But the motion of solid and elastic                        et al. [10] proposed a unified particle model, which can
+                                                                                                                                                                                   materials is more difficult to achieve using this solver. In                    simultaneously simulate multiple solid-liquid interactions
+                                                                                                                                                                                   addition, the grid-based method can better solve the problem                    and achieve melting and solidification effects. Yan et
+                                                                                                                                                                                   of elastic deformation. But those methods must rely on                          al.[11]realized solid dissolution effect based on concentration
+                                                                                                                                                                                   explicit collision detection to enhance the effect, and needs to                criterion.
+                                                                                                                                                                                   remesh according to topology changes to achieve fluid                               In the simulation of phase transition between solid and
+                                                                                                                                                                                   behavior. Due to the trade-off between solid and fluid                          liquid, the most concerned research focus is to simulate the
+                                                                                                                                                                                   simulations, many studies have explicitly coupled the two                       process of ice melting into water when heated. As physical
+                                                                                                                                                                                   solvers, but this method is usually complicated to implement                    phase change models were proposed, Jone[12] designed melt
+                                                                                                                                                                                   and computationally expensive.                                                  models that took into account heat flow and latent heat of
+
+
+                                                                                                                                                                                   978-1-6654-3208-5/21/$31.00 ©2021 IEEE
+
+
+
+                                                                                                                                                                                    Authorized licensed use limited to: Univ of Science and Tech Beijing. Downloaded on December 26,2021 at 02:59:15 UTC from IEEE Xplore. Restrictions apply.
+phase change. In Lagrange method, Iwasaki[13]proposed a                        particle i at position xi, the value Ai of any physical quantity
+GPU-based particle method, which can deal with the                             A can be taken according to its own value. And the value Aj
+interaction between ice, water and water droplets. Lii et al.                  of all neighbor particles j within the smooth length h is
+[14] endowed each particle with the attribute of virtual water                 approximately:
+by using a particle-based model. The virtual water volume of
+ice particles represents the water volume around the ice                                                            mj
+particles, and the virtual water is transferred between the                                        Ai =  j Aj           W ( x i − x j , h)            (2)
+outer ice particles to effectively simulate the thin water flow                                                     ρj
+on the ice surface. In the mixed method, Stomakhin et al.
+[15]further realized the expansion and cracking effect caused                  and the gradient of Ai can be obtained directly by
+by heat conduction effect in the MPM method based on the                       approximating the gradient of the smooth kernel
+temperature criterion.                                                         function:
+     In the simulation of phase transition between solid and
+liquid, the most concerned research is to simulate the process
+                                                                                                                   mj
+of ice melting into water when heated. Due to the complex                                      ∇Ai =  j Aj              ∇W (xi − x j , h)             (3)
+coupling problem of solid-liquid phase transition, non-                                                            ρj
+physical models were used in the early methods. In Euler
+method, Fujishiro et al. [16] used the voxel method to                             Due to the SPH method has poor stability in calculating
+simulate solid ice and modeled the phase transition process                    the second derivative, the Laplacian form of Ai can be
+of ice through the grid automaton to approach the real                         expressed in artificial form as:
+physical effect, but this method could not deal with the fluid
+formed by melting. Subsequently, physical phase change
+                                                                                                                     mj          Aij ·x ij
+models were proposed. Jones[17] designed a melting model
+that took into account heat flow and latent heat of phase
+                                                                                        ∇ 2 Ai = 2(d + 2) j                    2
+                                                                                                                                               ∇Wij (4)
+                                                                                                                     ρ j xij + 0.01h 2
+change, and Matsumura et al. [18] simulated the melting
+process of ice when natural convection occurs in the
+surrounding air based on this heat flow model. In Lagrange                         where Aij = Ai - Aj, Xij = Xi - Xj, and d are the dimensions
+method, Iwasaki[19] proposed a GPU-based particle method,                      of the simulation space. The simulation process in this paper
+which can deal with the interaction between ice, water and                     is all three-dimensional, so d=3. The advantage of this
+water droplets. Lii et al. [20] endowed each particle with the                 approximation is that it has Galileo invariance and has no
+attribute of virtual water by using a particle-based model. The                effect on the uniform velocity field. The 0.01h2 term is used
+virtual water volume of ice particles represents the water                     to ensure that the denominator is not 0.
+volume around the ice particles, and the virtual water is                      B. Lagrangian particle heat conduction solution
+transferred between the outer ice particles to effectively
+simulate the thin water flow on the ice surface. In the mixed                      The physics-based solid-liquid transition is mainly based
+method, Stomakhin et al. [21] further realized the expansion                   on the realization of heat conduction. In this paper, the heat
+and cracking effect caused by heat conduction effect in the                    conduction phenomenon caused by the temperature
+MPM method based on the temperature criterion.                                 difference between the solid and the liquid, the solid and the
+                                                                               surrounding air and the latent heat caused by the phase
+                           III. METHOD                                         change are numerically simulated, and a realistic phase
+                                                                               transition animation is generated. The specific process is
+A. Fluid simulation methods for smooth particle
+                                                                               shown in the Figure 1.
+   hydrodynamics—SPH
+    In fluid simulation based on SPH method, the value of
+any physical field at coordinates in the simulated region can
+be approximated as (1) according to the properties of Dirac
+function:
+
+       A(x) ≈ ( A *W )(x) =  A( x ' )W ( x − x ' , h) dv '
+                                                                     (1)
+
+    where W is the normalized Gaussian kernel function, h is
+the smoothing length of the kernel function, this paper selects
+the cubic spline function as the smooth kernel function,     is
+the volume integral variable corresponding to The formula
+indicates that the physical quantity of physical quantity A at                            Figure 1 Simulation of particle heat conduction process
+X can be approximated as the volume integration process of
+the product of the physical quantity and the smooth kernel                         In the Lagrangian simulation system, solids and liquids
+function on the smooth length.                                                 can be discretized into particle forms, and the solid-solid and
+    In the computer SPH numerical calculation process, the                     solid-liquid heat conduction process can be expressed as heat
+continuous space needs to be discretized into the form of                      exchange between particles. This paper simulates the heat
+uniform volume particles. According to formula (1), for the                    conduction process based on Fourier's law , the law states that
+
+
+
+
+Authorized licensed use limited to: Univ of Science and Tech Beijing. Downloaded on December 26,2021 at 02:59:15 UTC from IEEE Xplore. Restrictions apply.
+the amount of heat conduction through a given section in a                     judged that the particle has a certain surface area exposed to
+unit time is proportional to the temperature change rate in the                the air; if the neighbor particle is equal to or greater than 26, it
+direction perpendicular to the section and the area of the                     can be considered that the particle is completely surrounded
+section, expressed as:                                                         and not exposed to the air, there is no heat exchange with the
+                                                                               air.
+                            dQ        dT                                       D. Solid-Liquid phase transition simulation
+                               = − ks                                   (5)
+                            dt        dx                                           Based on the above method, the state and motion process
+                                                                               of each particle can be calculated, so as to simulate the phase
+   where s is the heat conduction area, dQ/dt is the heat                      change. Figure 3 shows the simulation process within a time
+conduction rate, Q is the heat, x is the coordinate on the heat                step.
+conduction surface, and the constant k is the thermal
+conductivity, the unit is W·m-1·K-1, which is regarded as a
+constant in this paper.
+C. Air heat conduction calculation
+     Due to the large proportion of air in the simulation space,
+if the rest of the space is discretized by particles, the
+simulation efficiency will be greatly affected and the
+simulation dynamics process will not be significantly
+affected. In order to calculate the air heat conduction
+efficiently, the global air temperature is set as constant, and
+the implicit heat conduction simulation is carried out based
+on Newton's cooling law.
+    Newton's law of cooling states that when there is a
+temperature difference between the surface of an object and
+its surroundings, the heat loss per unit area per unit time is
+proportional to the temperature difference, which can be
+expressed as:
+
+                        Qi = h(Tair − Ti )δ S                           (6)            Figure 3 Solid melting process and phase transition treatment
+
+                                                                                   The solid and liquid in this paper are represented by
+    where Qi is the heat received by the particle i, h is the heat             particles. Each particle stores information such as initial
+conduction coefficient, and        is the surface area of the                  position, initial velocity, static density, temperature, etc. In
+particle in contact with the air.
+                                                                               order to prevent only the solid surface information after
+                                                                               sampling, and the interior is hollow, resulting in a splash
+                                                                               effect after liquefaction. First of all, the solid is sampled with
+                                                                               a Poisson disk, as shown in Figure 4. The position
+                                                                               information of each particle after sampling can be calculated
+                                                                               to obtain the distribution of the solid model in the three-
+                                                                               dimensional space. The space is formatted with the particle
+                                                                               radius as the side length, and divided three-dimensional space
+                                                                               into cubes, and the formatted particles are located at the
+                                                                               intersection of the cube grid. By calculating the distance
+    Figure 2 Particles and their neighbors in three-dimensional space          between the sampled point and the intersection, and taking
+                                                                               the intersection with the sampling point of the Poisson disk
+    As shown in Figure 2, in the microscopic state, the                        less than the particle radius to place the solid particles, the
+particles can be approximately regarded as cubes. Considering                  boundary particles can be obtained outer information.
+the incompressibility of liquids and the uniform sampling of
+solids, when a particle is completely surrounded, the number
+of surrounding particles is at most about 26. , Therefore, the
+contact area of the particle with the air can be obtained
+indirectly by calculating the number of neighbors of the
+particle. Suppose the total surface area of the particle is s, then
+                                                                                    a. Solid model   b. Poisson disk sampling c. 3d space formatting
+the surface area exposed to the air is approximately:
+                                                                                      Figure 4 Schematic diagram of uniform grid sampling method
+
+                                  26 − ni                                          After obtaining the boundary information of the solid, it
+                           δ S=           *S                            (7)
+                                                                               is necessary to determine the position properties of particles
+                                    26
+                                                                               at the intersection point, that is, internal particles or external
+    where ni means that the particle i has n neighbor particles.               particles. It is possible to explore whether there are sampled
+If the number of neighbor particles is less than 26, it can be                 boundary particles in each direction along the three
+                                                                               dimensions and six directions of the space where the
+
+
+
+
+Authorized licensed use limited to: Univ of Science and Tech Beijing. Downloaded on December 26,2021 at 02:59:15 UTC from IEEE Xplore. Restrictions apply.
+

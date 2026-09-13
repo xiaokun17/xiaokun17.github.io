@@ -1,0 +1,190 @@
+Received: 12 July 2023    Accepted: 22 July 2023
+
+DOI: 10.1002/cav.2202
+
+
+S P E C I A L I S S U E PA P E R
+
+
+
+
+Efficient and high precision target-driven fluid simulation
+based on spatial geometry features
+
+Xiangyang Zhou1,2,3                        Sinuo Liu1,2,3,4 Haokai Zeng1,2,3
+Xiaokun Wang1,2,3,5                        Xiaojuan Ban1,2,3,6
+
+1
+  Beijing Advanced Innovation Center for
+Materials Genome Engineering,                      Summary
+University of Science and Technology               We proposed a novel target-driven fluid simulation method based on the
+Beijing, Beijing, China
+2
+                                                   weighted control model derived from the spatial geometric features of the target
+  School of Intelligence Science and
+Technology, University of Science and              shape. First, the spatial geometric characteristics of the target model are taken
+Technology Beijing, Beijing, China
+                                                   into account to set the color field weights of control particles. This enabled the
+3
+ Key Laboratory of Intelligent Bionic
+Unmanned Systems, University of Science            full expression of geometric characteristics of the target model, and improve the
+and Technology Beijing, Beijing, China             shape accuracy of controlled fluid. Then, the fluid is controlled to form the target
+4
+ School of Computer Science, Peking                shape under driving constraints, wherein we proposed a new adaptive constraint
+University, Beijing, China
+5
+  National Centrefor Computer Animation,
+                                                   mechanism that enables efficient target shape generation. Finally, a new density
+Bournemouth University, Poole, UK                  constraint between the control particles and the controlled fluid particles is pro-
+6
+ Institute of Materials Intelligent                posed to ensure the incompressibility of fluid during control. Compared to the
+Technology, Liaoning Academy of
+Materials, Shenyang, China                         state-of-the-art target-driven fluid control methods, our method achieves higher
+                                                   precision fluid control with higher efficiency.
+Correspondence
+Xiaojuan Ban, Beijing Advanced
+                                                   KEYWORDS
+Innovation Center for Materials Genome
+Engineering, University of Science and             smoothed particle hydrodynamics, spatial geometry weighting, target-driven fluid simulation
+Technology Beijing, 30 Xueyuan Road,
+Haidian District, Beijing, China.
+Email: banxj@ustb.edu.cn
+Sinuo Liu, School of Computer Science,
+Peking University, 5 Yiheyuan Road,
+Haidian District, Beijing, China.
+Email: sinuoliu@pku.edu.cn
+
+Funding information
+Guangdong Basic and Applied Basic
+Research Foundation, Grant/Award
+Numbers: 2022A1515110350,
+2021A1515012285, 2023A1515030177;
+H2020 Marie Skłodowska-Curie
+Individual Fellowship, Grant/Award
+Number: 895941; National Key R&D
+Program of China, Grant/Award Number:
+2022ZD0118001; National Natural Science
+Foundation of China, Grant/Award
+Number: U22A2022; Postdoctoral
+Innovation Talents Support Program,
+Grant/Award Number: BX20220007
+
+
+
+
+Comp Anim Virtual Worlds. 2024;35:e2202.                    wileyonlinelibrary.com/journal/cav                 © 2023 John Wiley & Sons Ltd.     1 of 17
+https://doi.org/10.1002/cav.2202
+2 of 17                                                                                                             ZHOU et al.
+
+
+
+1         I N T RO DU CT ION
+
+Target-driven fluid control is a hot topic in Computer Graphics, which creates unique simulation results by driving the
+motion of the fluid to form a specific shape. Since only 3D models are required to generate the desired fluid effect, these
+methods are widely used in the field of games and films, such as the movie “Terminator”, “Spider-Man-Homecoming”,
+and “Frozen”. Besides, the fluid control method can also be used for auxiliary medical research. The symptoms of various
+vascular diseases could be obtained by simulating blood flow using a human blood vessel model. However, to generate
+the desired visual effect, the time-consuming repeatedly adjusting of a sea of parameters is required. This also makes it
+hard to accurately fill fluid into a model with complex spatial geometry features. Therefore, it is of great significance to
+propose a fluid-driven method that automatically matches the target shape according to the user’s expectation, and forms
+the desired fluid result efficiently and accurately.
+    To control the motion of the fluid, Zhang et al.1 applied a constraint driving force to the fluid particles and influence
+their velocity. However, it could only generate an approximate surface of a simple toy object, but cannot handle complex
+models with a large ratio of surface-to-volume ratio. Lu et al. 2 proposed to drive the movement of fluid more intuitively
+by rigging-skinning mechanism. This method is effective, but the flow characteristics tend to be lost due to the dense
+sampling of control particles and the excessive control constraints. Schoentgen et al. 3 proposed to make it easier for artists
+to achieve their desired effect by using precomputed templates. However, such an expected effect can only be limited to
+the existing templates, and the preparation is very time-consuming.
+    In order to solve the above problems, we propose a new controllable fluid simulation method driven by a weighted
+model of spatial geometric features. Firstly, our proposed weight-based actuation control model tackles the issue of sparse
+feature points in model details by applying stronger constraints to areas with fewer feature points and vice versa. This
+approach enables the fluid to conform better to the model’s shape, resulting in improved fluid surface generation with
+the same computational resources. Secondly, our innovative approach introduces an adaptive driving constraint that can
+regulate the constraint range independently, resulting in a significant reduction in the required number of frames for
+target model generation. The proposed method generates the controlled result efficiently and effectively by controlling
+the driving force between the particles and the fluid through adaptive adjustment. Finally, the conventional approaches
+are prone to fluid compression resulting from control constraints, whereas our novel density-driven constraint model
+ensures fluid incompressibility and improve the realism of fluid flow, thus offering an improved solution. To summarize,
+our main contributions include:
+
+1. A novel target-driven fluid simulation method based on spatial geometry features, which achieves high-precision fluid
+   control efficiently, and could maintain subtle details of a complex target model.
+2. A novel adaptive constraint model that controls particles based on the distance between fluid particles and control
+   particles, which greatly improves the shape forming efficiency.
+3. A new density-driven constraint model to ensure the incompressibility of fluid during the control process, and improve
+   the realism of fluid flow.
+
+
+2         RELATED WORK
+
+Target-driven fluid control is an important technology of fluid animation. There are many different approaches to the
+study of driving. The following aspects of fluid drive are introduced, including drive the fluid in a static shape (2.1), drive
+the fluid in a motion process (2.2), and the fluid controllable simulation system (2.3).
+
+
+2.1        Drive the fluid in a static shape
+
+2.1.1       Keyframe driven simulation
+
+Keyframe driven simulation is where the final shape of a fluid particle is guided by a specific keyframe. Treuille et al.4
+matched a set of sketchy shapes for a given keyframe by applying forces found by using a gradient-based optimizer. Hong
+and Kim5 extracted a potential field from static user-defined keyframes during preprocessing and then applied the driving
+force to the smoke simulation, proportional to the gradient of this field. Bergou et al.6 took a rough keyframe animation
+ZHOU et al.                                                                                                             3 of 17
+
+
+and augmented it with details from a physical simulation, allowing the artist to choose where to add details. Chu et al.7
+implemented the ability to derive plausible velocity fields from a single frame.
+    To improve the computing efficiency, Pan et al.8 edit keyframe liquid simulations locally by solving an optimiza-
+tion problem on a subset of particles. In addition, in order to improve the efficiency by an order of magnitude, Pan and
+Manocha9 decomposed the keyframe animation optimization into two subproblems and solved them with the (ADMM).
+Later, Pan et al.10 deformed mesh for simulation where smoke can be driven directly by editing the mesh.
+
+
+2.1.2          Target model actuation
+
+Target model actuation is the actuation of a fluid to form a desired shape by a specific actuation model or actuation
+module. Fattal and Lischinski11 used two forces, a driving force that directs smoke to the density field of the target model
+and a smoke aggregation force that prevents smoke diffusion. Raveendran et al.12 took as input a dense sequence of
+target-driven meshes and used the velocities of these meshes as boundary conditions for pressure resolution. Zhang et al.1
+took a specific model as the driving target, and formed the fluid surface by driving forces including density, spring and
+velocity. Cornelis et al.13 realized that the fluid could be converted between the target object and the fluid, enabling a
+more efficient and simplified solver. Lu et al.2 also proposed to drive the movement of fluid more intuitively by means of
+rigging movement and fluid skin. Schoentgen et al.3 proposed that different driving templates should be prefabricated to
+make it easier for artists to achieve the desired effect.
+
+
+2.2           Drive the fluid in a motion process
+
+2.2.1          Enhance and drive detail
+
+This is achieved by inputting a low-resolution effect, by adding additional detail and extra actuation to enhance the
+actuation effect of the fluid. Nielsen et al.14 first simulated high-resolution smoke by tracking low-resolution inputs,
+adding additional details while preserving the overall appearance of low-resolution. Since then, they15 have also pro-
+posed an improved mathematical model of Eulerian-based simulation, improved the use of steady-state (constant)
+guidance that often leads to a lack of sufficient high detail. Later, they also applied these ideas to the driving simulation
+of fluids.16
+    Through conversion in the frequency domain, Forootaninia et al.17 showed this effect by combining the
+high-frequency component of the simulated fluid velocity with the low-frequency component of the input guidance field
+in order to simulate the smoke faster and maintain the details of the smoke itself. Sato et al.18 introduced a stream function
+based on Forootaninia’s attempt to ensure efficiency and appearance, which could better drive the shape of smoke.
+
+
+2.2.2          Dynamic physical field driven simulation
+
+It works by attaching an additional physical field to the fluid to drive its flow path. McNamara et al.19 used gradient-based
+nonlinear optimization to drive physics-based fluid simulations, which was guided early by adding additional con-
+straints to guide the driving fluid. Shi and Yu applied feedback forces in smoke20 and liquid to compensate for the
+differences in shape and velocity, matching the controlled fluid to the given target. Sato et al.21 proposed to calculate
+the (time-varying) vector potential from a sequence of input velocity field, then deform the vector potential, calculate
+the deformed velocity field by using the spin operator on the vector potential. Thuerey22 proposed a mesh-based input
+signed distance function to compute dense spatiotemporal deformations, combining data-driven fluid simulation and
+interpolation techniques that match and interpolate phenomena with fundamentally different physics. Inglis et al.23
+used a first-order Primal-Dual method to minimize the difference between the guided velocity field and the target
+velocity field.
+    In addition to using material flow fields, Rasmussen et al.24 guided fluid particles through soft or hard constraints
+that define several physical properties of fluids by artist-generated control particles. Stomakhin and Selle25 also used
+input-driven shapes to enforce boundary conditions and deal with particles reseeding around shapes that describe open
+boundaries.
+

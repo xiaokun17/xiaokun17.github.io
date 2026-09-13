@@ -1,0 +1,187 @@
+The Visual Computer (2024) 40:4765–4776
+https://doi.org/10.1007/s00371-024-03474-4
+
+    RESEARCH
+
+
+
+Dual-mechanism surface tension model for SPH-based simulation
+Yuege Xiong1 · Xiaokun Wang1 · Yanrui Xu1,2 · Yalan Zhang3 · Jian Chang4 · Jianjun Zhang4 · Xiaojuan Ban3
+
+Accepted: 9 May 2024 / Published online: 27 May 2024
+© The Author(s), under exclusive licence to Springer-Verlag GmbH Germany, part of Springer Nature 2024
+
+
+Abstract
+We present an innovative Lagrangian dual-mechanism model for simulating versatile surface tension phenomena, designed
+to replicate the intricate interplay of liquids with textured solid surfaces and the emergence of gas bubbles. This model
+synergistically merges the influence of inter-particle dynamics with global surface curvature, ensuring a harmonious balance
+between the intricacies of fluid motion and the imperative of surface area reduction. A cornerstone of our methodology is
+the incorporation of Laplace pressure differentials across fluid boundaries, enhancing interface stability and enabling the
+depiction of distinctive droplet oscillations driven by fluctuations in kinetic energy. Additionally, our model introduces a
+dual-scale smoothing kernel, meticulously engineered to resolve the subtle nuances of surface textures. The prowess of our
+model is exemplified in its ability to simulate superhydrophobic behaviors, underscoring its utility. Integrated within the
+smoothed particle hydrodynamics framework, our model offers efficient simulation performance, contributing a valuable tool
+to the field of fluid simulation.
+
+Keywords Surface tension · Laplace pressure · Rough surface · Interface stability
+
+
+1 Introduction                                                              inter-particle interaction force (IIF) within SPH address
+                                                                            cohesion through a blend of attractive and repulsive forces.
+In nature, surface tension significantly influences fluid phe-              However, challenges like particle clustering and the need for
+nomena such as droplets [12], thin-film bubbles [18, 31],                   larger computational resources can compromise the stability
+and splash crowns [1, 8]. The interaction of fluids with solid              and smoothness of simulations (Fig. 1).
+surfaces introduces complex behaviors like wetting and non-                    To enhance simulation fidelity, the continuum surface
+wetting [7, 37], influenced by the surface characteristics of               force (CSF) model [5] calculates surface tension through
+the materials involved. This has spurred research in com-                   curvature. Yet, the CSF model struggles with accurately
+puter graphics [35] to accurately simulate these effects for                determining curvature near free surfaces due to kernel trun-
+improved visual realism.                                                    cation, leading to errors and computational inefficiency [23,
+   Surface tension results from the unequal forces among                    39, 42]. These challenges underscore the ongoing need for
+molecules, modeled effectively in smoothed particle hydro-                  advanced methods to simulate surface tension effectively
+dynamics (SPH) [23]. SPH uses macro-Lagrangian particles                    within the confines of computer graphics research.
+to simulate these molecular interactions, providing a frame-                   Furthermore, existing surface tension models have pre-
+work for capturing fluid dynamics. Techniques such as the                   dominantly focused on fluid movement over smooth and
+                                                                            continuous surfaces, limiting their ability to simulate spe-
+B Xiaokun Wang                                                              cific hydrophilic or hydrophobic effects and notably failing
+     wangxiaokun@ustb.edu.cn                                                to capture superhydrophobic behavior on rough surfaces. In
+     Xiaojuan Ban                                                           real-world scenarios, contact surfaces often exhibit visible
+     banxj@ustb.edu.cn                                                      protrusions, indentations, or gaps, particularly pronounced
+1
+                                                                            at smaller scales. Regrettably, traditional models, reliant on
+     School of Intelligence Science and Technology, University of
+     Science and Technology Beijing, Beijing, China                         larger-scale smoothing kernels [37], tend to overlook these
+2
+                                                                            intricate surface details.
+     University of Groningen, Groningen, The Netherlands
+                                                                               To overcome these limitations, we introduce a dual-
+3    University of Science and Technology Beijing, Beijing, China           mechanism surface tension model in this paper, which
+4    Bournemouth University, Poole, UK
+
+
+                                                                                                                               123
+4766                                                                                                                Y. Xiong et al.
+
+
+
+
+Fig. 1 Bubble coalescence
+
+
+integrates particle interaction forces with curvature forces.   issues by employing implicit incompressible SPH (IISPH)
+Our approach differentiates between the dynamics of par-        [16]. Yang et al. [37, 38] improved performance by using
+ticles at the fluid surface and those within the bulk, while    a larger smoothing kernel radius, though at the cost of
+also addressing the issue of kernel truncation. Addition-       increased computational complexity. Jeske et al. [18] pro-
+ally, we incorporate a Laplace pressure adjustment based        posed an implicit cohesion force to enhance surface tension
+on the Young–Laplace equation to enhance the stability of       stability but observed abnormal curvature at bubble adhesion
+fluid interfaces, facilitating the simulation of diverse sur-   surfaces.
+face tension phenomena and ensuring the minimization of
+surface area. A novel dual-scale smoothing kernel is pro-       2.1.2 Continuum surface force
+posed to recover the details lost at fluid–solid interfaces,
+enabling the successful simulation of Cassie [6] and Wen-       Another approach to model surface tension in particle-based
+zel [34] phenomena, which represent two distinct states of      methods is through curvature, using the CSF method [1, 5,
+fluid superhydrophobicity on various rough surfaces.            23, 28, 39, 42]. Brackbill et al. [5] conceptualized surface
+   Our main contributions are as follows:                       tension as a volumetric force across interfaces. Morris et al.
+                                                                [22] and Muller et al. [23] simplified CSF for SPH. Akinci
+ – Introduction of an accurate surface detection mechanism      et al. [1] and Si et al. [28] achieved results comparable to
+   that identifies and corrects the truncated kernels of sur-   IIF with proper tuning. However, CSF faces challenges in
+   face particles.                                              surface detection due to noisy kernel gradient normalization
+ – Implementation of a Laplace pressure adjustment to           and curvature estimation sensitivity to sampling. Zorilla et al.
+   enhance the interface stability of surface tension.          [42] applied a method inspired by Monte Carlo integration
+ – Development of a dual-scale smoothing kernel designed        for estimating local normals and curvatures. He et al. [12]
+   to capture superhydrophobic phenomena by preserving          took inspiration from the Cahn–Hilliard equation to derive a
+   detail on rough and discontinuous surfaces.                  similar force for handling surface tension and air pressure.
+
+                                                                2.2 Mesh-based methods
+2 Related work
+                                                                Mesh-based methods diverge from particle-based techniques
+2.1 Particle-based methods                                      by focusing on tracking the fluid surface to capture finer
+                                                                details. Zhang et al. [40] introduced a deformable surface
+2.1.1 Inter-particle interaction force                          mesh for droplets. Da et al. [11] developed a surface-only
+                                                                technique using triangle meshes for surface tension sim-
+Surface tension is a consequence of inter-molecular interac-    ulations. Zhu et al. [41] utilized non-manifold simplicial
+tions at the microscopic level. Several studies have approx-    complexes for thin sheets and filaments. These methods find
+imated these interactions by introducing attractive forces      extensive application in simulating foam, bubbles, films [10,
+between neighboring particles [3, 9, 37, 38]. Clavet et al.     17], and viscous sheets or threads [2, 4].
+[9] and Becker et al. [3] incorporated IIF within the SPH
+framework. Akinci et al. [1] and Huber et al. [14] com-         2.3 Hybrid methods
+bined cohesion and curvature forces to model surface tension.
+Despite their efforts, challenges remain, especially in simu-   Hybrid methods combine Lagrangian particles and Eulerian
+lating large surface tensions, leading to particle clustering   grids to leverage the strengths of both approaches. Wang et al.
+and cobweb-like structures. Wang et al. [32] addressed these    [30] built on Zhu et al.’s work [41] in a Eulerian–Lagrangian
+
+
+123
+Dual-mechanism surface tension model for SPH-based simulation                                                                            4767
+
+
+framework, using transition operators for fluid volume, sheet,           According to Solenthaler et al. [29], the density of particle
+and filament evolution. Hyde et al. [15] simulated liquid met-        i can be approximated as:
+als with high surface energy using material point method                     
+(MPM) and particle-in-cell (PIC). Chen et al. [7] introduced          ρi =       m i Wi j ,                                               (3)
+a MPM approach for Marangoni effects simulation due to                       j
+tension gradients. Ruan et al. [26] developed a simplicial
+mesh membrane for strong surface tension-driven solid–fluid           where Wi j = W (x i − x j , h).
+coupling. Xing et al. [36] proposed a novel position-based                The pressure for each particle is computed using the Tait
+dynamics (PBD) framework approach with a local mesh                   equation [3], which ensures minimal density variations and is
+structure for surface tension simulation.                             computationally efficient. As a common equation of state for
+   We introduce a new particle-based surface tension model            SPH simulations of incompressible fluids, it can be expressed
+that combines the effects of particle interactions and surface        as:
+curvature. By utilizing this dual-mechanism approach, we                                 
+are able to consider both the intricacies of fluid motion and                     ρi 7
+                                                                      pi = B            −1 ,                                    (4)
+surface area minimization. The previously existing issue of                       ρ0
+estimation error in curvature is alleviated by incorporating
+Laplace pressure to correct the truncated surface particles.          where B = ρ0 cs2 /γ [24]. B is a stiffness coefficient related to
+Furthermore, we introduce a dual-scale smoothing kernel to            the speed of sound cs in the fluid and ρ0 is the rest density of
+account for interactions between the fluid and rough solid            the fluid. The index is typically set to 7 for water-like fluids.
+surfaces that was previously overlooked.                                 Pressure forces are then calculated to ensure fluid incom-
+                                                                      pressibility and are given by:
+
+3 SPH discretization                                                      1                               pi  pj
+                                                                      −      ∇ pi = −   mj                    + 2             ∇Wi j .     (5)
+                                                                          ρi                               ρi
+                                                                                                            2  ρj
+                                                                                              j
+SPH is a Lagrangian framework used for simulating fluids by
+discretizing them into particles [23]. Each particle represents
+                                                                        This symmetrized version can preserve momentum. To
+a portion of the fluid and carries properties such as mass,
+                                                                      enhance numerical stability and account for shock phenom-
+position, and velocity. In this paper, the subscript i and j are
+                                                                      ena, artificial viscosity [21] is utilized as the viscosity force
+defined as target particle and neighbor particle separately.
+                                                                      and computed as follows:
+The Navier–Stokes equations govern the motion of fluids,
+and in the SPH context, they are expressed as follows for                                                             
+                                                                                                        vi j · x i j
+particle i:                                                           ν∇ 2 v i = ν       mj                                 ∇Wi j ,       (6)
+                                                                                                      |x i j |2 +  2
+                                                                                     j
+   Dv i
+ρi      = −∇ pi + ρi ν∇ 2 v i + ρi g + F iST ,                  (1)
+   Dt                                                                 where  = 0.01h 2 .  being a small value added to prevent
+                                                                      singularity when particles are very close (|x i j | = 0). v i j =
+where ρi is the density, v i is the velocity, pi is the pressure,     v i − v j and x i j = x i − x j represent the relative velocity and
+ν is the kinematic viscosity coefficient, g is the gravitational      position.
+acceleration, and F iST represents surface tension forces act-
+ing on particle i.
+    In SPH, any scalar field ψ at the position x i of particle i      4 Dual-mechanism surface tension
+is interpolated using contributions from all particles within a
+certain radius (defined by the smoothing length h), as given          In this section, we delve into the intricate details of our
+by:                                                                   dual-mechanism surface tension model, which stands out for
+                                                                      its innovative approach to simulating fluid dynamics with
+                    ψj              
+ψ(x i ) =       mj      W xi − x j , h ,                        (2)   enhanced precision and stability.
+                     ρj
+            j
+                                                                      4.1 Surface particle detection and correction
+where m j is the mass and ψ j /ρ j is the value of the field per
+unit mass for particle j. W is the smoothing kernel function,         A crucial component of our model is the precise identifica-
+which is often chosen to be a cubic spline as suggested by            tion and subsequent correction of surface particles, essential
+Monaghan [20] for its good balance between computational              for preserving the accuracy of fluid simulations, particularly
+efficiency and accuracy.                                              in regions near free surfaces or phase interfaces where the
+
+
+                                                                                                                                        123
+

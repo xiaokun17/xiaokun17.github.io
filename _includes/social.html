@@ -22,8 +22,10 @@
             {%- if site.osf_id -%}
             <a href="https:/osf.io/{{ site.osf_id }}/" title="Open Science Framework"><i class="ai ai-osf"></i></a>
             {% endif %}
-            {%- if site.research_gate_profile -%}
-            <a href="https://www.researchgate.net/profile/{{site.research_gate_profile}}/" title="ResearchGate"><i class="ai ai-researchgate"></i></a>
+            {%- if site.research_gate_url -%}
+            <a href="{{ site.research_gate_url }}" title="ResearchGate" aria-label="ResearchGate"><i class="ai ai-researchgate"></i></a>
+            {%- elsif site.research_gate_profile -%}
+            <a href="https://www.researchgate.net/profile/{{site.research_gate_profile}}/" title="ResearchGate" aria-label="ResearchGate"><i class="ai ai-researchgate"></i></a>
             {% endif %}
             {%- if site.github_username -%}
             <a href="https://github.com/{{ site.github_username }}" title="GitHub"><i class="fab fa-github"></i></a>

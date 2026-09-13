@@ -2,76 +2,67 @@
   type: map
   contents:
     - name: Full Name
-      value: Chao Yao
-    - name: Date of Birth
-      value: 23rd March 1986
-    - name: Languages
-      value: English, Mandarin
+      value: Xiaokun Wang (王笑琨)
+    - name: Position
+      value: Professor
+    - name: Affiliation
+      value: School of Intelligence Science and Technology, University of Science and Technology Beijing
+    - name: Email
+      value: wangxiaokun@ustb.edu.cn
+    - name: ORCID
+      value: <a href="https://orcid.org/0000-0002-4449-591X">0000-0002-4449-591X</a>
 
 - title: Education
   type: time_table
   contents:
-    - title: Ph. D
-      institution: Institute of Information Science, Beijing Jiaotong University
-      year: 2010 - 2016
-      description:
-        - supervisor: Prof. Yao Zhao
-    - title: Visiting Ph. D
-      institution: LTS4 Group, Electrical Engineering Institute of École Polytechnique Fédérale de Lausanne (EPFL), Lausanne, Switzerland
-      year: 2014 - 2015
-      description:
-        - supervisor: Prof. Pascal Frossard
+    - title: Ph.D.
+      institution: School of Computer and Communication Engineering, University of Science and Technology Beijing
+      year: "2017"
 
-- title: Experience
+- title: Academic Experience
   type: time_table
   contents:
-    - title: Associated Professor
-      institution: School of Computer & Communication Engineering, University of Science and Technology Beijing
+    - title: Professor
+      institution: School of Intelligence Science and Technology, University of Science and Technology Beijing
       year: 2022 - present
-     
-    - title: Assisstant Professor
-      institution: School of Computer & Communication Engineering, University of Science and Technology Beijing
-      year: 2018 - 2022
-
-    - title: Postdoc.
-      institution: School of Computer Science, Beijing University of Posts and Telecommunications
-      year: 2016 - 2018
-
-- title: Open Source Projects
-  type: time_table
-  contents:
-    - title: <a href="https://github.com/baiyu12345/LGDeNet">LGDeNet</a>
-      year: 2022-now
-      description: Local-Global Decomposite of Deep Image Denoising.
+    - title: Marie Skłodowska-Curie Fellow
+      institution: National Centre for Computer Animation, Bournemouth University
+      year: 2021 - 2023
+    - title: Visiting Scholar and Postdoctoral Researcher
+      institution: Bernoulli Institute, University of Groningen
+      year: 2019 - 2020; 2023
+    - title: Postdoctoral Researcher, Lecturer, and Associate Professor
+      institution: School of Computer and Communication Engineering, University of Science and Technology Beijing
+      year: 2017 - 2022
 
 - title: Honors and Awards
   type: time_table
   contents:
-    - year: 2022
-      items: 
-        - 2nd Award for Scientific and Technological Advancement, Chinese Institute of Electronics
-        - 1st Award for Scientific and Technological Advancement, China Gold Association
-        - Best poster Award, China Multimedia (ChinaMM) 2022
-    - year: 2021
-      items: 
-        - 1st Award for Teaching Achievement of Higher Education, Beijing （北京市高等教育教学成果奖）
-        - Yourth Elevates the talent, Beijing Association of Science and Technology (北京市科协青年托举人才)
-    - year: 2020
+    - year: "2023"
       items:
-        - 1st Award for Scientific and Technological Advancement, China Gold Association
-    - year: 2017
+        - Science and Technology Progress First Prize, China Gold Association
+    - year: "2022"
       items:
-        - Distinguished doctoral thesis award, Beijing Society of Image and Graphics
-- title: Academic Interests
+        - Science and Technology Progress Second Prize, Chinese Institute of Electronics
+        - USTB Young Scholar
+        - Science and Technology Progress First Prize, China Gold Association
+    - year: "2021"
+      items:
+        - Young Elite Scientists Sponsorship Program by CAST
+    - year: "2020"
+      items:
+        - European Union Marie Skłodowska-Curie Individual Fellowship
+        - Science and Technology Progress First Prize, China Gold Association
+
+- title: Research Interests
   type: nested_list
   contents:
-    - title: Image/Video Compression
-      items: 
-        - H.264, HEVC, VVC, etc.
-        - Deep Image/Video Compression
-    - title: Image/Video Restoration
+    - title: Physics-based Modeling
       items:
-        - super-resolution, denoising, deblurring, etc.
-    - title: Human-Computer Interaction
+        - Fluids, deformations, and multiphase phenomena
+    - title: Differentiable Methods
       items:
-        - Action Recognition, 3D Hand Reconstructiong, Posture Recognition, Wearable Devices, etc.
+        - Differentiable rendering and simulation
+    - title: Virtual Reality and Human-Computer Interaction
+      items:
+        - Surgical simulation, motion control, and haptics

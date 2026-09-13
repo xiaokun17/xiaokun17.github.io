@@ -1,0 +1,205 @@
+Computer Animation and Virtual Worlds
+
+
+
+
+    SPECIAL ISSUE PAPER
+
+
+
+An Adaptive Boundary Material Point Method With Surface
+Particle Reconstruction
+Haokai Zeng1          | Dongyu Yang2 | Yanrui Xu1                                        | Yalan Zhang1, 7                   | Zhongmin Wang2 | Feng Tian3 | Xiaokun Wang1, 7                                                   |
+             1, 4, 5, 6
+Xiaojuan Ban
+
+1
+ School of Intelligence Science and Technology, University of Science and Technology Beijing, Beijing, China | 2 School of Computer and Communication
+Engineering, University of Science and Technology Beijing, Beijing, China | 3 Division of Natural and Applied Sciences, Duke Kunshan University, Jiangsu,
+China | 4 Beijing Key Laboratory of Big Data Innovation and Application for Skeletal Health Medical Care, University of Science and Technology Beijing,
+Beijing, China | 5 Key Laboratory of Advanced Materials and Devices for Post-Moore Chips, Ministry of Education, University of Science and Technology
+Beijing, Beijing, China | 6 Institute of Materials Intelligent Technology, Liaoning Academy of Materials, Shenyang, China | 7 Shunde Innovation School,
+University of Science and Technology Beijing, Guangdong, China
+
+Correspondence: Xiaokun Wang (wangxiaokun@ustb.edu.cn) | Xiaojuan Ban (banxj@ustb.edu.cn)
+
+Received: 24 April 2025 | Accepted: 6 May 2025
+
+Funding: This work was supported by the National Natural Science Foundation of China (Grant Nos. 62332017 and 62376025), and Basic and Applied Basic
+Research Foundation of Guangdong Province (Grant No. 2023A1515030177).
+
+Keywords: adaptive grids | computer animation | material point method | surface reconstruction
+
+
+
+    ABSTRACT
+    The expression of fine details such as fluid flowing through narrow pipes or split by thin plates poses a significant challenge in
+    simulations involving complex boundary conditions. As a hybrid method, the material point method (MPM), which is widely
+    used for simulating various materials, combines the advantages of Lagrangian particles and Eulerian grids. To achieve accurate
+    simulations of fluid flow through narrow pipes, high-resolution uniform grid cells are necessary, but this often leads to inefficient
+    simulation performance. In this article, we present an adaptive boundary material point method that facilitates adaptive subdi-
+    vision within regions of interest and conducts collision detection across grids of varying sizes. Within this framework, particles
+    interact through grids of differing resolutions. To tackle the challenge of unevenly distributed subdivided particles, we propose a
+    surface reconstruction approach grounded in the color distance field (CDF), which accurately defines the relationship between
+    the particles and the reconstructed surface. Furthermore, we incorporate a mesh refinement technique to enrich the detail of
+    the mesh utilized to mark the grids during subdivision. We demonstrate the effectiveness of our approach in simulating various
+    materials and boundary conditions, and contrast it with existing methods, underscoring its distinctive advantages.
+
+
+
+1 |         Introduction                                                                                            MPM provides the convenience of a unified framework, the
+                                                                                                                    efficiency and accuracy of simulations remain constrained by
+The material point method (MPM) has been widely applied                                                             the grid size and particle count. As grid resolution increases,
+to the simulation of various materials since its introduction                                                       more particles are required within each grid cell to ensure a
+into computer graphics by Stomakhin et al. [1]. MPM utilizes                                                        uniform and stable force distribution. However, this results
+a background grid for force calculation and particle-based sim-                                                     in significant particle-grid transmission overhead, as seen in
+ulation, making it particularly effective for modeling elastic                                                      simulations of sand [3] and water [4]. To prevent numerical
+and plastic materials undergoing large deformations [2]. While                                                      fractures, additional particles must be introduced into the grid.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+© 2025 John Wiley & Sons Ltd.
+
+
+
+Computer Animation and Virtual Worlds, 2025; 36:e70024                                                                                                                                                                1 of 10
+https://doi.org/10.1002/cav.70024
+FIGURE 1 | Bunny penetrates thin alphabet panel. Comparing the results of the original grid and the adaptive grid, bunny with original grid (left
+in the scene) is difficult to penetrate through the pores. Our adaptive method (right in the scene) allows penetration, and produces a more refined and
+detailed effect.
+
+
+These challenges hinder the improvement of simulation                         2 |     Related Work
+efficiency as grid accuracy increases. In addition, the grid
+size influences the phenomena of material self-collision and                  2.1 | Material Point Method
+boundary coupling. When using a uniform grid for force calcu-
+lation, particles separated by a distance smaller than grid size              The MPM, was introduced into computer graphics and applied
+do not interact with each other. This can lead to unrealistic                 to snow simulation by Stomakhin et al. [1]. Since then, the
+phenomena, such as excessively wide cuts, missed collisions and               MPM has continued to attract interest and has undergone exten-
+slow-moving streams in pipes.                                                 sive development. Tampubolon et al. [5] used the continuous
+                                                                              mixing theory to deal with fluid–sand interactions to realize
+To maintain efficiency while addressing issues arising from grid              realistic physical phenomena such as mudslides. The affine
+resolution, we propose an adaptive boundary material point                    particle-in-cell (APIC) method proposed by Jiang et al. [6]
+method. By adaptively subdividing particles in regions of interest,           reduces dissipation and preserves the lost angular momentum
+we can simulate particles of varying sizes using grids at different           from the particle-grid transition compared to particle-in-cell
+scales. All particles interact through background grid transmis-              (PIC) methods [7] and fluid implicit particle (FLIP) methods
+sion. Our main contributions can be summarized as follows:                    [8] and has become the dominant interpolation scheme for the
+                                                                              MPM. On this basis, Klár et al. [9] introduced the Drucker-Prager
+  1. A novel multigrid adaptive interpolation MPM that enables                model to describe the elastic and plastic behavior of materials.
+     the interaction of multiscale particles across different grids.          Hu et al. [10] proposed the compatible particle-in-cell (CPIC)
+     It enables the simulation of fine details (see Figure 1) and             method and the moving-least-squares MPM (MLS-MPM) for
+     improves the efficiency of the simulation meanwhile con-                 dealing with two-way rigid body coupling, significantly improv-
+     suming less computational resources.                                     ing the efficiency of particle-grid information transfer. Fang et al.
+  2. A new surface reconstruction scheme based on the signed                  [11] implemented a return mapping algorithm in the prediction
+     distance field, which mitigates the issue of uneven distribu-            correction stage to simulate viscoelastic materials. The ghost
+     tion of newly generated subdivision particles on the surface.            matrix operator-splitting scheme proposed by Fang et al. [12]
+     It ensures a smooth and consistent particle distribution for             effectively solves the viscous numerical artifacts at the boundary
+     high-quality surface reconstruction.                                     of the MPM.
+
+  3. An extension of the MPM solver to support multiple
+     complex boundary conditions with corresponding subdivi-                  2.2 | Adaptive Method
+     sion strategies. It improves the versatility and applicabil-
+     ity of MPM solver to handle a wider range of simulation
+                                                                              Adaptive methods dynamically adjust the resolution to fit the
+     scenes.
+                                                                              accuracy, mainly including temporal and spatial adaptation,
+                                                                              where the spatial method determines the underlying discretiza-
+                                                                              tion scheme. An octree-based adaptive method is a classic
+                                                                              example of a spatial adaptive technique. Seiler et al. [13] pro-
+                                                                              posed an octree-based deformable object cutting scheme that
+                                                                              achieves high-detail resolution surfaces through refinement and
+                                                                              node splitting. Setaluri et al. [14] utilized a sparse grid to store
+                                                                              the octree, enhancing the efficiency of data access. Xiao et al. [15]
+
+2 of 10                                                                                                       Computer Animation and Virtual Worlds, 2025
+introduced a tilted mesh based on the octree to avoid T-junctions,       In this article, our surface reconstruction framework demon-
+thereby improving the effectiveness of adaptive simulations.             strates seamless integration with the grid-based topology of
+                                                                         the MPM, using color-distance-field encoding to quantitatively
+Regarding particles, Adams et al. [16] were the pioneers in intro-       determine particle–surface positional relationships. This hybrid
+ducing a size function based on geometric local feature dimen-           approach significantly improves the accuracy of reconstruction
+sions, enabling adaptive particle resolution. To mitigate insta-         while maintaining computational stability across complex mate-
+bility arising from excessive differences in neighboring particle        rial boundaries.
+sizes, Winchenbach et al. [17, 18] implemented continuous tran-
+sitions in particle resolution by adjusting splitting and merging
+modes. Building upon this, Zhai et al. [19] enhanced particle dis-       3 |     Adaptive MPM
+tribution stability through improved interpolation functions. Liu
+et al. [20] considered factors such as vorticity and splashing, opti-    3.1 |     MPM Basics
+mizing adaptive simulations for high-dynamic scenarios. To fur-
+                                                                         The material point method uses the APIC method for particle-
+ther reduce computational costs, Chentanez et al. [21] proposed
+                                                                         grid transfer. We use subscripts 𝑖 to denote grid nodes, 𝑝 to denote
+a coupled pure Lagrangian and Eulerian approach for simulat-
+                                                                         particles, and superscripts 𝑛 to denote discrete time steps. Par-
+ing single-fluid bulk materials. Nakanishi et al. [22] focused on
+                                                                         ticles carry information such as mass 𝑚, position 𝒙, velocity 𝒗,
+constructing a suitable data structure to realize the octree grids
+                                                                         deformation gradient F, and affine matrix C. At the beginning of
+adaptation of FLIP, adjusting the background grid size only near
+                                                                         each time step, the particle information is first passed to the grid.
+the fluid surface.
+                                                                                                          ∑
+                                                                                                   𝑚𝑛𝑖 =       𝑤𝑛𝑖𝑝 𝑚𝑝                     (1)
+In terms of temporal adaptation, Sun et al. [23] solved the                                                 𝑝
+problem of the global time step that affects the stability of                                     ∑
+                                                                                        𝑚𝑛𝑖 v𝑛𝑖 =   𝑤𝑛𝑖𝑝 𝑚𝑝 (v𝑛𝑝 + C𝑛𝑝 (x𝑖 − x𝑛𝑝 ))𝑠       (2)
+MPM. Fang et al. [24] used a chunked time-step approach in                                          𝑝
+the matter-point method to achieve time acceleration for asyn-
+                                                                         where 𝑤 represents the interpolation weight. After collecting the
+chronous matter-point methods, using asynchronous computa-
+                                                                         particle information, the velocity of the grid vni is calculated and
+tion locally and synchronization globally. Spatially, Lian et al. [25]
+                                                                         the force and boundary treatment are performed on the grid.
+proposed a grid-based hierarchical MPM by modifying the shape
+function. Gao et al. [26] further modified the shape function to
+                                                                                                (   v𝑛𝑖 = 𝑚𝑛𝑖 v𝑛𝑖 ∕𝑚𝑛𝑖       )             (3)
+ensure its non-negativity of the shape function, which ensures
+                                                                                                        ∑ 𝜕𝜓
+the stability of the simulation.                                                 v𝑛+1 = v𝑛𝑖 +     𝑛
+                                                                                                 𝑚𝑖 g −    𝑉𝑝          𝑛 𝑇
+                                                                                                                    (F ) ∇𝑤𝑖𝑝 Δ𝑡∕𝑚𝑛𝑖
+                                                                                                                           𝑛
+                                                                                                                                           (4)
+                                                                                  𝑖
+                                                                                                         𝑝
+                                                                                                                𝜕F 𝑝
+Compared to most previous work, we implement a multi-
+grid adaptive scheme that avoids direct modification of the              where 𝜓 is the energy density function. After the grid is updated,
+mesh geometry, thereby ensuring interpolation stability and              the velocity and affine matrix for the next time step will be inter-
+non-negativity while maintaining compatibility with existing             polated back to the particles.
+computational frameworks.                                                                                    ∑
+                                                                                                    v𝑛+1
+                                                                                                     𝑝   =        𝑤𝑛𝑖𝑝 v𝑛+1
+                                                                                                                        𝑖                  (5)
+                                                                                                              𝑖
+                                                                                                                    (          )𝑇
+                                                                                                         ∑              𝜕𝑤𝑖𝑝
+                                                                                                C𝑛+1 =       v𝑛+1                          (6)
+2.3 |     Surface Reconstruction                                                                 𝑝
+                                                                                                         𝑖
+                                                                                                              𝑖
+                                                                                                                        𝜕𝑥
+
+Meshless surface reconstruction is widely used in SPH-based
+fluid simulation. Blinn [27] expressed the positional relationship       3.2 |     Multigrid Adaptive Method
+between the sampling points and object surface through implicit
+surface equations. Zhu et al. [3] obtained a smoother quicksand          We use multiple grids to solve the motions of particles inside the
+surface by smoothing the color distance field (CDF). Adams et al.        object and near the boundary, while computing their interactions
+[16] proposed time continuity to improve the accuracy of dis-            in the overlapping region of multisized particles.
+tance field calculation. Wang et al. [28] used an anisotropic kernel
+method to accurately reconstruct the fine effects of multiphase          The traditional material point method incorporates nearby parti-
+interfaces.                                                              cle interactions by gathering information from neighboring par-
+                                                                         ticles at a common grid node, as shown in Figure 2a.
+Compared with meshless methods, mesh schemes are more suit-
+able for dealing with regular data distributions. Yu et al. [29]         In the original MPM, particles are only interpolated to a single
+avoided reconstructing the surface in every frame by constructing        grid. To ensure that particles of different sizes can still influence
+object surface at the beginning moment and tracking the seg-             each other through the nodes, we achieve interaction by interpo-
+mentation and integration of the surface at each time step, which        lating particles in overlapping regions onto the opposite grid, as
+ensured efficiency. Akinci et al. [30] efficiently reconstructed a       shown in Figure 1b. At the boundary of the collision, the origi-
+high-quality mesh by constructing scalar fields in a narrow band         nal grid with a length of 𝑑𝑥 is subdivided into a finer grid with a
+around the surface in parallel. Xing et al. [31] constructed a local-    length of 𝑑𝑥′ = 𝑑𝑥∕𝑏(𝑏 > 1). Where 𝑏 is the subdivision base, by
+ized mesh by detecting fluid surface particles through the shading       adjusting the value of 𝑏, our approach can be adapted to different
+method to achieve the surface tension constraints.                       scenarios and enable more detailed simulations.
+
+                                                                                                                                       3 of 10
+

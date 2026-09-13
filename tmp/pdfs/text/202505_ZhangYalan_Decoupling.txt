@@ -1,0 +1,164 @@
+                     Utrecht University Repository
+
+Title                Decoupling Density Dynamics: A Neural Operator Framework for Adaptive
+                     Multi-Fluid Interactions
+
+
+Authors              Zhang, Yalan; Xu, Yuhang; Wang, Xiaokun; Chatzimparmpas, Angelos; Ban,
+                     Xiaojuan
+
+
+Published in         Computer Animation and Virtual Worlds
+
+
+Publication Date     2025-05
+
+
+Link                 https://dspace.library.uu.nl/handle/1874/477135
+
+
+Citation             Zhang, Y, Xu, Y, Wang, X, Chatzimparmpas, A & Ban, X 2025, 'Decoupling
+                     Density Dynamics : A Neural Operator Framework for Adaptive Multi-Fluid
+                     Interactions', Computer Animation and Virtual Worlds, vol. 36, no. 3, e70027,
+                     pp. 1-8. https://doi.org/10.1002/cav.70027
+
+
+Versions / License   Publisher version
+
+
+Rights               https://www.uu.nl/en/university-library/license-and-reuse-conditions
+Computer Animation and Virtual Worlds
+
+
+
+
+    SPECIAL ISSUE PAPER
+
+
+
+Decoupling Density Dynamics: A Neural Operator
+Framework for Adaptive Multi-Fluid Interactions
+Yalan Zhang1, 2                 | Yuhang Xu1, 2 | Xiaokun Wang1                                   | Angelos Chatzimparmpas3 | Xiaojuan Ban1
+
+1
+ School of Intelligence Science and Technology, University of Science and Technology Beijing, Beijing, China | 2 Shunde Innovation School, University of
+Science and Technology Beijing, Guangdong, China | 3 Department of Information and Computing Sciences, Utrecht University, Utrecht, the Netherlands
+
+Correspondence: Yalan Zhang (zhangyl@ustb.edu.cn)
+
+Received: 25 April 2025 | Accepted: 8 May 2025
+
+Funding: This research was supported by the National Natural Science Foundation of China (No. 62306032), Guangdong Basic and Applied Basic Research
+Foundation (No. 2022A1515110350), Interdisciplinary Research Project for Young Teachers of USTB (FRF-IDRY-GD24-003). The computing work is partly
+supported by the MAGICOM Platform of Beijing Advanced Innovation Center for Materials Genome Engineering.
+
+Keywords: density-conditioned convolution | Lagrangian simulation | multi-phase fluid dynamics | neural particle methods
+
+
+
+    ABSTRACT
+    The dynamic interface prediction of multi-density fluids presents a fundamental challenge across computational fluid dynamics
+    and graphics, rooted in nonlinear momentum transfer. We present Density-Conditioned Dynamic Convolution, a novel neural
+    operator framework that establishes differentiable density-dynamics mapping through decoupled operator response. The core
+    theoretical advancement lies in continuously adaptive neighborhood kernels that transform local density distributions into tunable
+    filters, enabling unified representation from homogeneous media to multi-phase fluid. Experiments demonstrate autonomous
+    evolution of physically consistent interface separation patterns in density contrast scenarios, including cocktail and bidirectional
+    hourglass flow. Quantitative evaluation shows improved computational efficiency compared to a SPH method and qualitatively
+    plausible interface dynamics, with a larger time step size.
+
+
+
+1 |         Introduction                                                                                            Systematic evaluation identifies several key challenges in existing
+                                                                                                                    learning-based approaches when applied to multi-density fluids:
+Fluid simulation with multi-density interactions remains a crit-                                                    (1) Static convolution kernels cannot adapt to density-dependent
+ical challenge in computer graphics and computational physics.                                                      material responses, causing error accumulation at fluid inter-
+While position-based neural solvers [1, 2] have demonstrated                                                        faces; (2) Fixed-dimensional feature encoding limits generaliza-
+remarkable success in homogeneous fluid simulation, their                                                           tion to unseen phase combinations.
+extension to multi-phase scenarios with varying density ratios
+(e.g., oil-water separation, magma-water interaction) introduces                                                    To address these limitations, we propose Density-Conditioned
+fundamental limitations. Traditional neural architectures pro-                                                      Dynamic Convolution, a novel neural operator framework. Its
+cess density as passive input features, failing to explicitly model                                                 core innovation lies in establishing explicit mappings between
+the dynamic coupling between fluids with contrasting material                                                       local density distributions and material responses. Specifically,
+properties.                                                                                                         we contribute:
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+© 2025 John Wiley & Sons Ltd.
+
+
+
+Computer Animation and Virtual Worlds, 2025; 36:e70027                                                                                                                                                                  1 of 8
+https://doi.org/10.1002/cav.70027
+                                                                                                                                                   1546427x, 2025, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/cav.70027 by Utrecht University, Wiley Online Library on [06/06/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+    • A novel Density-Conditioned Dynamic Convolution mod-              decoupling density ratios from numerical approximations, set-
+      ule that uses continuously adaptive neighborhood kernels to       ting new benchmarks for high-density contrast simulations.
+      model density-dependent interactions.
+                                                                        These methodological evolutions demonstrate three persistent
+    • A relative density encoding scheme that decouples feature
+                                                                        challenges in SPH-based methods for multi-phase fluids: (1)
+      learning from absolute density values, enabling generaliza-
+                                                                        Momentum conservation at dynamic interfaces, (2) Prevention
+      tion to arbitrary phase combinations.
+                                                                        of phase particle aggregation without resorting to non-physical
+                                                                        forces, and (3) Computational efficiency for interactive or
+These contributions collectively advance the state-of-the-art in        real-time applications. Current SPH-based approaches must
+neural particle methods for multi-density fluid simulation by           balance between physical accuracy and numerical stability
+explicitly addressing the challenges posed by varying material          through either enhanced mathematical formulations or empiri-
+properties.                                                             cal corrections—a trade-off our neural approach aims to resolve
+                                                                        through learned dynamics.
+
+2    | Related Work
+                                                                        2.2 | Machine Learning for Fluid Simulation
+2.1 | Traditional SPH-Based Multi-Phase
+Simulation                                                              Recent advances in machine learning (ML) have opened new
+                                                                        frontiers in fluid simulation by leveraging data-driven pat-
+Multi-phase fluid systems present unique challenges in handling         tern recognition. In contrast to Eulerian grid-based methods,
+density discontinuities at fluid interfaces. Erroneous density esti-    particle-based approaches deal with unstructured data, which
+mation at phase boundaries propagates to velocity and pressure          poses unique challenges for neural network modeling. Stan-
+miscalculations, necessitating specialized interface treatment.         ton et al. [11] introduced a precomputed state graph method
+Colagrossi et al. [3] pioneered the weakly compressible model           for real-time fluid simulation, where each graph vertex repre-
+using particle volume instead of density for pressure gradient          sents the position and velocity of particles in a frame, and each
+computation, effectively bypassing density discontinuities at           edge denotes transient connections between states. Similarly,
+gas-liquid interfaces through surface tension terms. However,           Sanchez-Gonzalez et al. [12] proposed Graph Network-based
+their method required prohibitively small time steps for sta-           Simulators (GNS), which use particles to represent the state
+bility. Hu et al. [4] introduced interfacial pressure averaging         of a physical system. By learning message-passing mecha-
+between phases, employing distinct approximation functions              nisms between edges, GNS can simulate fluids, rigid solids, and
+for cross-phase interactions. While innovative, this approach           deformable materials in a unified framework.
+violated mass conservation principles, leading to simulation
+divergence in long-term scenarios.                                      The similarity between unstructured Lagrangian particle sets
+                                                                        and point cloud models has inspired the adoption of point
+Building on these foundations, Hu and Adams [5] formulated              cloud processing techniques in Lagrangian systems across inter-
+an incompressible multi-phase SPH method using phase-aware              disciplinary research. Qi et al. [13] pioneered PointNet, a net-
+gradient/divergence operators. Their Poisson-based projection           work specifically designed for point cloud processing. PointNet
+method achieved enhanced interface stability at the cost of             employs multi-layer perceptrons (MLPs) to extract features and
+increased computational complexity. Grenier and Colagrossi [6]          uses max pooling to ensure permutation invariance, a crucial
+derived pressure terms through Lagrangian variational princi-           property for point cloud data. The following year, Qi et al. [14]
+ples, but required solving ill-conditioned matrices for particle        introduced PointNet++, which addressed the limitation of Point-
+volume distribution—a critical bottleneck in large-scale sim-           Net in capturing only global features. PointNet++ incorporates
+ulations. Monaghan et al. [7] proposed a pragmatic solution             sampling and grouping strategies to hierarchically extract local
+using artificial repulsion forces at interfaces, sacrificing physical   features, enhancing its ability to model fine-grained structures.
+accuracy for computational efficiency. This approach proved
+inadequate for turbulent flows due to unphysical constraints on         In the context of fluid simulation, Kashefi et al. [15] were among
+interfacial particle motion.                                            the first to apply a PointNet-based deep learning strategy to pre-
+                                                                        dict incompressible velocity and pressure fields around cylinders
+Recent advances focus on density ratio robustness. Chen et al.          with varying cross-sectional shapes. In industrial applications,
+[8] developed a novel density smoothing scheme by treat-                Jiang et al. [16] utilized a PointNet-based model to reconstruct
+ing cross-phase neighbors as intra-phase particles, coupled             high-resolution vascular flow models. Here, the vascular geom-
+with innovative density initialization and pressure correction          etry was represented as a point cloud, and the PointNet model
+terms, but did not include an artificial repulsion term, result-        was used to extract spatiotemporal features of the time-varying
+ing in a rougher simulated two-phase interface. Krimi et al.            flow field, which were then decoded into high-fidelity flow
+[9] enhanced interface sharpness through continuous pressure            reconstructions. For sequential point cloud data, PointRNN [17]
+surface equations, yet faced challenges in parameter selec-             was proposed, leveraging recurrent neural networks (RNNs) to
+tion without quantitative criteria. The most significant break-         predict the motion trajectories of 3D point clouds.
+through comes from Xu et al. [10], who replaced the traditional
+mass-density model with a volume-flux divergence-free formu-            Schenck et al. [18] leveraged fully convolutional neural networks
+lation. This paradigm shift eliminated interface instability by         to detect and track liquid dynamics in pouring sequences. They
+
+
+
+2 of 8                                                                                               Computer Animation and Virtual Worlds, 2025
+
