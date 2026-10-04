@@ -21,21 +21,34 @@ FIELD_ORDER = [
     "visible",
     "preview",
     "booktitle",
+    "research_area",
     "volume",
     "number",
     "pages",
     "doi",
     "url",
     "pdf",
-    "selected",
-    "note",
-    "publisher",
-    "organization",
     "abstract",
     "keywords",
-    "day",
-    "language",
+    "publisher",
+    "organization",
     "issn",
+    "language",
+    "day",
+    "bibtex_show",
+    "selected",
+    "note",
+    "arxiv",
+    "html",
+    "supp",
+    "blog",
+    "code",
+    "poster",
+    "slides",
+    "website",
+    "altmetric",
+    "dimensions",
+    "pmid",
 ]
 MINOR_WORDS = {
     "a",
@@ -367,10 +380,9 @@ def field_value(record: dict[str, str], name: str) -> str:
 
 def format_entry(entry_type: str, key: str, fields: dict[str, str]) -> str:
     lines = [f"@{entry_type}{{{key},"]
-    present = [name for name in FIELD_ORDER if name in fields]
-    for index, name in enumerate(present):
-        comma = "," if index < len(present) - 1 else ""
-        lines.append(f"  {name} = {{{fields[name]}}}{comma}")
+    for index, name in enumerate(FIELD_ORDER):
+        comma = "," if index < len(FIELD_ORDER) - 1 else ""
+        lines.append(f"  {name} = {{{fields.get(name, '')}}}{comma}")
     lines.append("}")
     return "\n".join(lines)
 
@@ -473,6 +485,15 @@ def main() -> None:
         note = field_value(current_fields, "note") or field_value(source_fields, "note")
         if note:
             fields["note"] = normalize_ampersands(note)
+
+        # Keep site-specific metadata and resource links when importing a new
+        # archive. Source metadata still takes precedence where it exists.
+        for name in FIELD_ORDER:
+            if fields.get(name, ""):
+                continue
+            current_value = field_value(current_fields, name)
+            if current_value:
+                fields[name] = current_value
 
         key = citation_key(author, year, month, title, used_keys)
         records.append((int(year), int(month), title, entry_type, key, fields))
