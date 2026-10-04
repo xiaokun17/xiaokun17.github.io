@@ -12,7 +12,6 @@ nav_order: 1
   <div class="publication-overview" aria-label="Publication overview">
     <span><strong id="publication-total">70</strong> publications</span>
     <span>2014–2026</span>
-    <span>Research areas: placeholder labels</span>
   </div>
 
   <div class="publication-tools">
@@ -28,15 +27,12 @@ nav_order: 1
         <option value="Deformable Materials">Deformable Materials</option>
         <option value="VR / HCI">VR / HCI</option>
         <option value="Rendering">Rendering</option>
-        <option value="Research area placeholder">Research area placeholder</option>
       </select>
     </label>
     <button class="publication-clear" id="publication-clear" type="button" aria-label="Clear publication filters" title="Clear filters">
       <i class="fas fa-times" aria-hidden="true"></i>
     </button>
   </div>
-
-  <p class="publication-placeholder-note">Topic labels and additional resource links are placeholders for this layout preview and can be replaced in the BibTeX records.</p>
 
   <div id="publication-empty" class="publication-empty" hidden>No publications match the current filters.</div>
 
