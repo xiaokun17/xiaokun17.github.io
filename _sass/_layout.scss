@@ -107,13 +107,15 @@ body.sticky-bottom-footer {
   }
 }
 
-.about-content {
-  > h2,
-  .about-section > h2,
-  .section-heading-row {
-    margin-top: 2.75rem;
-  }
+.service-page > h2,
+.project-page > h2,
+.about-content > h2,
+.about-content .about-section > h2,
+.about-content .section-heading-row {
+  margin-top: 2.75rem;
+}
 
+.about-content {
   > p {
     line-height: 1.75;
   }
@@ -163,9 +165,13 @@ body.sticky-bottom-footer {
     grid-template-columns: 5rem minmax(0, 1fr);
     gap: 1rem;
     padding: 0.9rem 0;
-    border-bottom: 1px solid var(--global-divider-color);
+    border-bottom: 1px dashed var(--global-divider-color);
     list-style: none;
     line-height: 1.5;
+  }
+
+  li:last-child {
+    border-bottom-style: solid;
   }
 
   time {
@@ -175,6 +181,105 @@ body.sticky-bottom-footer {
 
   small {
     color: var(--global-text-color-light);
+  }
+}
+
+.service-page {
+  padding-bottom: 2rem;
+}
+
+.service-list {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--global-divider-color);
+
+  li {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, 1fr);
+    gap: 2rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px dashed var(--global-divider-color);
+    list-style: none;
+    line-height: 1.5;
+  }
+
+  li:last-child {
+    border-bottom-style: solid;
+  }
+
+  time {
+    color: var(--global-theme-color);
+    box-sizing: border-box;
+    font-size: 0.84rem;
+    font-weight: 600;
+    line-height: 1.55;
+    padding-left: 4ch;
+    text-align: left;
+    font-variant-numeric: tabular-nums;
+  }
+
+  strong,
+  span {
+    display: block;
+  }
+
+  strong {
+    color: var(--global-text-color);
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  span {
+    margin-top: 0.2rem;
+    color: var(--global-text-color-light);
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+}
+
+.project-list .project-meta {
+  font-size: 0.82rem;
+}
+
+.project-list li {
+  grid-template-columns: 11rem minmax(0, 1fr);
+  gap: 2.25rem;
+}
+
+.project-list time {
+  white-space: nowrap;
+}
+
+.project-list div > span:first-of-type {
+  color: var(--global-text-color);
+  font-weight: 400;
+}
+
+@media (max-width: 575.98px) {
+  .service-list li {
+    grid-template-columns: 8rem minmax(0, 1fr);
+    gap: 1rem;
+    padding: 0.75rem 0;
+  }
+
+  .project-list li {
+    grid-template-columns: 9.5rem minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .service-list {
+    time {
+      font-size: 0.78rem;
+    }
+
+    strong {
+      font-size: 0.91rem;
+    }
+
+    span {
+      font-size: 0.84rem;
+    }
   }
 }
 

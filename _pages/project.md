@@ -1,38 +1,87 @@
 ---
 layout: page
 permalink: /project/
-title: Project
-description:
+title: Projects
+description: Research projects led or supported by Xiaokun Wang in physics-based simulation, fluid dynamics, and intelligent applications.
 nav: true
 nav_order: 6
 ---
 
-**1.** Principal investigator (PI) of “Complex multi-component fluid simulation technology for industrial scenarios”, funded by the Natural Science Foundation of China (NSFC), Grant No.62376025, 01/2024 - 12/2027.
+<div class="project-page">
 
-**2.** Co-PI (the Fellow) of “Multi-level Multi-phase Fluid Animation”, funded by EU’s Horizon 2020 -Marie Skłodowska-Curie Action- Individual Fellowships, No.895941, 07/2021-07/2023.
+<h2>Principal Investigator</h2>
 
-**3.** PI of “3D simulation of pipeline rheology for paste filling”, supported by Jianlong Steel Holding Co., LTD, 04/2023-12/2024
+<ol class="service-list project-list">
+  <li>
+    <time>Jan 2024-Dec 2027</time>
+    <div><strong>Complex Multi-Component Fluid Simulation Technology for Industrial Scenarios</strong><span>National Natural Science Foundation of China (NSFC)</span><span class="project-meta">Grant No. 62376025</span></div>
+  </li>
+  <li>
+    <time>Apr 2023-Dec 2024</time>
+    <div><strong>3D Simulation of Pipeline Rheology for Paste Filling</strong><span>Jianlong Steel Holding Company Limited</span><span class="project-meta">Industry-supported project</span></div>
+  </li>
+  <li>
+    <time>Jan 2023-Dec 2025</time>
+    <div><strong>Differentiable Fluid Modeling Techniques for Multiphase Flow Scenarios</strong><span>Guangdong Basic and Applied Basic Research Foundation</span><span class="project-meta">Grant No. 2023A1515030177</span></div>
+  </li>
+  <li>
+    <time>Jan 2022-Dec 2023</time>
+    <div><strong>Physical Modeling for Multi-Material Coupling Scenarios</strong><span>Ministry of Science and Technology of China</span><span class="project-meta">Grant number not provided</span></div>
+  </li>
+  <li>
+    <time>Jan 2018-Dec 2020</time>
+    <div><strong>Fluid Interactive Phenomena Simulation for Multiphase Flow Scenarios</strong><span>National Natural Science Foundation of China (NSFC)</span><span class="project-meta">Grant No. 61702036</span></div>
+  </li>
+  <li>
+    <time>Nov 2017-Dec 2018</time>
+    <div><strong>Non-Newtonian Fluid Simulation Using Particle-Based Methods</strong><span>China Postdoctoral Science Foundation</span><span class="project-meta">Grant No. 2017M620619</span></div>
+  </li>
+  <li>
+    <time>Jul 2017-Jun 2019</time>
+    <div><strong>Multiphase Interaction Simulation for Incompressible SPH Fluids</strong><span>Fundamental Research Funds for the Central Universities of China</span><span class="project-meta">Grant No. FRFTP-17-012A1</span></div>
+  </li>
+</ol>
 
-**4.** PI of “Physical Modeling for multi-material coupling scenarios”, funded by Ministry of Science and Technology of China, 01/2022-12/2023.
+<h2>Co-Principal Investigator</h2>
 
-**5.** PI of “Differentiable fluid modeling techniques for multiphase flow scenarios”, funded by Guangdong Basic and Applied Basic Research Foundation, Grant No.2023A1515030177, 01/2023-12/2025.
+<ol class="service-list project-list">
+  <li>
+    <time>Jul 2021-Jul 2023</time>
+    <div><strong>Multi-Level Multi-Phase Fluid Animation</strong><span>European Union Horizon 2020 Marie Skłodowska-Curie Actions</span><span class="project-meta">Grant No. 895941</span></div>
+  </li>
+  <li>
+    <time>Jan 2021-Dec 2022</time>
+    <div><strong>Research on Intelligent Simulation Modeling for Complex Multiphase Flow Environments</strong><span>Ministry of Science and Technology of China</span><span class="project-meta">Grant number not provided</span></div>
+  </li>
+  <li>
+    <time>Nov 2020-Nov 2022</time>
+    <div><strong>Computer-Aided Simulation Analysis of Silicone Oil Filling for Rheogenic Retinal Detachment</strong><span>Hainan Provincial Department of Science and Technology</span><span class="project-meta">Grant number not provided</span></div>
+  </li>
+  <li>
+    <time>Dec 2019-Nov 2022</time>
+    <div><strong>Data-Driven Intelligent and Accurate Control Technology for Paste Filling in Metal Mines</strong><span>National Key Research and Development Program of China</span><span class="project-meta">Grant No. 2019YFC0605302</span></div>
+  </li>
+  <li>
+    <time>Jun 2019-Jun 2021</time>
+    <div><strong>Intelligent and Precise Control and 3D Visualization for Paste Filling in the Southeast Ore Body of Chambishi Copper Mine</strong><span>NFC Africa Mining Public Limited Company</span><span class="project-meta">Industry-supported project</span></div>
+  </li>
+  <li>
+    <time>Jan 2019-Dec 2022</time>
+    <div><strong>Efficient Data-Driven Fluid Simulation for Multi-Element Scenarios</strong><span>National Natural Science Foundation of China (NSFC)</span><span class="project-meta">Grant No. 61873299</span></div>
+  </li>
+</ol>
 
-**6.** Co-PI of “Research on intelligent Simulation modeling for Complex Multiphase Flow Environment”, funded by Ministry of Science and Technology of China, 01/2021-12/2022.
+<h2>Researcher</h2>
 
-**7.** Co-PI of “Computer aided simulation analysis of silicone oil filling for rheogenic retinal detachment”, funded by Hainan Provincial Department of Science and Technology, 11/2020-11/2022.
+<ol class="service-list project-list">
+  <li>
+    <time>Aug 2016-Sep 2020</time>
+    <div><strong>Multimodal Data Interaction Intention Understanding Based on Cloud-Client Synergy</strong><span>National Key Research and Development Program of China</span><span class="project-meta">Grant No. 2016YFB1001404</span></div>
+  </li>
+  <li>
+    <time>Jan 2016-Dec 2019</time>
+    <div><strong>Non-Homogeneous Fluid-Oriented Interactive Animation</strong><span>National Natural Science Foundation of China (NSFC)</span><span class="project-meta">Grant No. 61572075</span></div>
+  </li>
+</ol>
 
-**8.** Co-PI of“Data-driven intelligent and accurate control technology for paste filling in metal mines”, funded by National Key Research and Development Program of China, Grant No.2019YFC0605302, 12/2019-11/2022.
-
-**9.** Co-PI of “ Intelligent and precise control and 3D visualization project for paste filling in southeast ore body of Chambishi Copper Mine”, supported by NFC Africa Mining PLC, 06/2019-06/2021.
-
-**10.** Co-PI of “ Efficient data driven fluid simulation for multi-element scenarios ” funded by by the Natural Science Foundation of China (NSFC), Grant No.61873299, 01/2019-12/2022.
-
-**11.** PI of “ Fluid interactive phenomena simulation for multiphase flow scenario ” funded NSFC, Grant No.61702036, 01/2018-12/2020.
-
-**12.** PI of “ Non-Newtonian fluid simulation using particle-based method ” funded by China Postdoctoral Science Foundation, Grant No.2017M620619, 11/2017-12/2018.
-
-**13.** PI of “Multiphase interaction simulation for incompressible SPH Fluids” funded by Fundamental Research Funds for the Central Universities of China, Grant No.FRFTP-17-012A1, 07/2017-06/2019.
-
-**14.** Researcher of “Multimodal data interaction intention understanding based on cloud client synergy”, funded by National Key Research and Development Program of China, Grant No.2016YFB1001404, 08/2016- 09/2020.
-
-**15.** Researcher of “ Non-homogeneous fluid oriented interactive animation ” funded by NSFC, Grant No.61572075, 01/2016-12/2019.
+</div>
