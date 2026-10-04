@@ -10,24 +10,19 @@ nav_order: 1
 
 <div class="publications publications-page">
   <div class="publication-overview" aria-label="Publication overview">
-    <span><strong id="publication-total">70</strong> publications</span>
-    <span>2014–2026</span>
+    <span><strong id="publication-total">59</strong> publications</span>
+    <label class="publication-year-range" for="publication-year-from">
+      <span class="sr-only">Publication year range</span>
+      <input id="publication-year-from" type="number" inputmode="numeric" min="1900" max="2100" step="1" value="2015" aria-label="Publication start year">
+      <span aria-hidden="true">–</span>
+      <input id="publication-year-to" type="number" inputmode="numeric" min="1900" max="2100" step="1" value="2026" aria-label="Publication end year">
+    </label>
   </div>
 
   <div class="publication-tools">
     <label class="publication-search" for="publication-search-input">
       <i class="fas fa-search" aria-hidden="true"></i>
       <input id="publication-search-input" type="search" placeholder="Search title, author, venue, year, or keyword" autocomplete="off">
-    </label>
-    <label class="publication-filter" for="publication-area-filter">
-      <span>Research area</span>
-      <select id="publication-area-filter">
-        <option value="all">All areas</option>
-        <option value="Fluid Simulation">Fluid Simulation</option>
-        <option value="Deformable Materials">Deformable Materials</option>
-        <option value="VR / HCI">VR / HCI</option>
-        <option value="Rendering">Rendering</option>
-      </select>
     </label>
     <button class="publication-clear" id="publication-clear" type="button" aria-label="Clear publication filters" title="Clear filters">
       <i class="fas fa-times" aria-hidden="true"></i>

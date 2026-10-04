@@ -1,8 +1,7 @@
 ---
 ---
 <!-- _layouts/bib.html -->
-      {%- assign publication_area = entry.research_area | default: '' | strip -%}
-      <div class="row publication-entry" data-publication-area="{{ publication_area | escape }}" data-publication-search="{{ entry.title | strip_html | append: ' ' | append: entry.author | append: ' ' | append: entry.journal | append: ' ' | append: entry.booktitle | append: ' ' | append: entry.year | append: ' ' | append: entry.keywords | escape }}">
+      <div class="row publication-entry" data-publication-year="{{ entry.year | escape }}" data-publication-search="{{ entry.title | strip_html | append: ' ' | append: entry.author | append: ' ' | append: entry.journal | append: ' ' | append: entry.booktitle | append: ' ' | append: entry.year | append: ' ' | append: entry.keywords | escape }}">
         <div class="col-sm-3 publication-preview-column">
         {%- assign default_preview_path = '/assets/img/publication_preview/loading.png' -%}
         {%- if entry.preview != blank -%}
@@ -14,9 +13,6 @@
           {%- endif -%}
         {%- else -%}
           {% include figure.html path=default_preview_path class="preview z-depth-1 rounded" alt="Default publication preview placeholder" zoomable=true -%}
-        {%- endif -%}
-        {%- if publication_area != blank -%}
-          <span class="publication-area-label">{{ publication_area }}</span>
         {%- endif -%}
         </div>
         <!-- Entry bib key -->
