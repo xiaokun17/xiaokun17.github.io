@@ -24,9 +24,6 @@
         {% assign author_array_size = entry.author_array | size %}
 
         {% assign author_array_limit = author_array_size %}
-        {%- if site.max_author_limit and author_array_size > site.max_author_limit %}
-          {% assign author_array_limit = site.max_author_limit %}
-        {% endif %}
 
         {%- for author in entry.author_array limit: author_array_limit -%}
           {%- assign author_first = author.first | strip -%}
@@ -53,7 +50,7 @@
             {%- if forloop.last and author_array_limit == author_array_size -%}and&nbsp;{%- endif -%}
           {%- endif -%}
           {%- if author_is_self -%}
-            <em>{{author_first}} {{author_last}}</em>
+            <span class="author-self">{{author_first}} {{author_last}}</span>
           {%- else -%}
             {%- if coauthor_url -%}
               <a href="{{coauthor_url}}">{{author_first}} {{author_last}}</a>
@@ -62,41 +59,6 @@
             {%- endif -%}
           {%- endif -%}
         {%- endfor -%}
-        {%- assign more_authors = author_array_size | minus: author_array_limit -%}
-
-        {%- assign more_authors_hide = more_authors | append: " more author" -%}
-        {%- if more_authors > 0 -%}
-          {%- if more_authors > 1 -%}
-            {%- assign more_authors_hide = more_authors_hide | append: "s" -%}
-          {%- endif -%}
-          {%- assign more_authors_show = '' -%}
-          {%- for author in entry.author_array offset: author_array_limit -%}
-            {%- assign author_first = author.first | strip -%}
-            {%- assign author_last = author.last | strip -%}
-            {%- assign more_authors_show = more_authors_show | append: author_first | append: " " | append: author_last -%}
-            {%- unless forloop.last -%}
-              {%- assign more_authors_show = more_authors_show | append: ", " -%}
-            {%- endunless -%}
-          {%- endfor -%}
-          , and
-          <span
-              class="more-authors"
-              title="click to view {{more_authors_hide}}"
-              onclick="
-                var element = $(this);
-                element.attr('title', '');
-                var more_authors_text = element.text() == '{{more_authors_hide}}' ? '{{more_authors_show}}' : '{{more_authors_hide}}';
-                var cursorPosition = 0;
-                var textAdder = setInterval(function(){
-                  element.text(more_authors_text.substring(0, cursorPosition + 1));
-                  if (++cursorPosition == more_authors_text.length){
-                    clearInterval(textAdder);
-                  }
-              }, '{{site.more_authors_animation_delay}}');
-              "
-          >{{more_authors_hide}}</span>
-        {%- endif -%}
-
         </div>
 
         <!-- Journal/Book title and date -->
@@ -194,7 +156,7 @@
             <a href="{{ entry.website }}" class="btn btn-sm z-depth-0" role="button">Website</a>
           {%- endif %}
           </div>
-          {% if site.badges %}
+          {% if site.publication_citations and site.badges %}
           {%- if entry.doi != blank or entry.altmetric != blank or entry.pmid != blank or entry.dimensions != blank %}
           <div class="badges">
           {%- if site.badges.altmetric_badge or entry.altmetric != blank %}

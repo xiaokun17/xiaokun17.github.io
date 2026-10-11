@@ -3,22 +3,11 @@ layout: page
 permalink: /publications/
 title: Publications
 description: Complete and selected publications on physics-based simulation, fluid dynamics, differentiable rendering, virtual reality, and human-computer interaction.
-years: [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014]
 nav: true
 nav_order: 1
 ---
 
 <div class="publications publications-page">
-  <div class="publication-overview" aria-label="Publication overview">
-    <span><strong id="publication-total">59</strong> publications</span>
-    <label class="publication-year-range" for="publication-year-from">
-      <span class="sr-only">Publication year range</span>
-      <input id="publication-year-from" type="number" inputmode="numeric" min="1900" max="2100" step="1" value="2015" aria-label="Publication start year">
-      <span aria-hidden="true">–</span>
-      <input id="publication-year-to" type="number" inputmode="numeric" min="1900" max="2100" step="1" value="2026" aria-label="Publication end year">
-    </label>
-  </div>
-
   <div class="publication-tools">
     <label class="publication-search" for="publication-search-input">
       <i class="fas fa-search" aria-hidden="true"></i>
@@ -31,12 +20,28 @@ nav_order: 1
 
   <div id="publication-empty" class="publication-empty" hidden>No publications match the current filters.</div>
 
-  {%- for y in page.years %}
-    <section class="publication-year" data-publication-year="{{ y }}">
-      <h2 class="year">{{ y }}</h2>
+  {% assign publication_cutoff = site.publication_year_cutoff | default: 2019 %}
+  {% assign publication_batch_size = site.publication_year_batch_size | default: 5 %}
+  {%- for y in site.data.publication_years %}
+    <details class="publication-year{% if y <= publication_cutoff %} publication-year-older{% endif %}"
+      data-publication-year="{{ y }}"
+      {% if y > publication_cutoff %}open{% else %}hidden{% endif %}>
+      <summary class="year">{{ y }}</summary>
       {% bibliography -f papers -q @*[year={{y}},visible!=false]* %}
-    </section>
+    </details>
   {% endfor %}
+
+  <div id="publication-years-controls" class="publication-years-controls"
+    data-year-cutoff="{{ publication_cutoff }}" data-batch-size="{{ publication_batch_size }}" hidden>
+    <button id="publication-years-more" class="publication-years-toggle" type="button">
+      <i class="fas fa-chevron-down" aria-hidden="true"></i>
+      <span>More years</span>
+    </button>
+    <button id="publication-years-less" class="publication-years-toggle" type="button" hidden>
+      <i class="fas fa-chevron-up" aria-hidden="true"></i>
+      <span>Show fewer years</span>
+    </button>
+  </div>
 </div>
 
 <script defer src="{{ '/assets/js/publications.js' | relative_url }}"></script>

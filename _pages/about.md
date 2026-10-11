@@ -7,7 +7,6 @@ description: Xiaokun Wang is a Professor at the University of Science and Techno
 profile:
   image: WangXiaoKun.png
 
-news: false
 selected_papers: true
 social: true
 ---
@@ -27,6 +26,10 @@ From 2017 to 2022, I held postdoctoral, lecturer, and associate professor positi
   <li><strong>Human-computer interaction</strong><span>Motion control and haptics</span></li>
   <li><strong>Industrial applications</strong><span>Translating simulation technologies into practice</span></li>
 </ul>
+
+## News
+
+{% include news.html %}
 
 ## Honors & Awards
 
