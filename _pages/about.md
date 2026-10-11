@@ -7,7 +7,7 @@ description: Xiaokun Wang is a Professor at the University of Science and Techno
 profile:
   image: WangXiaoKun.png
 
-selected_papers: true
+featured_papers: true
 social: true
 ---
 
@@ -32,16 +32,14 @@ From 2017 to 2022, I held postdoctoral, lecturer, and associate professor positi
 {% include news.html %}
 
 <div class="section-heading-row">
-  <h2>Selected Achievements</h2>
+  <h2>Featured Achievements</h2>
   <a href="{{ '/achievements/' | relative_url }}">View all</a>
 </div>
 
+{% assign featured_achievements = site.data.achievements | where: 'featured', true | sort: 'featured_order' %}
+{% assign featured_achievements = featured_achievements | sort: 'year' | reverse %}
 <ol class="honors-list">
-  <li><time>2023</time><span>Science and Technology Progress First Prize, China Gold Association</span></li>
-  <li><time>2022</time><span>Science and Technology Progress Second Prize, Chinese Institute of Electronics<br><small>中国电子学会科技进步二等奖</small></span></li>
-  <li><time>2022</time><span>USTB Young Scholar<br><small>北京科技大学“北科青年学者”</small></span></li>
-  <li><time>2022</time><span>Science and Technology Progress First Prize, China Gold Association</span></li>
-  <li><time>2021</time><span>Young Elite Scientists Sponsorship Program by CAST<br><small>北京科协“青年人才托举工程”</small></span></li>
-  <li><time>2020</time><span>European Union Marie Skłodowska-Curie Individual Fellowship<br><small>欧盟玛丽居里学者</small></span></li>
-  <li><time>2020</time><span>Science and Technology Progress First Prize, China Gold Association</span></li>
+  {% for item in featured_achievements %}
+    <li><time>{{ item.year }}</time><span><strong>{{ item.title }}</strong><br><small>{{ item.organization }}</small></span></li>
+  {% endfor %}
 </ol>

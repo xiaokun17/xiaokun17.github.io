@@ -283,7 +283,7 @@ publication_year_cutoff: 2019
 publication_year_batch_size: 5
 
 # Filter out certain bibtex entry keywords used internally from the bib output
-filtered_bibtex_keywords: [abbr, abstract, arxiv, bibtex_show, html, pdf, selected, visible, supp, blog, code, poster, slides, website, preview, research_area, altmetric, dimensions, pmid]
+filtered_bibtex_keywords: [abbr, abstract, arxiv, bibtex_show, html, pdf, featured, visible, supp, blog, code, poster, slides, website, preview, research_area, altmetric, dimensions, pmid]
 
 # -----------------------------------------------------------------------------
 # Jekyll Link Attributes

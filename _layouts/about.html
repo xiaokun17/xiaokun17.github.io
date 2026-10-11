@@ -35,10 +35,10 @@ layout: default
   <article class="about-content">
     {{ content }}
 
-    {% if page.selected_papers %}
+    {% if page.featured_papers %}
       <section class="about-section selected-publications">
         <div class="section-heading-row">
-          <h2>Selected Publications</h2>
+          <h2>Featured Publications</h2>
           <a href="{{ '/publications/' | relative_url }}">View all</a>
         </div>
         {% include selected_papers.html %}

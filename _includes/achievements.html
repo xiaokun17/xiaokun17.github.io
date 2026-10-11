@@ -1,0 +1,15 @@
+{% assign all_achievements = site.data.achievements | where_exp: 'item', 'item.visible != false' %}
+{% assign categories = 'Major Awards|Academic Awards|Educational & Institutional Honors|Innovation & Team Building' | split: '|' %}
+{% for category in categories %}
+  {% assign category_items = all_achievements | where: 'category', category | sort: 'year' | reverse %}
+  {% if category_items != empty %}
+    <section class="achievement-section">
+      <h2>{{ category }}</h2>
+      <ol class="service-list achievement-list">
+        {% for item in category_items %}
+          <li><time>{{ item.year }}</time><div><strong>{{ item.title }}</strong>{% if item.organization %}<span class="achievement-organization">{{ item.organization }}</span>{% endif %}{% if item.description %}<span>{{ item.description }}</span>{% endif %}{% if item.role %}<span>{{ item.role }}</span>{% endif %}</div></li>
+        {% endfor %}
+      </ol>
+    </section>
+  {% endif %}
+{% endfor %}
