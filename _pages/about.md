@@ -20,11 +20,11 @@ From 2017 to 2022, I held postdoctoral, lecturer, and associate professor positi
 ## Research Interests
 
 <ul class="interest-list">
-  <li><strong>Physics-based modeling</strong><span>Fluids, deformations, and multiphase phenomena</span></li>
-  <li><strong>Differentiable methods</strong><span>Differentiable rendering and simulation</span></li>
-  <li><strong>Virtual reality</strong><span>Surgical simulation and immersive interaction</span></li>
-  <li><strong>Human-computer interaction</strong><span>Motion control and haptics</span></li>
-  <li><strong>Industrial applications</strong><span>Translating simulation technologies into practice</span></li>
+  <li><strong>Physics-Based Modeling</strong><span>Fluids, deformations, and multiphase phenomena</span></li>
+  <li><strong>Differentiable Methods</strong><span>Differentiable rendering and simulation</span></li>
+  <li><strong>Virtual Reality</strong><span>Surgical simulation and immersive interaction</span></li>
+  <li><strong>Human-Computer Interaction</strong><span>Motion control and haptics</span></li>
+  <li><strong>Industrial Applications</strong><span>Translating simulation technologies into practice</span></li>
 </ul>
 
 ## News
