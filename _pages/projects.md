@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Members
-permalink: /projects/
+permalink: /members/
 description: A growing collection of your cool projects.
 nav: false
 nav_order: 2

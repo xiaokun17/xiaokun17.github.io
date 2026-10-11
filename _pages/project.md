@@ -1,6 +1,6 @@
 ---
 layout: page
-permalink: /project/
+permalink: /projects/
 title: Projects
 description: Research projects led or supported by Xiaokun Wang in physics-based simulation, fluid dynamics, and intelligent applications.
 nav: true

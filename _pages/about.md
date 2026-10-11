@@ -31,7 +31,10 @@ From 2017 to 2022, I held postdoctoral, lecturer, and associate professor positi
 
 {% include news.html %}
 
-## Honors & Awards
+<div class="section-heading-row">
+  <h2>Selected Achievements</h2>
+  <a href="{{ '/achievements/' | relative_url }}">View all</a>
+</div>
 
 <ol class="honors-list">
   <li><time>2023</time><span>Science and Technology Progress First Prize, China Gold Association</span></li>

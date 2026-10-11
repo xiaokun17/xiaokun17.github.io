@@ -1,7 +1,7 @@
 ---
 layout: page
-permalink: /honors/
-title: Honors & Awards
+permalink: /achievements/
+title: Achievements
 nav: true
 nav_order: 7
 ---
