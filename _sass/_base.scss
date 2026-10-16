@@ -690,6 +690,18 @@ footer.sticky-bottom {
           color: var(--global-theme-color);
           font-weight: 700;
         }
+        > a.author-self-plain {
+          &,
+          &:visited,
+          &:hover,
+          &:focus,
+          &:active {
+            color: inherit;
+            font-weight: inherit;
+            border-bottom: none;
+            text-decoration: none;
+          }
+        }
       }
       .publication-keywords {
         display: flex;

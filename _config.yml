@@ -278,12 +278,15 @@ badges: # Display different badges for your pulications
 # Keep disabled by default; set to true when the external services are desired.
 publication_citations: false
 
+# Highlight Xiaokun Wang in publication author lists when set to true.
+publication_highlight_self: false
+
 # Years up to and including the cutoff are revealed in calendar-year batches.
 publication_year_cutoff: 2019
 publication_year_batch_size: 5
 
 # Filter out certain bibtex entry keywords used internally from the bib output
-filtered_bibtex_keywords: [abbr, abstract, arxiv, bibtex_show, html, pdf, featured, visible, supp, blog, code, poster, slides, website, preview, research_area, altmetric, dimensions, pmid]
+filtered_bibtex_keywords: [abbr, abstract, arxiv, bibtex_show, html, pdf, video, featured, visible, supp, blog, code, poster, slides, website, preview, research_area, altmetric, dimensions, pmid]
 
 # -----------------------------------------------------------------------------
 # Jekyll Link Attributes

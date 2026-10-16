@@ -49,7 +49,9 @@
             {%- if forloop.first == false -%},&nbsp;{%- endif -%}
             {%- if forloop.last and author_array_limit == author_array_size -%}and&nbsp;{%- endif -%}
           {%- endif -%}
-          {%- if author_is_self -%}
+          {%- if author_is_self and coauthor_url -%}
+            <a href="{{coauthor_url}}" class="{% if site.publication_highlight_self == true %}author-self{% else %}author-self-plain{% endif %}">{{author_first}} {{author_last}}</a>
+          {%- elsif author_is_self and site.publication_highlight_self == true -%}
             <span class="author-self">{{author_first}} {{author_last}}</span>
           {%- else -%}
             {%- if coauthor_url -%}
@@ -127,6 +129,10 @@
             {%- else -%}
             <a href="{{ entry.pdf | prepend: '/assets/pdf/' | relative_url }}" class="btn btn-sm z-depth-0" role="button">PDF</a>
             {%- endif %}
+          {%- endif %}
+          {%- assign video_url = entry.video | default: "" | strip -%}
+          {%- if video_url != blank %}
+            <a href="{{ video_url | escape }}" class="publication-video btn btn-sm z-depth-0" role="button" target="_blank" rel="noopener noreferrer">Video</a>
           {%- endif %}
           {%- if entry.supp != blank %}
             {% if entry.supp contains '://' -%}
