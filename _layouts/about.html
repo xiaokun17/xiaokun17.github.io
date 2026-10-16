@@ -21,6 +21,9 @@ layout: default
         <a href="https://orcid.org/{{ site.orcid_id }}" target="_blank" rel="noopener noreferrer"><i class="ai ai-orcid" aria-hidden="true"></i> ORCID</a>
         <a href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener noreferrer"><i class="fab fa-github" aria-hidden="true"></i> GitHub</a>
         <a href="{{ site.research_gate_url }}" target="_blank" rel="noopener noreferrer"><i class="ai ai-researchgate" aria-hidden="true"></i> ResearchGate</a>
+        {% if site.bilibili_url != blank %}
+        <a href="{{ site.bilibili_url | escape }}" target="_blank" rel="noopener noreferrer">{% include bilibili_icon.html %} Bilibili</a>
+        {% endif %}
       </nav>
     </div>
 

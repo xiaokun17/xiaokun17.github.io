@@ -22,13 +22,16 @@
             {%- if site.osf_id -%}
             <a href="https:/osf.io/{{ site.osf_id }}/" title="Open Science Framework"><i class="ai ai-osf"></i></a>
             {% endif %}
+            {%- if site.github_username -%}
+            <a href="https://github.com/{{ site.github_username }}" title="GitHub"><i class="fab fa-github"></i></a>
+            {% endif %}
             {%- if site.research_gate_url -%}
             <a href="{{ site.research_gate_url }}" title="ResearchGate" aria-label="ResearchGate"><i class="ai ai-researchgate"></i></a>
             {%- elsif site.research_gate_profile -%}
             <a href="https://www.researchgate.net/profile/{{site.research_gate_profile}}/" title="ResearchGate" aria-label="ResearchGate"><i class="ai ai-researchgate"></i></a>
             {% endif %}
-            {%- if site.github_username -%}
-            <a href="https://github.com/{{ site.github_username }}" title="GitHub"><i class="fab fa-github"></i></a>
+            {%- if site.bilibili_url != blank -%}
+            <a href="{{ site.bilibili_url | escape }}" title="Bilibili" aria-label="Bilibili" target="_blank" rel="noopener noreferrer">{% include bilibili_icon.html %}</a>
             {% endif %}
             {%- if site.linkedin_username -%}
             <a href="https://www.linkedin.com/in/{{ site.linkedin_username }}" title="LinkedIn"><i class="fab fa-linkedin"></i></a>

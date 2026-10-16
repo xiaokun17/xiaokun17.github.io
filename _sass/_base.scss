@@ -250,17 +250,25 @@ blockquote {
 
 // Social (bottom)
 
+.bilibili-icon {
+  display: inline-block;
+  vertical-align: -0.125em;
+  flex-shrink: 0;
+}
+
 .social {
   text-align: center;
   .contact-icons {
     font-size: 4rem;
     a {
-      i::before {
+      i::before,
+      .bilibili-icon {
         color: var(--global-text-color);
         transition-property: all 0.2s ease-in-out;
       }
       &:hover {
-        i::before {
+        i::before,
+        .bilibili-icon {
           color: var(--global-theme-color);
         }
       }
