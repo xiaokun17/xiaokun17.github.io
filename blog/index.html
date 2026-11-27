@@ -42,7 +42,7 @@ pagination:
 
   <ul class="post-list">
 
-    {%- if page.pagination.enabled -%}
+    {%- if site.pagination.enabled and page.pagination.enabled -%}
       {%- assign postlist = paginator.posts -%}
     {%- else -%}
       {%- assign postlist = site.posts -%}
@@ -109,7 +109,7 @@ pagination:
 {%- if post.thumbnail -%}
     </div>
   <div class="col-sm-3">
-    <img class="card-img" src="{{post.thumbnail | relative_url}}" style="object-fit: cover; height: 90%" alt="image">
+    <img class="card-img" src="{{post.thumbnail | relative_url}}" style="object-fit: cover; height: 90%" alt="{{ post.title | escape }}">
   </div>
 </div>
 {%- endif -%}
@@ -118,7 +118,7 @@ pagination:
     {% endfor %}
   </ul>
 
-  {%- if page.pagination.enabled -%}
+  {%- if site.pagination.enabled and page.pagination.enabled -%}
     {%- include pagination.html -%}
   {%- endif -%}
 

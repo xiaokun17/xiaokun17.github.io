@@ -4,13 +4,13 @@
   <head>
     {%- include head.html %}
 
+    {% include scripts/jquery.html %}
     {%- if site.enable_medium_zoom %}
       <!-- Medium Zoom JS -->
       <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@{{ site.medium_zoom.version }}/dist/medium-zoom.min.js" integrity="{{ site.medium_zoom.integrity }}" crossorigin="anonymous"></script>
-      <script defer src="{{ '/assets/js/zoom.js' | relative_url | bust_file_cache }}"></script>
+      <script defer src="{{ '/assets/js/zoom.js' | relative_url }}"></script>
     {%- endif -%}
 
-    {% include scripts/jquery.html %}
     {% include scripts/mathjax.html %}
     <!-- Distill js -->
     <script src="{{ '/assets/js/distillpub/template.v2.js' | relative_url }}"></script>

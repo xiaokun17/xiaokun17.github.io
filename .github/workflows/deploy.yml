@@ -1,6 +1,7 @@
 name: deploy
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
@@ -12,43 +13,47 @@ on:
 
 jobs:
   deploy:
+    if: github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+      pages: write
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.0.2'
+        ruby-version: '3.3.8'
         bundler-cache: false
 
     - name: Upgrade Bundler
-      run: gem install bundler
+      run: gem install bundler -v 4.0.20
 
     - name: Install deps
       run: |
         npm install -g mermaid.cli
         bundle install
 
-    - name: Setup deploy options
-      id: setup
+    - name: Build and deploy website
+      env:
+        SOURCE_BRANCH: ${{ github.head_ref || github.ref_name }}
       run: |
-        git config --global user.name "GitHub Action"
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        if [[ ${GITHUB_REF} = refs/pull/*/merge ]]; then # pull request
-          echo "SRC_BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT
-          echo "NO_PUSH=--no-push" >> $GITHUB_OUTPUT
-        elif [[ ${GITHUB_REF} = refs/heads/* ]]; then # branch, e.g. master, source etc
-          echo "::set-output name=SRC_BRANCH::${GITHUB_REF#refs/heads/}"
+        git config user.name "GitHub Action"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        options=(--src "$SOURCE_BRANCH" --deploy gh-pages)
+        if [[ "$GITHUB_EVENT_NAME" == pull_request ]]; then
+          options+=(--no-push)
         fi
-        if [[ ${{ github.repository }} = *.github.io ]]; then # user/org repo
-          echo "::set-output name=DEPLOY_BRANCH::gh-pages"
-        else
-          echo "DEPLOY_BRANCH=gh-pages" >> $GITHUB_OUTPUT
-        fi
+        bash bin/deploy "${options[@]}" <<< y
 
-    - name: Deploy website 
-      run:  yes | bash bin/deploy --verbose ${{ steps.setup.outputs.NO_PUSH }}
-                    --src ${{ steps.setup.outputs.SRC_BRANCH }} 
-                    --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }} 
+    - name: Request a Pages build from the published branch
+      if: github.event_name == 'workflow_dispatch'
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        publish_branch=$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq '.source.branch')
+        if [[ "$publish_branch" == gh-pages ]]; then
+          gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
+        fi

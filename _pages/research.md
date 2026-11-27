@@ -5,6 +5,21 @@ title: Research
 description: An overview of the research themes, methods, and application areas that shape this work.
 nav: true
 nav_order: 2
+dropdown: true
+children:
+  - title: Research overview
+    permalink: /research/
+  - title: divider
+  - title: Physics-Based Modeling
+    permalink: /research/physics-based-modeling/
+  - title: Differentiable Methods
+    permalink: /research/differentiable-methods/
+  - title: Virtual Reality
+    permalink: /research/virtual-reality/
+  - title: Human-Computer Interaction
+    permalink: /research/human-computer-interaction/
+  - title: Industrial Applications
+    permalink: /research/industrial-applications/
 ---
 
 <div class="research-list">

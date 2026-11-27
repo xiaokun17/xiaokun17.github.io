@@ -75,11 +75,11 @@ if ! test -z "$(git ls-files --exclude-standard --others)"; then
 fi
 
 # Switch to source branch (creates it if necessary from the current branch)
-if [ `git branch | grep $SRC_BRANCH | tr ' ' '\n' | tail -1` ]
+if git show-ref --verify --quiet "refs/heads/$SRC_BRANCH"
 then
-    git checkout $SRC_BRANCH
+    git checkout "$SRC_BRANCH"
 else
-    git checkout -b $SRC_BRANCH
+    git checkout -b "$SRC_BRANCH"
 fi
 
 # Checkout DEPLOY_BRANCH branch
@@ -109,7 +109,7 @@ git commit --allow-empty -m "$(git log -1 --pretty=%B) [ci skip]"
 [[ ${NO_PUSH} ]] || git push -f -q origin $DEPLOY_BRANCH
 
 # Move back to SRC_BRANCH
-git checkout $SRC_BRANCH
+git checkout "$SRC_BRANCH"
 
 echo "Deployed successfully!"
 

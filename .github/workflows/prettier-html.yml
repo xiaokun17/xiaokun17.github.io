@@ -3,34 +3,28 @@ name: Prettify gh-pages
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   format:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout gh-pages branch
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           ref: gh-pages
-
-      - name: Find and Remove </source> Tags
-        run: find . -type f -name "*.html" -exec sed -i 's/<\/source>//g' {} +
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-
-      - name: Install Prettier
-        run: npm install -g prettier
-
-      - name: Check for Prettier
-        run: npx prettier --version || echo "Prettier not found"
-
-      - name: Run Prettier on HTML files
-        run: npx prettier --write '**/*.html'
-
-      - name: Commit and push changes
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Format generated HTML
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add .
-          git commit -m "Formatted HTML files" || echo "No changes to commit"
-          git push
+          find . -name '*.html' -type f -exec sed -i 's|</source>||g' {} +
+          npx --yes prettier@3.6.2 --write '**/*.html'
+      - name: Save formatting to gh-pages
+        run: |
+          git add -- '*.html'
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Format generated HTML"
+          git push origin HEAD:gh-pages

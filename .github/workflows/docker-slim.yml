@@ -1,51 +1,44 @@
 name: Docker Slim
 
-#Only trigger, when the build workflow succeeded
 on:
-  workflow_run:
-    workflows: ["Docker Image CI"]
-    types:
-      - completed
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish the verified slim image to this repository's GHCR package
+        type: boolean
+        default: false
 
-# on: 
-#   push:
-#     branches: 
-#       - 'master'
-
-jobs: 
+jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'alshedivat'
-
-    defaults:
-      run:
-        working-directory: ${{ github.workspace }}
-
+    permissions:
+      contents: read
+      packages: write
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    - name: Login
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        
-    - name: update docker-compose
-      shell: bash
-      run:  |
-        sed -i "s|\.:|${{ github.workspace }}:|g" ${{ github.workspace }}/docker-compose.yml 
-        cat ${{ github.workspace }}/docker-compose.yml 
-        
-    - uses: kitabisa/docker-slim-action@v1.0.3
-      env:
-        DSLIM_PULL: true
-        DSLIM_COMPOSE_FILE: ${{ github.workspace }}/docker-compose.yml
-        DSLIM_TARGET_COMPOSE_SVC: jekyll
-        DSLIM_CONTINUE_AFTER: signal
-      with:
-        target: amirpourmand/al-folio
-        tag: "slim"
-
-    # Push to the registry
-    - run: docker image push amirpourmand/al-folio:slim
+      - uses: actions/checkout@v4
+      - name: Build the local Jekyll image
+        run: docker compose -f docker-local.yml build jekyll_custom
+      - name: Profile the preview server and build the slim image
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download 1.40.11 --repo slimtoolkit/slim --pattern dist_linux.tar.gz --dir "$RUNNER_TEMP"
+          tar -xzf "$RUNNER_TEMP/dist_linux.tar.gz" -C "$RUNNER_TEMP"
+          "$RUNNER_TEMP/dist_linux/slim" build \
+            --target al-folio-local-docker:latest --tag homepage:slim \
+            --mount "$GITHUB_WORKSPACE:/srv/jekyll" --expose 8080 \
+            --cmd 'bundle exec jekyll serve --config _config.yml,_config_local.yml --host 0.0.0.0 --port 8080' \
+            --include-path /var/lib/gems --include-path /usr/lib/ruby
+      - name: Verify the static site builds with the slim image
+        run: |
+          docker run --rm -v "$GITHUB_WORKSPACE:/srv/jekyll" homepage:slim \
+            bundle exec jekyll build --config _config.yml,_config_local.yml --destination /tmp/site
+      - name: Publish the verified image
+        if: inputs.publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          image="ghcr.io/${GITHUB_REPOSITORY,,}:slim"
+          echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          docker tag homepage:slim "$image"
+          docker push "$image"

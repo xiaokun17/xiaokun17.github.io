@@ -117,6 +117,10 @@
           {%- if entry.bibtex_show == true or entry.bibtex_show == 'true' %}
             <a class="bibtex btn btn-sm z-depth-0" role="button">Bib</a>
           {%- endif %}
+          {%- assign doi = entry.doi | default: '' | strip | remove_first: 'https://doi.org/' | remove_first: 'http://doi.org/' | remove_first: 'https://dx.doi.org/' | remove_first: 'http://dx.doi.org/' -%}
+          {%- if doi != '' %}
+            <a href="https://doi.org/{{ doi | escape }}" class="publication-doi btn btn-sm z-depth-0" role="button" target="_blank" rel="noopener noreferrer">DOI</a>
+          {%- endif %}
           {%- if entry.url != blank %}
             <a href="{{ entry.url | strip | escape }}" class="publication-url btn btn-sm z-depth-0" role="button" target="_blank" rel="noopener noreferrer">URL</a>
           {%- endif %}

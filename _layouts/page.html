@@ -11,6 +11,14 @@ layout: default
 
           <article>
             {{ content }}
+            {% if page.related_publications %}
+              <section class="publications">
+                <h2>Related Publications</h2>
+                {% for key in page.related_publications %}
+                  {% bibliography -f papers -q @*[key={{key}},visible!=false]* %}
+                {% endfor %}
+              </section>
+            {% endif %}
           </article>
 
         </div>

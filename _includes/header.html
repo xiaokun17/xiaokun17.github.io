@@ -69,7 +69,7 @@
               {%- if p.dropdown %}
               {%- assign has_active_child = false -%}
               {%- for child in p.children -%}
-              {%- if page.title == child.title -%}
+              {%- if page.url == child.permalink -%}
               {%- assign has_active_child = true -%}
               {%- endif -%}
               {%- endfor -%}
@@ -84,7 +84,7 @@
                   {%- if child.title == 'divider' %}
                   <div class="dropdown-divider"></div>
                   {%- else %}
-                  <a class="dropdown-item {% if page.title == child.title %}active{% endif %}" href="{{ child.permalink | relative_url }}">{{ child.title }}</a>
+                  <a class="dropdown-item {% if page.url == child.permalink %}active{% endif %}" href="{{ child.permalink | relative_url }}">{{ child.title }}</a>
                   {%- endif -%}
                   {% endfor %}
                 </div>

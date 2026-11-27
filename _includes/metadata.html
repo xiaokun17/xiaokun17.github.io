@@ -37,10 +37,8 @@
 {%- endif %}
 
 {%- assign is_blog_post = false -%}
-{%- if page.url != '/blog/index.html' and page.url contains '/blog/' -%}
-    {%- unless page.url contains '/tag/' or page.url contains '/category/' -%}
-        {%- assign is_blog_post = true -%}
-    {%- endunless -%}
+{%- if page.collection == 'posts' -%}
+    {%- assign is_blog_post = true -%}
 {%- endif -%}
 
 {%- if site.serve_og_meta %}
@@ -187,26 +185,17 @@
         {%- capture link -%}https://discord.com/users/{{ site.discord_id }}{%- endcapture -%}
         {%- assign sameaslinks = sameaslinks | push: link -%}
     {%- endif -%}
-    {%- if sameaslinks != blank -%}
-        {%- assign sameaslinks = sameaslinks | split: "" -%}
-    {%- endif -%}
-
+    {%- capture author_name -%}{{ site.first_name }}{% if site.middle_name %} {{ site.middle_name }}{% endif %} {{ site.last_name }}{%- endcapture -%}
     <script type="application/ld+json">
     {
-        "author":
-        {
-            "@type": "Person",
-            "name": "{{ site.first_name }} {{ site.middle_name }} {{ site.last_name }}"
-        },
-        "url": "{{ page.url | prepend: site.baseurl | prepend: site.url }}",
-        "@type": "{%- if is_blog_post -%}BlogPosting{%- else -%}WebSite{%- endif -%}",
-        "description": "{%- if page.description -%}{{ page.description }}{%- else if site.description -%}{{ site.description }}{%- endif -%}",
-        "headline": "{%- if page.title -%}{{ page.title }}{%- else -%}{{ site.title }}{%- endif -%}",
-        {% if sameaslinks != blank -%}
-        "sameAs": {{ sameaslinks }},
-        {%- endif %}
-        "name": "{{ site.first_name }} {{ site.middle_name }} {{ site.last_name }}",
-        "@context": "https://schema.org"
+        "@context": "https://schema.org",
+        "@type": "{% if is_blog_post %}BlogPosting{% else %}WebSite{% endif %}",
+        "author": {"@type": "Person", "name": {{ author_name | jsonify }}},
+        "url": {{ page.url | absolute_url | jsonify }},
+        "description": {{ page.description | default: site.description | jsonify }},
+        "headline": {{ page.title | default: title | jsonify }},
+        {% if sameaslinks.size > 0 %}"sameAs": {{ sameaslinks | jsonify }},{% endif %}
+        "name": {{ author_name | jsonify }}
     }
     </script>
 {%- endif %}

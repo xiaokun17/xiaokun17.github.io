@@ -186,6 +186,11 @@ kramdown:
 # Includes & excludes
 include: ['_pages']
 exclude:
+  - README.md
+  - CONTRIBUTING.md
+  - Dockerfile
+  - docker-compose.yml
+  - docker-local.yml
   - bin
   - Gemfile
   - Gemfile.lock
