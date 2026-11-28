@@ -75,12 +75,8 @@
         {%- else -%}
           {%- capture entrytype -%}{%- endcapture -%}
         {%- endif -%}
-        {%- if entry.month != blank -%}
-          {%- capture entrymonth -%}{{ " " }}{{ entry.month | capitalize }}{%- endcapture -%}
-        {%- endif -%}
-        {%- if entry.year != blank -%}
-          {%- capture entryyear -%}{{ " " }}{{entry.year}}{%- endcapture -%}
-        {%- endif -%}
+        {%- capture entrymonth -%}{% if entry.month != blank %} {{ entry.month | capitalize }}{% endif %}{%- endcapture -%}
+        {%- capture entryyear -%}{% if entry.year != blank %} {{ entry.year }}{% endif %}{%- endcapture -%}
         {% assign entrytype_text = entrytype | strip_html | strip %}
         {%- capture periodical -%}{{ entrytype }}{%- if entrytype_text != "" and entryyear != "" -%}, {%- endif -%}{{ entrymonth }}{{ entryyear }}{%- endcapture -%}
         {%- if periodical != blank -%}

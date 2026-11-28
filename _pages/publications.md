@@ -27,7 +27,7 @@ nav_order: 1
       data-publication-year="{{ y }}"
       {% if y > publication_cutoff %}open{% else %}hidden{% endif %}>
       <summary class="year">{{ y }}</summary>
-      {% bibliography -f papers -q @*[year={{y}},visible!=false]* %}
+      {% year_bibliography -f papers -q @*[year={{y}},visible!=false]* %}
     </details>
   {% endfor %}
 
